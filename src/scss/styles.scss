@@ -1,0 +1,46 @@
+body {
+    background-color: rgba(255, 0, 255, 0.21);
+}
+
+.layered-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.secondary {
+        background: rgba(0, 0, 0, 0.15);
+    }
+}
+
+.layered-modal {
+    background: white;
+    width: 400px;
+    padding: 20px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+
+    opacity: 0; /* Initially hidden (for fading effect) */
+    transition: opacity 0.3s ease; /* Fade-in effect */
+}
+
+.layered-modal-header {
+    font-weight: bold;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+.layered-modal-body {
+    padding: 10px 0;
+}
+
+.layered-modal-footer {
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
+    text-align: right;
+}
