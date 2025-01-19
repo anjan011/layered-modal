@@ -8,7 +8,7 @@
     <body>
 
         <div style="position: fixed;top:0;left:0;right:0;height: 60px;display: flex;justify-content: center;align-items: center;gap: 20px;z-index: 9999999;">
-            <button id="openModal">Open Modal 2</button>
+            <button id="openModal">Open Modal</button>
             <button id="closeModal">Close Modal</button>
         </div>
 
@@ -17,17 +17,38 @@
             let modalManager = null;
 
             document.addEventListener('DOMContentLoaded', function () {
-                // Your code goes here
-                console.log('Document is fully loaded');
 
-                modalManager = new LayeredModalManager();
+
+
+                modalManager = new LayeredModalManager({
+                    baseShiftDistance : {
+                        top : 30,
+                        left: 30,
+                    },
+                    hideXButton : 0,
+                    cssClass: {
+                        modalClose: 'damn-modal'
+                    },
+                    zIndex : 8988
+                });
 
                 // Add a modal
                 document.getElementById('openModal').addEventListener('click', () => {
                     modalManager.addModal({
-                        header: "<h3>Modal Title</h3>",
+                        header: {
+                            enabled : 1,
+                            content : "<h3>Modal Title 123</h3>"
+                        },
                         content: "<p>This is a modal content.</p>",
-                        footer: "<button class='close-modal'>Close</button>"
+                        footer: {
+                            enabled : 1,
+                            content: `<div class="d-flex fd-row jc-center gap-3">
+<button class='damn-modal lm-btn lm-btn-warning'>Close 33</button>
+<button class='damn-modal lm-btn lm-btn-success'>Close 33</button>
+<button class='damn-modal lm-btn lm-btn-info'>Close 33</button>
+</div>`
+                        },
+
                     });
                 });
 
