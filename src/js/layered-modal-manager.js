@@ -91,28 +91,42 @@ export default class LayeredModalManager {
         }
 
         // Set zIndex based on stack
-        const topModal = this.#stack.length > 0 ? this.#stack[this.#stack.length - 1] : null;
         params.zIndex = this.#params.zIndex + this.#stack.length;
 
         // secondary overlay?
 
         params.secondaryOverlay = this.#stack.length > 0;
 
-        // shift distance ...
+        // set base shift distance from manager ...
 
-        params.shiftDistance = this.#params.baseShiftDistance;
 
-        if (this.#stack.length) {
+
+        /**
+         * Then if the stack is not empty, add last modal's
+         * distance values to base shift distance ...
+         */
+
+        if (this.#stack.length > 0) {
+
+            params.shiftDistance = {...this.#params.baseShiftDistance};
+
             let prevModal = this.#stack[this.#stack.length - 1];
 
             let shiftDistance = prevModal.getParams().shiftDistance;
 
-            shiftDistance.top += this.#params.baseShiftDistance.top;
-            shiftDistance.right += this.#params.baseShiftDistance.right;
-            shiftDistance.bottom += this.#params.baseShiftDistance.bottom;
-            shiftDistance.left += this.#params.baseShiftDistance.left;
+            params.shiftDistance.top += shiftDistance.top;
+            params.shiftDistance.right += shiftDistance.right;
+            params.shiftDistance.bottom += shiftDistance.bottom;
+            params.shiftDistance.left += shiftDistance.left;
 
-            params.shiftDistance = shiftDistance;
+        } else {
+            params.shiftDistance = {
+                top : 0,
+                right : 0,
+                bottom : 0,
+                left : 0,
+
+            };
         }
 
         /**
@@ -146,15 +160,25 @@ export default class LayeredModalManager {
      * Remove modal instance from DOM and stack ...
      */
 
-    removeModal() {
+    removeModal(callback = null) {
 
-        if (this.#stack.length === 0) return;
+        if (this.#stack.length === 0) {
+            return
+        }
 
+        const latestModal = this.#stack[this.#stack.length - 1];
 
-        const topModal = this.#stack[this.#stack.length - 1];
+        if (latestModal instanceof LayeredModal) {
 
-        if (topModal instanceof LayeredModal) {
-            topModal.hide();
+            latestModal.hide(() => {
+                this.popStack();
+
+                if(_.isFunction(callback)) {
+                    callback.apply(this);
+                }
+
+            });
+
         }
 
     }
@@ -166,6 +190,11 @@ export default class LayeredModalManager {
         }
 
         return this.#stack.pop();
+    }
+
+    stackSize() {
+
+        return this.#stack.length;
     }
 
     /**

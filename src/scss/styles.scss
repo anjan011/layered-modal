@@ -1,8 +1,7 @@
-body {
-    background-color: rgba(255, 0, 255, 0.21);
-}
+@import "https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap";
 
 .layered-modal-overlay {
+    font-family: 'Roboto Serif',serif;
     position: fixed;
     top: 0;
     left: 0;
@@ -16,6 +15,10 @@ body {
     &.secondary {
         background: rgba(0, 0, 0, 0.15);
     }
+
+    *:not(.icon) {
+        font-family: inherit;
+    }
 }
 
 .layered-modal {
@@ -23,12 +26,19 @@ body {
     width: 400px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
     /*border-radius: 8px;*/
 
     opacity: 0; /* Initially hidden (for fading effect) */
     transition: opacity 0.3s ease; /* Fade-in effect */
 
     position: relative;
+
+    @media screen and (max-width: 767px) {
+        width: 90%;
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
 
     & > .x-btn {
         font-family: monospace;
@@ -251,7 +261,7 @@ body {
     padding-bottom: 10px;
     border-bottom: 1px solid #ccc;
 
-    h2 {
+    h2,h3,h1 {
         margin: 0;
     }
 }

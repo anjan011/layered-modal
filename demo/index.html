@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Layered Modal Example</title>
+        <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap"
+              rel="stylesheet">
     </head>
     <body>
 
@@ -22,21 +24,22 @@
 
                 modalManager = new LayeredModalManager({
                     baseShiftDistance : {
-                        top : 30,
-                        left: 30,
+                        top : 100,
+                        left: 0,
                     },
                     hideXButton : 0,
                     cssClass: {
                         modalClose: 'damn-modal'
                     },
-                    zIndex : 8988
+                    zIndex : 1
                 });
 
                 // Add a modal
                 document.getElementById('openModal').addEventListener('click', () => {
                     modalManager.addModal({
+                        transitionDuration : 100,
                         header: {
-                            enabled : 1,
+                            enabled : 0,
                             content : "<h3>Modal Title 123</h3>"
                         },
                         content: "<p>This is a modal content.</p>",
@@ -46,15 +49,38 @@
 <button class='damn-modal lm-btn lm-btn-warning'>Close 33</button>
 <button class='damn-modal lm-btn lm-btn-success'>Close 33</button>
 <button class='damn-modal lm-btn lm-btn-info'>Close 33</button>
-</div>`
+</div>`,
+                            mode : 'custom',
+                            onOk : function() {
+                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Is ok?`);
+                                this.hide();
+                            }
                         },
+                        onShow : function() {
+
+                            console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `The modal is displayed now! ID: ${this.getId()}`);
+
+                            document.getElementById(this.getModalId()).querySelectorAll('button').forEach(function (item, index, itemList) {
+
+                                //item.disabled = true;
+
+                            });
+
+                        },
+                        onHide : function() {
+
+                            console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Now the modal is gone for real ....`);
+
+                        }
 
                     });
                 });
 
                 // Remove top modal
                 document.getElementById('closeModal').addEventListener('click', () => {
-                    modalManager.removeModal();
+                    modalManager.removeModal(() => {
+                        console.log('Stack Size: ', modalManager.stackSize());
+                    });
                 });
             });
 

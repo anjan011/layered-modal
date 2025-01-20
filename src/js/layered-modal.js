@@ -34,15 +34,15 @@ export default class LayeredModal {
     /**
      * Class parameters object ..
      *
-     * @type {{zIndex : number,id : string, shiftDistance : {top: number, left: number,right: number, bottom: number}, transitionDuration : number, hideXButton : number, cssClass : {modalClose : string, modal : string}, header : object, content: string, footer: object}}
+     * @type {{width : {value : number,unit: string},zIndex : number,id : string, shiftDistance : {top: number, left: number,right: number, bottom: number}, transitionDuration : number, hideXButton : number, cssClass : {modalClose : string, modal : string, modalOk : string}, header : object, content: string, footer: object, onShow : null, onHide : null}}
      */
 
     #params = {};
 
     /**
-     * Get params ...
+     * Get parameters object ...
      *
-     * @return {{zIndex: number, id: string, shiftDistance: {top: number, left: number, right: number, bottom: number}, transitionDuration: number, hideXButton : number}}
+     * @return {{width: {value: number, unit: string}, zIndex: number, id: string, shiftDistance: {top: number, left: number, right: number, bottom: number}, transitionDuration: number, hideXButton: number, cssClass: {modalClose: string, modal: string, modalOk : string}, header: Object, content: string, footer: Object}}
      */
 
     getParams() {
@@ -104,10 +104,10 @@ export default class LayeredModal {
          * Fade transition duration ...
          */
 
-        this.#params.transitionDuration = _.objValueAsInt(this.#params, 'transitionDuration', 300);
+        this.#params.transitionDuration = _.objValueAsInt(this.#params, 'transitionDuration', 100);
 
         if (this.#params.transitionDuration < 0) {
-            this.#params.transitionDuration = 300;
+            this.#params.transitionDuration = 0;
         }
 
         /**
@@ -125,6 +125,7 @@ export default class LayeredModal {
 
         cssClass.modal = _.objValueAsString(cssClass, 'modal', '');
         cssClass.modalClose = _.objValueAsString(cssClass, 'modalClose', 'modal-close');
+        cssClass.modalOk = _.objValueAsString(cssClass, 'modalOk', 'modal-ok');
 
         /**
          * header ...
@@ -142,13 +143,41 @@ export default class LayeredModal {
         let footer = this.#params.footer = _.objValueAsObject(this.#params, 'footer');
 
         footer.enabled = _.objValueAsIntFlag(footer, 'enabled', 1);
-        footer.content = _.objValueAsString(footer, 'content', `<div class="text-center"><button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass.modalClose}">Close</button></div>`);
+
+        footer.mode = _.objValueAsString(footer,'mode','alert');
+
+        if(!['alert','confirm','custom'].includes(footer.mode)) {
+            footer.mode = 'alert';
+        }
+
+        if(footer.mode === 'custom') {
+            footer.content = _.objValueAsString(footer, 'content', `<div class="text-center"><button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass.modalClose}">Close</button></div>`);
+        }
+
 
         /**
          * Content ...
          */
 
         this.#params.content = _.objValueAsString(this.#params,'content','Modal content');
+
+        /**
+         * Width
+         */
+
+        let w = this.#params.width = _.objValueAsObject(this.#params,'width');
+
+        w.value = _.objValueAsFloat(w,'v',600);
+
+        if(w.value < 300) {
+            w.value = 300;
+        }
+
+        w.unit = _.objValueAsString(w,'u','px');
+
+        if(!w.unit) {
+            w.unit = 'px';
+        }
     }
 
     /**
@@ -205,6 +234,10 @@ export default class LayeredModal {
 
     }
 
+    generateWidthCss() {
+        return `width:${this.#params.width.value}${this.#params.width.unit};`;
+    }
+
     /**
      * Generate markup ...
      *
@@ -213,15 +246,17 @@ export default class LayeredModal {
 
     generateHtml() {
 
-        const {zIndex, content, header, footer, secondaryOverlay} = this.#params;
+        const {zIndex, secondaryOverlay} = this.#params;
 
 
-        let marginCss = this.generateMarginShift();
+        let modalInlineCss =
+            this.generateMarginShift() +
+            this.generateWidthCss();
 
 
         return `
         <div id="${this.getOverlayId()}" class="layered-modal-overlay ${secondaryOverlay ? 'secondary' : ''}" style="z-index: ${zIndex};">
-            <div id="${this.getModalId()}" class="layered-modal ${this.#params.cssClass.modal}" style="${marginCss}">
+            <div id="${this.getModalId()}" class="layered-modal ${this.#params.cssClass.modal}" style="${modalInlineCss}">
                 
                 ${this.#params.hideXButton <= 0 ? `<span class="x-btn ${this.#params.cssClass.modalClose}">X</span>` : ''}
             
@@ -265,7 +300,25 @@ export default class LayeredModal {
             return '';
         }
 
-        return `<div class="layered-modal-footer">${footer.content}</div>`;
+        if(footer.mode === 'custom') {
+            return `<div class="layered-modal-footer">${footer.content}</div>`;
+        } else if(footer.mode === 'alert') {
+
+            return `<div class="layered-modal-footer d-flex fd-row jc-center">
+    <button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass.modalClose}">Close</button>
+</div>`;
+
+        } else if (footer.mode === 'confirm') {
+
+            return `<div class="layered-modal-footer d-flex fd-row jc-between">
+    <button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass.modalClose}">Close</button>
+    
+    <button type="button" class="lm-btn lm-btn-success ${this.#params.cssClass.modalOk}">Ok</button>
+</div>`;
+
+        }
+
+
 
     }
 
@@ -283,16 +336,29 @@ export default class LayeredModal {
 
         setTimeout(() => {
             modal.style.opacity = '1'; // Fade in after the modal is displayed
+
+            this.#bindEvents();
+
         }, 10); // Small delay to trigger the opacity transition
 
-        this.#bindEvents();
+
     }
 
     #timerHiding = null;
 
-    hide() {
+    /**
+     * Hide the modal ...
+     */
 
-        if (this.#timerHiding) {
+    hide(callback = null) {
+
+        /**
+         * While an animation or transition is going on,
+         * we wont allow this function call. This is to throttle
+         * the hide function calls via escape key or fast mouse clicks
+         */
+
+        if (this.#timerHiding !== null) {
             return;
         }
 
@@ -314,9 +380,28 @@ export default class LayeredModal {
                 overlay.remove();
             }
 
-            this.getManager().popStack();
-
             clearTimeout(this.#timerHiding);
+
+            this.#timerHiding = null;
+
+            /**
+             * The logic here, if we close the modal via manager, the manager
+             * will call the hide() method with a callback. The callback will
+             * then pop the latest modal, which is this one from the stack.
+             *
+             * But, if we close this via the modal's own hide() method, we then
+             * need to pop from the stack in manager instance.
+             */
+
+            if(_.isFunction(callback)) {
+                callback.apply(this);
+            } else {
+                this.getManager().popStack();
+            }
+
+            if (this.#params.hasOwnProperty('onHide') && _.isFunction(this.#params.onHide)) {
+                this.#params.onHide.apply(this);
+            }
 
         }, this.#params.transitionDuration);
 
@@ -333,6 +418,10 @@ export default class LayeredModal {
 
         let overlay = document.getElementById(this.getOverlayId());
 
+        /**
+         * Modal close trigger click handlers ...
+         */
+
         overlay
             .querySelectorAll(`.${this.#params.cssClass.modalClose}`)
             .forEach(function (item) {
@@ -341,6 +430,31 @@ export default class LayeredModal {
                 });
             });
 
+        /**
+         * Modal ok  trigger click handlers ...
+         */
+
+        if(this.#params.footer.hasOwnProperty('onOk') && _.isFunction(this.#params.footer.onOk)) {
+            overlay
+                .querySelectorAll(`.${this.#params.cssClass.modalOk}`)
+                .forEach(function (item) {
+                    item.addEventListener('click', function () {
+                        _this.getParams().footer.onOk.apply(_this);
+                    });
+                });
+        }
+
+
+
+        /**
+         * Do we have a onShow callback? if so, apply this here.
+         * This will ensure that the callback is called when the modal
+         * is added to DOm and fully visible.
+         */
+
+        if(_this.#params.hasOwnProperty('onShow') && _.isFunction(this.#params.onShow)) {
+            _this.#params.onShow.apply(this);
+        }
 
     }
 
