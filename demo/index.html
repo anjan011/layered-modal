@@ -2,91 +2,9 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Layered Modal Example</title>
-        <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap"
-              rel="stylesheet">
+        <title>Title</title>
     </head>
     <body>
-
-        <div style="position: fixed;top:0;left:0;right:0;height: 60px;display: flex;justify-content: center;align-items: center;gap: 20px;z-index: 9999999;">
-            <button id="openModal">Open Modal</button>
-            <button id="closeModal">Close Modal</button>
-        </div>
-
-        <script>
-
-            let modalManager = null;
-
-            document.addEventListener('DOMContentLoaded', function () {
-
-
-
-                modalManager = new LayeredModalManager({
-                    baseShiftDistance : {
-                        top : 100,
-                        left: 0,
-                    },
-                    hideXButton : 0,
-                    cssClass: {
-                        modalClose: 'damn-modal'
-                    },
-                    zIndex : 1
-                });
-
-                // Add a modal
-                document.getElementById('openModal').addEventListener('click', () => {
-                    modalManager.addModal({
-                        transitionDuration : 100,
-                        header: {
-                            enabled : 0,
-                            content : "<h3>Modal Title 123</h3>"
-                        },
-                        content: "<p>This is a modal content.</p>",
-                        footer: {
-                            enabled : 1,
-                            content: `<div class="d-flex fd-row jc-center gap-3">
-<button class='damn-modal lm-btn lm-btn-warning'>Close 33</button>
-<button class='damn-modal lm-btn lm-btn-success'>Close 33</button>
-<button class='damn-modal lm-btn lm-btn-info'>Close 33</button>
-</div>`,
-                            mode : 'custom',
-                            onOk : function() {
-                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Is ok?`);
-                                this.hide();
-                            }
-                        },
-                        onShow : function() {
-
-                            console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `The modal is displayed now! ID: ${this.getId()}`);
-
-                            document.getElementById(this.getModalId()).querySelectorAll('button').forEach(function (item, index, itemList) {
-
-                                //item.disabled = true;
-
-                            });
-
-                        },
-                        onHide : function() {
-
-                            console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Now the modal is gone for real ....`);
-
-                        }
-
-                    });
-                });
-
-                // Remove top modal
-                document.getElementById('closeModal').addEventListener('click', () => {
-                    modalManager.removeModal(() => {
-                        console.log('Stack Size: ', modalManager.stackSize());
-                    });
-                });
-            });
-
-
-
-        </script>
 
     </body>
 </html>

@@ -1,5 +1,47 @@
 import _ from "underscore";
 
+declare module 'underscore' {
+    interface UnderscoreStatic {
+        isPlainObject(o: any): boolean;
+
+        asObject<T extends object>(v: any, d?: T): T;
+
+        asString(v: any, d?: string): string;
+
+        asInt(v: any, d?: number): number;
+
+        asFloat(v: any, d?: number): number;
+
+        asArray<T>(v: any, d?: T[]): T[];
+
+        objOwnValue<T>(o: any, k: string, d?: T): T;
+
+        objValue<T>(o: any, k: string, d?: T): T;
+
+        objValueAsString(o: unknown, k: string, d?: string): string;
+
+        objValueAsObject(o: any, k: string, d?: object): object;
+
+        objValueAsInt(o: any, k: string, d?: number): number;
+
+        objValueAsIntFlag(o: any, k: string, d?: number): 0 | 1;
+
+        objValueAsFloat(o: any, k: string, d?: number): number;
+
+        objValueAsBool(o: any, k: string, d?: boolean): boolean;
+
+        objValueAsArray<T>(o: any, k: string, d?: T[]): T[];
+
+        hasMethod(o: object, m: string): boolean;
+
+        hasProperty(o: object, k: string): boolean;
+
+        guid(): string;
+
+        objValueAsMethod(o: any, k: string, d?:any) : any;
+    }
+}
+
 /**
  * Underscore extensions ...
  */
@@ -12,9 +54,12 @@ _.mixin({
      * @returns {boolean}
      */
 
-    isPlainObject: function (o) {
+    isPlainObject: function (o: any): boolean {
 
-        return this.isObject(o) && !this.isFunction(o) && !this.isArray(o);
+        return this.isObject(o)
+            && !this.isFunction(o)
+            && !this.isArray(o)
+            && (Object.getPrototypeOf(o) === Object.prototype);
 
     },
 
@@ -26,7 +71,7 @@ _.mixin({
      * @return {Object}
      */
 
-    asObject: function (v, d) {
+    asObject: function (v: any, d: object): object {
 
         if (!this.isPlainObject(d)) {
             d = {};
@@ -43,7 +88,7 @@ _.mixin({
      * @returns {*}
      */
 
-    asString: function (v, d) {
+    asString: function (v: any, d: string): string {
 
         if (this.isUndefined(d) || this.isNull(d)) {
             d = '';
@@ -68,10 +113,22 @@ _.mixin({
      * @returns {*}
      */
 
-    asInt: function (v, d) {
+    asInt: function (v: any, d: number = 0): number {
 
-        if (this.isUndefined(d) || this.isNull(d)) {
-            d = 0;
+        d = Number.isInteger(d) ? d : 0;
+
+        if (_.isArray(v)) {
+            return d;
+        }
+
+        if (typeof v === 'string'){
+
+            v = v.trim();
+
+            if(!/^[+-]?\d+$/.test(v)) {
+                return d;
+            }
+
         }
 
         v = parseInt(v);
@@ -91,10 +148,19 @@ _.mixin({
      * @returns {*}
      */
 
-    asFloat: function (v, d) {
+    asFloat: function (v: any, d: number = 0.0): number {
 
-        if (this.isUndefined(d) || this.isNull(d)) {
-            d = 0.0;
+        if(_.isArray(v)) {
+            return d;
+        }
+
+        if (typeof v === 'string') {
+
+            v = v.trim();
+
+            if (!/^[+-]?(?:\d+|\.\d+)(?:\.\d*)?$/.test(v)) {
+                return d;
+            }
         }
 
         v = parseFloat(v);
@@ -114,7 +180,7 @@ _.mixin({
      * @returns {*}
      */
 
-    asArray: function (v, d) {
+    asArray: function (v: any, d: unknown[]): unknown[] {
 
         if (!this.isArray(d)) {
             d = [];
@@ -131,7 +197,7 @@ _.mixin({
      * @param d
      */
 
-    objOwnValue: function (o, k, d) {
+    objOwnValue: function (o: any, k: string, d: any): any {
         return this.isPlainObject(o) && this.has(o, k) ? o[k] : d;
     },
 
@@ -143,7 +209,7 @@ _.mixin({
      * @param d
      */
 
-    objValue: function (o, k, d) {
+    objValue: function (o: any, k: string, d: any): any {
         return this.isPlainObject(o) && this.hasProperty(o, k) ? o[k] : d;
     },
 
@@ -155,7 +221,7 @@ _.mixin({
      * @returns {*}
      */
 
-    objValueAsString: function (o, k, d) {
+    objValueAsString: function (o: unknown, k: string, d: string): string {
 
         if (this.isUndefined(d) || this.isNull(d)) {
             d = '';
@@ -175,14 +241,15 @@ _.mixin({
      * @returns {*}
      */
 
-    objValueAsObject: function (o, k, d) {
+    objValueAsObject: function (o: any, k: string, d: object = {}): object {
 
-        if (this.isUndefined(d) || this.isNull(d)) {
-            d = {};
-        }
 
         if (!this.isPlainObject(o)) {
             return d;
+        }
+
+        if (!this.isPlainObject(d)) {
+            d = {};
         }
 
         let val = this.objValue(o, k, d);
@@ -201,7 +268,7 @@ _.mixin({
      * @returns {Number}
      */
 
-    objValueAsInt: function (o, k, d) {
+    objValueAsInt: function (o: object, k: string, d: number): number {
 
         let val = this.objValue(o, k, d);
 
@@ -214,7 +281,7 @@ _.mixin({
         return val;
     },
 
-    objValueAsIntFlag: function (o, k, d = 0) {
+    objValueAsIntFlag: function (o: object, k: string, d: number = 0): number {
 
         let val = this.objValue(o, k, d);
 
@@ -237,7 +304,7 @@ _.mixin({
      * @returns {Number}
      */
 
-    objValueAsFloat: function (o, k, d) {
+    objValueAsFloat: function (o: object, k: string, d: number): number {
 
         let val = this.objValue(o, k, d);
 
@@ -260,7 +327,7 @@ _.mixin({
      * @returns {boolean}
      */
 
-    objValueAsBool: function (o, k, d) {
+    objValueAsBool: function (o : object, k : string, d : boolean) : boolean {
 
         return !!(this.objValue(o, k, d));
 
@@ -276,7 +343,7 @@ _.mixin({
      * @returns {Object}
      */
 
-    objValueAsArray: function (o, k, d) {
+    objValueAsArray: function (o : object, k : string, d : unknown[]) : unknown[] {
 
         d = this.isArray(d) ? d : [];
 
@@ -294,7 +361,7 @@ _.mixin({
      * @returns {boolean}
      */
 
-    hasMethod: function (o, m) {
+    hasMethod: function (o : object, m : string) : boolean {
 
         return this.isPlainObject(o) && (this.functions(o).indexOf(m) >= 0);
 
@@ -309,7 +376,7 @@ _.mixin({
      * @returns {boolean}
      */
 
-    hasProperty: function (o, k) {
+    hasProperty: function (o : object, k : string) : boolean {
 
         return this.isPlainObject(o) && this.allKeys(o).indexOf(k) >= 0;
 
@@ -321,14 +388,21 @@ _.mixin({
      * @returns {string}
      */
 
-    guid: function () {
+    guid: function () : string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             let r = Math.random() * 16 | 0,
                 v = c === 'x' ? r : (r & 0x3 | 0x8);
 
             return v.toString(16);
         });
-    }
+    },
+
+    objValueAsMethod: function (o: any, k: string, d: unknown = null): unknown {
+
+        let val = this.objValue(o, k, d);
+
+        return this.isFunction(val) ? val : d;
+    },
 
 });
 

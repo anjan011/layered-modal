@@ -1,28 +1,26 @@
 {
-  "name": "layered-model",
-  "version": "1.0.0",
-  "description": "Layered modal or popup, that can display multiple popup windows stacked over each other.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start-dev": "webpack serve --mode development --open",
-    "start-pro": "webpack serve --mode production --open"
+  "dependencies": {
+    "underscore": "^1.13.7"
   },
-  "keywords": [],
-  "author": "",
-  "license": "MIT",
   "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/underscore": "^1.13.0",
     "css-loader": "^7.1.2",
-    "css-minimizer-webpack-plugin": "^7.0.0",
-    "html-webpack-plugin": "^5.6.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "mini-css-extract-plugin": "^2.9.2",
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
-    "style-loader": "^4.0.0",
-    "terser-webpack-plugin": "^5.3.11",
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.7.3",
     "underscore": "^1.13.7",
     "webpack": "^5.97.1",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "webpack-cli": "^6.0.1"
+  },
+  "scripts": {
+    "build": "webpack",
+    "test": "jest",
+    "watch": "webpack --watch"
   }
 }
