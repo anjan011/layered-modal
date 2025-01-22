@@ -33,8 +33,8 @@ interface LayeredModalParams {
     transitionDuration? : number;
     hideXButton? : number;
     cssClass? : CssClassNames;
-    onShow? : any;
-    onHide? : any;
+    onShow? : Function | null;
+    onHide? : Function | null;
     secondaryOverlay? : boolean;
     stackIndex : number;
 }
@@ -140,7 +140,7 @@ export class LayeredModal {
          * Fade transition duration ...
          */
 
-        this.#params.transitionDuration = _.objValueAsInt(params, 'transitionDuration', 100);
+        this.#params.transitionDuration = _.objValueAsInt(params, 'transitionDuration', 0);
 
         if (this.#params.transitionDuration < 0) {
             this.#params.transitionDuration = 0;
@@ -228,7 +228,14 @@ export class LayeredModal {
          * Secondary Overlay?
          */
 
-        this.#params.secondaryOverlay = _.objValueAsBool(params,'secondaryOverlay')
+        this.#params.secondaryOverlay = _.objValueAsBool(params,'secondaryOverlay');
+
+        /**
+         * On show and on hide ...
+         */
+
+        this.#params.onShow = _.objValueAsMethod(params,'onShow',null);
+        this.#params.onHide = _.objValueAsMethod(params,'onHide',null);
     }
 
     /**
@@ -399,26 +406,15 @@ export class LayeredModal {
         setTimeout(() => {
             modal.style.opacity = '1'; // Fade in after the modal is displayed
 
+            this.getManager().adjustStackCssClassForModals();
+
             this.#bindEvents();
 
-            this.getManager().adjustStackCssClassForModals();
+            this.getManager().adjustModalMarginsForLatestCenteredMode();
 
         }, this.#params.transitionDuration); // Small delay to trigger the opacity transition
 
 
-    }
-
-    addStackedCssClassToPrevModal() {
-
-        if (this.getManager() && this.getManager().stackSize() > 1) {
-
-            let prevModal = this.getManager().getStackedModal(this.#params.stackIndex! - 1);
-
-            if (prevModal) {
-                prevModal.toggleModalClass('stacked');
-            }
-
-        }
     }
 
     #timerHiding : any = null;
@@ -445,6 +441,8 @@ export class LayeredModal {
             return;
         }
 
+
+
         modal.style.opacity = '0'; // Fade out the modal
 
         this.#timerHiding = setTimeout(() => {
@@ -462,6 +460,8 @@ export class LayeredModal {
             clearTimeout(this.#timerHiding);
 
             this.#timerHiding = null;
+
+
 
             /**
              * The logic here, if we close the modal via manager, the manager
@@ -484,9 +484,13 @@ export class LayeredModal {
 
             this.getManager().adjustStackCssClassForModals();
 
-            if (this.#params.hasOwnProperty('onHide') && _.isFunction(this.#params.onHide)) {
+
+
+            if (this.#params.onHide) {
                 this.#params.onHide.apply(this);
             }
+
+            this.getManager().adjustModalMarginsForLatestCenteredMode();
 
         }, this.#params.transitionDuration);
 
@@ -544,15 +548,18 @@ export class LayeredModal {
         }
 
 
+
         /**
          * Do we have a onShow callback? if so, apply this here.
          * This will ensure that the callback is called when the modal
          * is added to DOm and fully visible.
          */
 
-        if (_this.#params.hasOwnProperty('onShow') && _.isFunction(this.#params.onShow)) {
+        if (_this.#params.onShow) {
             _this.#params.onShow.apply(this);
         }
+
+
 
     }
 
@@ -586,6 +593,42 @@ export class LayeredModal {
             modalElement.classList.remove(className);
         }
 
+
+    }
+
+    adjustMargin(position : Position) {
+
+        let element = document.getElementById(this.getModalId());
+
+        if(!element) {
+            return;
+        }
+
+        if(position.top !== undefined) {
+            element.style.marginTop = `${position.top}px`;
+        }
+
+        if (position.right !== undefined) {
+            element.style.marginRight = `${position.right}px`;
+        }
+
+        if (position.bottom !== undefined) {
+            element.style.marginBottom = `${position.bottom}px`;
+        }
+
+        if (position.left !== undefined) {
+            element.style.marginLeft = `${position.left}px`;
+        }
+
+    }
+
+    setShiftingDistance(distance : Position,adjustMargins : boolean = true) {
+
+        this.#params.shiftDistance = distance;
+
+        if(adjustMargins) {
+            this.adjustMargin(distance);
+        }
 
     }
 

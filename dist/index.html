@@ -17,6 +17,25 @@
         </div>
 
         <script>
+            function generateRandomPosition() {
+                function getRandomInt(min, max) {
+                    return Math.floor(Math.random() * (max - min + 1)) + min;
+                }
+
+                return {
+                    top: getRandomInt(-400, 400),
+                    left: getRandomInt(-400, 400),
+                    bottom: getRandomInt(-400, 400),
+                    right: getRandomInt(-400, 400)
+                };
+            }
+
+            // Example usage:
+            //console.log(generateRandomPosition());
+
+        </script>
+
+        <script>
 
 
             let modalManager = null;
@@ -26,8 +45,9 @@
 
 
                 modalManager = new LayeredModalManager({
+                    latestCentered : false,
                     baseShiftDistance : {
-                        top : 100,
+                        top : 0,
                         left: 0,
                     },
                     hideXButton : 0,
@@ -44,7 +64,7 @@
                         /*transitionDuration : 100,*/
                         header: {
                             enabled : 0,
-                            content : "<h3>Modal Title 123</h3>"
+                            content : `<h3>Modal Title @ ${new Date}</h3>`
                         },
                         content: "<p>This is a modal content.</p>",
                         footer: {
@@ -62,18 +82,18 @@
                         },
                         onShow : function() {
 
-                            console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `The modal is displayed now! ID: ${this.getId()}`);
+                            /*let pos = generateRandomPosition();
 
-                            document.getElementById(this.getModalId()).querySelectorAll('button').forEach(function (item, index, itemList) {
+                            this.adjustMargin(pos);*/
 
-                                //item.disabled = true;
+                            console.log('Shown');
 
-                            });
+                            console.log(this.getParams().shiftDistance);
 
                         },
                         onHide : function() {
 
-                            console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Now the modal is gone for real ....`);
+                            console.log('Hidden');
 
                         },
 
@@ -84,7 +104,7 @@
                 // Remove top modal
                 document.getElementById('closeModal').addEventListener('click', () => {
                     modalManager.removeModal(() => {
-                        console.log('Stack Size: ', modalManager.stackSize());
+                        //console.log('Stack Size: ', modalManager.stackSize());
                     });
                 });
             });
