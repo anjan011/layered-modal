@@ -181,6 +181,12 @@ export default class LayeredModalManager {
         }
 
         /**
+         * Stack index ...
+         */
+
+        params.stackIndex = this.#stack.length;
+
+        /**
          * Instantiate the model and display it, then add to stack ...
          *
          * @type {LayeredModal}
@@ -237,6 +243,22 @@ export default class LayeredModalManager {
     }
 
     /**
+     * Gets a modal object from stack using array index
+     *
+     * @param index
+     */
+
+    getStackedModal(index: number) : LayeredModal | null {
+
+        if(index < 0 || index >= this.#stack.length) {
+            return null;
+        }
+
+        return this.#stack[index];
+    }
+
+
+    /**
      * Bind events common to all models ...
      */
 
@@ -276,13 +298,38 @@ export default class LayeredModalManager {
             }
         };
     }
+
+    adjustStackCssClassForModals() {
+
+        if(this.#stack.length === 0) {
+            return;
+        }
+
+        if(this.#stack.length === 1) {
+
+            let modal = this.#stack[0] as LayeredModal;
+
+            if(modal) {
+                modal.removeModalClass('stacked');
+            }
+
+            return;
+        }
+
+        for (let i = 0; i < this.#stack.length - 1; i += 1) {
+
+            let modal = this.#stack[i] as LayeredModal;
+
+            if (modal) {
+                modal.addModalClass('stacked');
+            }
+
+        }
+
+        let modal = this.#stack[this.#stack.length - 1] as LayeredModal;
+
+        if (modal) {
+            modal.removeModalClass('stacked');
+        }
+    }
 }
-
-/**
- * Make LayeredModalManager available for browsers ...
- */
-
-/*
-if (typeof window !== "undefined") {
-    window.LayeredModalManager = LayeredModalManager;
-}*/

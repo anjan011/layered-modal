@@ -36,6 +36,7 @@ interface LayeredModalParams {
     onShow? : any;
     onHide? : any;
     secondaryOverlay? : boolean;
+    stackIndex : number;
 }
 
 export class LayeredModal {
@@ -94,6 +95,13 @@ export class LayeredModal {
      */
 
     prepareParams(params : Partial<LayeredModalParams>) {
+
+        /**
+         * Stack index ..
+         */
+
+
+        this.#params.stackIndex = _.objValueAsInt(params,'stackIndex');
 
         /**
          * Id ...
@@ -393,9 +401,24 @@ export class LayeredModal {
 
             this.#bindEvents();
 
+            this.getManager().adjustStackCssClassForModals();
+
         }, this.#params.transitionDuration); // Small delay to trigger the opacity transition
 
 
+    }
+
+    addStackedCssClassToPrevModal() {
+
+        if (this.getManager() && this.getManager().stackSize() > 1) {
+
+            let prevModal = this.getManager().getStackedModal(this.#params.stackIndex! - 1);
+
+            if (prevModal) {
+                prevModal.toggleModalClass('stacked');
+            }
+
+        }
     }
 
     #timerHiding : any = null;
@@ -434,6 +457,8 @@ export class LayeredModal {
                 overlay.remove();
             }
 
+
+
             clearTimeout(this.#timerHiding);
 
             this.#timerHiding = null;
@@ -452,6 +477,12 @@ export class LayeredModal {
             } else {
                 this.getManager().popStack();
             }
+
+            /**
+             * Adjust stacked css class for all modals in stack ...
+             */
+
+            this.getManager().adjustStackCssClassForModals();
 
             if (this.#params.hasOwnProperty('onHide') && _.isFunction(this.#params.onHide)) {
                 this.#params.onHide.apply(this);
@@ -525,5 +556,37 @@ export class LayeredModal {
 
     }
 
+    toggleModalClass(className : string) {
+
+        let modalElement = document.getElementById(this.getModalId());
+
+        if(modalElement) {
+            modalElement.classList.toggle(className);
+        }
+
+
+    }
+
+    addModalClass(className: string) {
+
+        let modalElement = document.getElementById(this.getModalId());
+
+        if (modalElement) {
+            modalElement.classList.add(className);
+        }
+
+
+    }
+
+    removeModalClass(className: string) {
+
+        let modalElement = document.getElementById(this.getModalId());
+
+        if (modalElement) {
+            modalElement.classList.remove(className);
+        }
+
+
+    }
 
 }

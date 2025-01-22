@@ -1,6 +1,6 @@
 module.exports = {
     preset: 'ts-jest',
-    testEnvironment: 'jsdom',
+    testEnvironment: 'node',
     testMatch: ['**/tests/**/*.jest.test.ts'],
     noStackTrace: true
 };

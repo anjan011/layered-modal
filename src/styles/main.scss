@@ -69,6 +69,12 @@ body {
         }
     }
 
+    &.stacked {
+        & > .x-btn {
+            display: none !important;
+        }
+    }
+
     /* General Button Styles */
     .lm-btn {
         display: inline-block;
