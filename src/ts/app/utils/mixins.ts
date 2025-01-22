@@ -39,6 +39,8 @@ declare module 'underscore' {
         guid(): string;
 
         objValueAsMethod(o: any, k: string, d?:any) : any;
+
+        isAlphanumeric(value : any) : boolean;
     }
 }
 
@@ -402,6 +404,10 @@ _.mixin({
         let val = this.objValue(o, k, d);
 
         return this.isFunction(val) ? val : d;
+    },
+
+    isAlphanumeric(value: any): boolean {
+        return typeof value === "string" && /^[a-z0-9]+$/i.test(value);
     },
 
 });

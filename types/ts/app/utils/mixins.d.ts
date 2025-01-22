@@ -20,6 +20,7 @@ declare module 'underscore' {
         hasProperty(o: object, k: string): boolean;
         guid(): string;
         objValueAsMethod(o: any, k: string, d?: any): any;
+        isAlphanumeric(value: any): boolean;
     }
 }
 export default _;

@@ -1,1 +1,237 @@
-body{color:red}body a{color:#fff}
+/*!***************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/styles/main.scss ***!
+  \***************************************************************************************************************/
+@import url(https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap);
+/*!*******************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/styles/main.scss (1) ***!
+  \*******************************************************************************************************************/
+.layered-modal-overlay {
+  font-family: "Roboto Serif", serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.layered-modal-overlay.secondary {
+  background: rgba(0, 0, 0, 0.15);
+}
+.layered-modal-overlay *:not(.icon) {
+  font-family: inherit;
+}
+
+.layered-modal {
+  background: white;
+  width: 400px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  /*border-radius: 8px;*/
+  opacity: 0; /* Initially hidden (for fading effect) */
+  transition: opacity 0.3s ease; /* Fade-in effect */
+  position: relative;
+  /* General Button Styles */
+  /* Default (Neutral) Button */
+  /* Success (Green) Button */
+  /* Warning (Yellow) Button */
+  /* Error (Red) Button */
+  /* Info (Blue) Button */
+  /* Disabled Button State */
+}
+@media screen and (max-width: 767px) {
+  .layered-modal {
+    width: 90%;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
+.layered-modal > .x-btn {
+  font-family: monospace;
+  display: flex;
+  width: 24px;
+  height: 24px;
+  background-color: red;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  border-radius: 50%;
+  user-select: none;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: translateX(40%) translateY(-40%);
+}
+.layered-modal > .x-btn:hover {
+  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.5);
+}
+.layered-modal .lm-btn {
+  display: inline-block;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  padding: 10px 16px;
+  font-size: 16px;
+  border-radius: 6px;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  user-select: none;
+}
+.layered-modal .lm-btn-default {
+  background-color: #e0e0e0;
+  color: #333;
+}
+.layered-modal .lm-btn-default:hover {
+  background-color: #d6d6d6;
+}
+.layered-modal .lm-btn-default:active {
+  background-color: #c0c0c0;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.layered-modal .lm-btn-default:disabled {
+  background-color: #f5f5f5;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.layered-modal .lm-btn-success {
+  background-color: #22c55e;
+  color: white;
+}
+.layered-modal .lm-btn-success:hover {
+  background-color: #16a34a;
+}
+.layered-modal .lm-btn-success:active {
+  background-color: #15803d;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.layered-modal .lm-btn-success:disabled {
+  background-color: #86efac;
+  color: #e0f2fe;
+  cursor: not-allowed;
+}
+.layered-modal .lm-btn-warning {
+  background-color: #facc15;
+  color: #333;
+}
+.layered-modal .lm-btn-warning:hover {
+  background-color: #eab308;
+}
+.layered-modal .lm-btn-warning:active {
+  background-color: #ca8a04;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.layered-modal .lm-btn-warning:disabled {
+  background-color: #fef9c3;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.layered-modal .lm-btn-error {
+  background-color: #ef4444;
+  color: white;
+}
+.layered-modal .lm-btn-error:hover {
+  background-color: #dc2626;
+}
+.layered-modal .lm-btn-error:active {
+  background-color: #b91c1c;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.layered-modal .lm-btn-error:disabled {
+  background-color: #fecaca;
+  color: #e0f2fe;
+  cursor: not-allowed;
+}
+.layered-modal .lm-btn-info {
+  background-color: #3b82f6;
+  color: white;
+}
+.layered-modal .lm-btn-info:hover {
+  background-color: #2563eb;
+}
+.layered-modal .lm-btn-info:active {
+  background-color: #1d4ed8;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.layered-modal .lm-btn-info:disabled {
+  background-color: #bfdbfe;
+  color: #e0f2fe;
+  cursor: not-allowed;
+}
+.layered-modal .lm-btn:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+.layered-modal .text-center {
+  text-align: center;
+}
+.layered-modal .d-flex {
+  display: flex !important;
+}
+.layered-modal .d-flex.inline {
+  display: inline-flex !important;
+}
+.layered-modal .d-flex.fd-row {
+  flex-direction: row !important;
+}
+.layered-modal .d-flex.fd-col {
+  flex-direction: column !important;
+}
+.layered-modal .d-flex.jc-center {
+  justify-content: center;
+}
+.layered-modal .d-flex.jc-between {
+  justify-content: space-between;
+}
+.layered-modal .d-flex.jc-around {
+  justify-content: space-around;
+}
+.layered-modal .d-flex.jc-start {
+  justify-content: start;
+}
+.layered-modal .d-flex.jc-end {
+  justify-content: end;
+}
+.layered-modal .d-flex.ai-center {
+  align-items: center;
+}
+.layered-modal .d-flex.ai-start {
+  align-items: start;
+}
+.layered-modal .d-flex.ai-end {
+  align-items: start;
+}
+.layered-modal .d-flex.gap-1 {
+  gap: 0.5rem;
+}
+.layered-modal .d-flex.gap-2 {
+  gap: 1rem;
+}
+.layered-modal .d-flex.gap-3 {
+  gap: 1rem;
+}
+
+.layered-modal-header {
+  font-weight: bold;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+.layered-modal-header h2, .layered-modal-header h3, .layered-modal-header h1 {
+  margin: 0;
+}
+
+.layered-modal-body {
+  padding: 10px 0;
+}
+
+.layered-modal-footer {
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+  text-align: right;
+}
