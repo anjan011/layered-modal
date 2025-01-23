@@ -10,7 +10,6 @@ interface LayeredModalManagerParams {
     baseShiftDistance?: Partial<Position>;
     cssClass?: Partial<CssClassNames>;
     transitionDuration?: number;
-    latestCentered?: boolean;
 
 }
 
@@ -56,11 +55,6 @@ export default class LayeredModalManager {
 
     prepareParams(params: Partial<LayeredModalManagerParams>) {
 
-        /**
-         * Latest centered?
-         */
-
-        this.#params.latestCentered = _.objValueAsBool(params, 'latestCentered', false);
 
         /**
          * Hide X button ...
@@ -142,31 +136,20 @@ export default class LayeredModalManager {
          * distance values to base shift distance ...
          */
 
-        if (!this.#params.latestCentered) {
-            if (this.#stack.length > 0) {
+        if (this.#stack.length > 0) {
 
-                params.shiftDistance = {...this.#params.baseShiftDistance};
+            params.shiftDistance = {...this.#params.baseShiftDistance};
 
-                let prevModal = this.#stack[this.#stack.length - 1];
+            let prevModal = this.#stack[this.#stack.length - 1];
 
-                let shiftDistance = prevModal.getParams().shiftDistance;
+            let shiftDistance = prevModal.getParams().shiftDistance;
 
-                params.shiftDistance.top += shiftDistance?.top;
-                params.shiftDistance.right += shiftDistance?.right;
-                params.shiftDistance.bottom += shiftDistance?.bottom;
-                params.shiftDistance.left += shiftDistance?.left;
+            params.shiftDistance.top += shiftDistance?.top;
+            params.shiftDistance.right += shiftDistance?.right;
+            params.shiftDistance.bottom += shiftDistance?.bottom;
+            params.shiftDistance.left += shiftDistance?.left;
 
-            } else {
-                params.shiftDistance = {
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    left: 0,
-
-                };
-            }
         } else {
-
             params.shiftDistance = {
                 top: 0,
                 right: 0,
@@ -350,60 +333,5 @@ export default class LayeredModalManager {
         if (modal) {
             modal.removeModalClass('stacked');
         }
-    }
-
-    adjustModalMarginsForLatestCenteredMode() {
-
-        if (!this.#params.latestCentered || this.#stack.length === 0) {
-            return;
-        }
-
-        let baseShiftDistance = this.#params.baseShiftDistance !== undefined ? this.#params.baseShiftDistance : {
-            top: 0,
-            right: 0,
-            bottom: 0,
-            left: 0,
-        };
-
-        /*let latestModal = this.#stack[this.#stack.length - 1];
-
-        if(!latestModal) {
-            return;
-        }*/
-
-
-        /*latestModal.adjustMargin({
-            top : 0,
-            right : 0,
-            bottom : 0,
-            left : 0,
-        });*/
-
-        for (let i = 0; i < this.#stack.length; i++) {
-
-            let offset = this.#stack.length - 1 - i;
-
-            let modal = this.#stack[i];
-
-            let newDistance = {...baseShiftDistance};
-
-            ['top', 'right', 'bottom', 'left'].forEach(function (key: string, index, itemList) {
-
-                const distKey = key as keyof Position;
-
-                if (newDistance[distKey] === undefined) {
-                    newDistance[distKey] = 0;
-                } else {
-                    newDistance[distKey] = newDistance[distKey] * -1 * offset;
-                }
-
-
-            });
-
-
-            modal.setShiftingDistance(newDistance);
-        }
-
-
     }
 }

@@ -28,7 +28,7 @@ body {
 .layered-modal {
     background: white;
     width: 400px;
-    padding: 20px;
+    /*padding: 20px;*/
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     box-sizing: border-box;
     /*border-radius: 8px;*/
@@ -40,10 +40,14 @@ body {
 
     position: relative;
 
-    @media screen and (max-width: 767px) {
-        width: 90%;
+    @media screen and (max-width: 1023px) {
+        max-width: 90% !important;
         margin-left: auto !important;
         margin-right: auto !important;
+    }
+
+    &.no-user-select {
+        user-select: none;
     }
 
     & > .x-btn {
@@ -266,11 +270,19 @@ body {
         }
     }
 
+    &.lm-draggable {
+
+        .lm-drag-handle {
+            user-select: none;
+            cursor: move;
+        }
+
+    }
 }
 
 .layered-modal-header {
     font-weight: bold;
-    padding-bottom: 10px;
+    padding: 15px;
     border-bottom: 1px solid #ccc;
 
     h2, h3, h1 {
@@ -279,11 +291,23 @@ body {
 }
 
 .layered-modal-body {
-    padding: 10px 0;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    iframe {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    &.no-padding {
+        padding: 0 !important;
+    }
 }
 
 .layered-modal-footer {
-    padding-top: 10px;
+    padding: 15px;
     border-top: 1px solid #ccc;
     text-align: right;
 }

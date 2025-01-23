@@ -13,6 +13,11 @@ interface HeaderParams {
     content : string;
 }
 
+interface BodyParams {
+    noPadding : boolean;
+    aspectRatio? : number;
+}
+
 interface FooterParams {
     enabled: number;
     content?: string;
@@ -37,6 +42,10 @@ interface LayeredModalParams {
     onHide? : Function | null;
     secondaryOverlay? : boolean;
     stackIndex : number;
+    draggable: boolean;
+    dragHandle : string;
+    userSelect : boolean;
+    body : BodyParams
 }
 
 export class LayeredModal {
@@ -236,6 +245,35 @@ export class LayeredModal {
 
         this.#params.onShow = _.objValueAsMethod(params,'onShow',null);
         this.#params.onHide = _.objValueAsMethod(params,'onHide',null);
+
+        /**
+         * Drag ...
+         */
+
+        this.#params.draggable = _.objValueAsBool(params,'draggable',false);
+        this.#params.dragHandle = _.objValueAsString(params,'dragHandle','');
+
+        /**
+         * User select ...
+         */
+
+        this.#params.userSelect = _.objValueAsBool(params, 'userSelect', true);
+
+        /**
+         * Body params ..
+         */
+
+        this.#params.body = _.objValueAsObject(params,'body') as BodyParams;
+
+        this.#params.body.noPadding = _.objValueAsBool(this.#params.body,'noPadding',false);
+
+        if(this.#params.body.hasOwnProperty('aspectRatio')) {
+            this.#params.body.aspectRatio = _.objValueAsFloat(this.#params.body,'aspectRatio',0);
+
+            if(this.#params.body.aspectRatio < 0) {
+                this.#params.body.aspectRatio = 0;
+            }
+        }
     }
 
     /**
@@ -266,6 +304,10 @@ export class LayeredModal {
 
     getModalId() : string {
         return `modal-${this.getId()}`;
+    }
+
+    getModalHeaderId(): string {
+        return `modal-header-${this.getId()}`;
     }
 
     /**
@@ -320,18 +362,59 @@ export class LayeredModal {
             this.generateMarginShift() +
             this.generateWidthCss() + `transition-duration: ${this.#params.transitionDuration}ms;`;
 
+        let modalCssClassList = [
+            'layered-modal',
+            this.#params.cssClass?.modal,
+        ];
+
+        if(this.#params.draggable) {
+            modalCssClassList.push('lm-draggable');
+        }
+
+        if(!this.#params.userSelect) {
+            modalCssClassList.push('no-user-select');
+        }
+
         return `
         <div id="${this.getOverlayId()}" class="layered-modal-overlay ${secondaryOverlay ? 'secondary' : ''}" style="z-index: ${zIndex};">
-            <div id="${this.getModalId()}" class="layered-modal ${this.#params.cssClass?.modal}" style="${modalInlineCss}">
+            <div id="${this.getModalId()}" class="${modalCssClassList.join(' ')}" style="${modalInlineCss}">
                 
                 ${this.#params.hideXButton !== undefined && this.#params.hideXButton <= 0 ? `<span class="x-btn ${this.#params.cssClass?.modalClose}">X</span>` : ''}
             
                 ${this.generateHeaderMarkup()}
-                <div class="layered-modal-content">${this.#params.content}</div>
+                ${this.generateBodyMarkup()}
                 ${this.generateFooterMarkup()}
             </div>
         </div>
     `;
+    }
+
+    /**
+     * Generates markup for body ...
+     */
+
+    generateBodyMarkup() : string {
+
+        let classList = [
+            'layered-modal-body'
+        ];
+
+        let styles = [];
+
+        if(this.#params.body !== undefined) {
+            if(this.#params.body.aspectRatio !== undefined) {
+                if (this.#params.body.aspectRatio > 0 ) {
+                    styles.push(`aspect-ratio: ${this.#params.body.aspectRatio};`);
+                }
+            }
+        }
+
+        if(this.#params.body !== undefined && this.#params.body?.noPadding){
+            classList.push('no-padding');
+        }
+
+        return `<div class="${classList.join(' ')}" style="${styles.join('')}">${this.#params.content}</div>`;
+
     }
 
     /**
@@ -344,11 +427,17 @@ export class LayeredModal {
 
         let header = this.#params.header;
 
-        if (header?.enabled && header?.enabled <= 0) {
+        if (header?.enabled !== undefined && header?.enabled <= 0) {
             return '';
         }
 
-        return `<div class="layered-modal-header">${header?.content}</div>`;
+        let classList = [];
+
+        if(this.#params.draggable && this.#params.dragHandle === '') {
+            classList.push('lm-drag-handle');
+        }
+
+        return `<div id="${this.getModalHeaderId()}" class="layered-modal-header ${classList.join(' ')}">${header?.content}</div>`;
 
     }
 
@@ -362,7 +451,7 @@ export class LayeredModal {
 
         let footer = this.#params.footer;
 
-        if (footer?.enabled && footer?.enabled <= 0) {
+        if (footer?.enabled !== undefined && footer?.enabled <= 0) {
             return '';
         }
 
@@ -409,8 +498,6 @@ export class LayeredModal {
             this.getManager().adjustStackCssClassForModals();
 
             this.#bindEvents();
-
-            this.getManager().adjustModalMarginsForLatestCenteredMode();
 
         }, this.#params.transitionDuration); // Small delay to trigger the opacity transition
 
@@ -490,8 +577,6 @@ export class LayeredModal {
                 this.#params.onHide.apply(this);
             }
 
-            this.getManager().adjustModalMarginsForLatestCenteredMode();
-
         }, this.#params.transitionDuration);
 
 
@@ -559,8 +644,80 @@ export class LayeredModal {
             _this.#params.onShow.apply(this);
         }
 
+        /**
+         * Handle dragging ...
+         */
 
 
+        this.handleDragEvents();
+
+
+    }
+
+    handleDragEvents() {
+
+        if(!this.#params.draggable) {
+            return;
+        }
+
+        const modal = document.getElementById(this.getModalId()) as HTMLElement;
+
+        let dragHandle = null;
+
+        if(this.#params.dragHandle !== '') {
+            dragHandle = document.getElementById(this.#params.dragHandle as string);
+        } else {
+            if(this.#params.header !== undefined && this.#params.header?.enabled > 0) {
+                dragHandle = document.getElementById(this.getModalHeaderId());
+            }
+
+        }
+
+        if(!dragHandle) {
+            dragHandle = modal;
+        }
+
+        if(!dragHandle.classList.contains('lm-drag-handle')) {
+            dragHandle.classList.add('lm-drag-handle');
+        }
+
+
+        let isDragging: boolean = false;
+        let startX: number, startY: number;
+        let marginLeft: number = 0;
+        let marginTop: number = 0;
+
+        dragHandle.addEventListener("mousedown", function (event: MouseEvent) {
+            isDragging = true;
+
+            // Get initial mouse position
+            startX = event.clientX;
+            startY = event.clientY;
+
+            // Get current margin values (parse as number)
+            marginLeft = parseInt(window.getComputedStyle(modal).marginLeft, 10) || 0;
+            marginTop = parseInt(window.getComputedStyle(modal).marginTop, 10) || 0;
+
+            document.addEventListener("mousemove", drag);
+            document.addEventListener("mouseup", stopDrag);
+        });
+
+        function drag(event: MouseEvent) {
+            if (!isDragging) return;
+
+            // Calculate new position
+            const deltaX: number = event.clientX - startX;
+            const deltaY: number = event.clientY - startY;
+
+            modal.style.marginLeft = `${marginLeft + deltaX}px`;
+            modal.style.marginTop = `${marginTop + deltaY}px`;
+        }
+
+        function stopDrag() {
+            isDragging = false;
+            document.removeEventListener("mousemove", drag);
+            document.removeEventListener("mouseup", stopDrag);
+        }
     }
 
     toggleModalClass(className : string) {
