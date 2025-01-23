@@ -1,5 +1,6 @@
 import {LayeredModal} from './layered-modal';
-import {Position} from "./interfaces/common";
+import {Dimension, Position} from "./interfaces/common";
+import {DomUtils} from "./utils/dom";
 import _ from "./utils/mixins";
 
 
@@ -272,6 +273,12 @@ export default class LayeredModalManager {
 
         document.addEventListener('keydown', throttledEscHandler);
 
+        /**
+         * Make modal open possible using data attributes ...
+         */
+
+        this.bindTriggerClickUsingDataAttributes();
+
     }
 
     handleEscapeKey(event: any) {
@@ -334,4 +341,179 @@ export default class LayeredModalManager {
             modal.removeModalClass('stacked');
         }
     }
+
+    /**
+     * This method allows opening a modal using data attributes ...
+     */
+
+
+    bindTriggerClickUsingDataAttributes() {
+
+        document.addEventListener("click",  (event) => {
+
+
+
+            if(!event.target) {
+                return;
+            }
+
+            let t = null;
+
+            const target = event.target as Element;
+
+            if ((t = target.closest("[data-layered-modal-trigger]"))) {
+
+                /**
+                 * if a button element or input element with button type
+                 * has disabled attr set, we skip click action ...
+                 *
+                 * Additionally, if the element has a disabled class, we
+                 * skip as well ..
+                 */
+
+                if(t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {
+                    if(t.disabled) {
+                        return;
+                    }
+                } else if(t.classList.contains('disabled')) {
+                    return;
+                }
+
+                let attrs = DomUtils.getDataAttributes(t as HTMLElement);
+
+                if(_.objValueAsIntFlag(attrs,'layered-modal-trigger',0) !== 1) {
+                    return;
+                }
+
+                let modalParams : any = {
+                    id : _.objValueAsString(attrs,'lm-id'),
+                    zIndex : _.objValueAsString(attrs,'lm-z-index'),
+                    header : {
+                        enabled : _.objValueAsIntFlag(attrs,'lm-header-enabled',1),
+                        title : _.objValueAsString(attrs, 'lm-header-title', 'Modal Title'),
+                        titleTag : _.objValueAsString(attrs, 'lm-header-title-tag', 'h2'),
+                    },
+                    cssClass : {
+                        modal : _.objValueAsString(attrs,'lm-css-class'),
+                    }
+                };
+
+                // region [Content]
+
+
+
+
+
+                let contentType = _.objValueAsString(attrs,'lm-content-type','html');
+
+                if(contentType === 'html') {
+                    modalParams.content = _.objValueAsString(attrs, 'lm-content-html', 'Enter content string ...');
+                } else if(contentType === 'function') {
+
+                    let functionName =_.objValueAsString(attrs, 'lm-content-function');
+                    let functionArgs =_.objValueAsString(attrs, 'lm-content-function-args');
+
+                    modalParams.content = this.getFunctionResult(functionName,functionArgs);
+
+
+                } else if(contentType === 'template') {
+
+                    let templateId = _.objValueAsString(attrs,'lm-content-template-id');
+
+                    modalParams.content = this.getContentFromTemplateElement(templateId);
+
+                } else {
+                    modalParams.content = 'Unable to determine content from any possible sources ...';
+                }
+
+                // endregion
+
+                // region [Footer]
+
+                let footer : any = {
+                    enabled: _.objValueAsIntFlag(attrs, 'lm-footer-enabled', 1),
+                    mode: _.objValueAsString(attrs, 'lm-footer-mode', 'confirm'),
+                };
+
+                if(footer.mode === 'custom') {
+
+                    let templateId = _.objValueAsString(attrs, 'lm-footer-template-id');
+
+                    footer.content = this.getContentFromTemplateElement(templateId);
+
+                }
+
+                modalParams.footer = footer;
+
+                // endregion
+
+                this.addModal(modalParams);
+
+            }
+        });
+
+    }
+
+    getContentFromTemplateElement(templateId : string) : string {
+
+        if (!templateId) {
+            return 'Template element id is required';
+        } else {
+
+            let elem = document.getElementById(templateId);
+
+            if (!elem) {
+                return `No template tag found with id: ${templateId}`;
+            } else if (!(elem instanceof HTMLTemplateElement)) {
+
+                return `Element found with id ${templateId} is not a <template> element`;
+
+            } else {
+                return elem.innerHTML;
+            }
+
+        }
+
+    }
+
+    getFunctionResult(funcName: string, functionArgs : string): any | null {
+
+        if (typeof (window as any)[funcName] === "function") {
+            let val =  (window as any)[funcName].apply(null,[functionArgs]);
+
+            if(typeof val === 'string') {
+                return val;
+            } else {
+                return `Function ${funcName} does not return string data type.`;
+            }
+
+        } else {
+           return `Function ${funcName} not found.`;
+        }
+    }
 }
+
+/*
+interface LayeredModalParams {
+    id: string;
+    zIndex: number;
+    content?: string;
+    header?: HeaderParams;
+    footer?: FooterParams;
+    width?: Dimension;
+    height?: Dimension;
+    position: string;
+    shiftDistance?: Position;
+    transitionDuration?: number;
+    hideXButton?: number;
+    cssClass?: CssClassNames;
+    onShow?: Function | null;
+    onHide?: Function | null;
+    secondaryOverlay?: boolean;
+    stackIndex: number;
+    draggable: boolean;
+    dragHandle: string;
+    userSelect: boolean;
+    body: BodyParams
+}
+*/

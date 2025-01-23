@@ -6,190 +6,78 @@
         <title>Layered Modal Example</title>
         <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap"
               rel="stylesheet">
+
+        <!-- jQuery 2.1.2 -->
+        <script id="script-jq-2.1.2-min" src="//code.jquery.com/jquery-2.1.2.min.js"></script>
+
+
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
         <link rel="stylesheet" href="styles.min.css">
         <script src="minified.bundle.js"></script>
+        <style>
+            .rounded {
+                border-radius: 15px !important;
+
+            }
+        </style>
     </head>
     <body>
 
         <div style="position: fixed;top:0;left:0;right:0;height: 60px;display: flex;justify-content: center;align-items: center;gap: 20px;z-index: 9999999;">
-            <button id="openModal" class="modal-open-trigger">Open Modal</button>
-            <button id="openVideoModal" class="modal-open-trigger">Open Video</button>
-            <button id="closeModal" class="modal-close-trigger">Close Modal</button>
+            <button id="openModal" class="modal-open-trigger btn btn-primary">Open Modal</button>
+            <button id="openVideoModal" class="modal-open-trigger btn btn-info">Open Video</button>
+            <button id="closeModal" class="modal-close-trigger btn btn-danger">Close Modal</button>
+
+            <button
+                    id="openModalViaData"
+                    class="btn btn-warning lm-btn-success"
+
+                    data-layered-modal-trigger="1"
+
+                    data-lm-header-enabled="1"
+                    data-lm-header-title="Account login"
+                    data-lm-header-title-tag="h5"
+
+                    data-lm-content-type="template"
+                    data-lm-content-function="__mc_content"
+                    data-lm-content-function-args='{"name":"Justin","age":20}'
+                    data-lm-content-html="<div>What the hell Mary! <span class='text-danger'>using html for content ...</span></div>"
+                    data-lm-content-template-id="modal-content-1234"
+
+                    data-lm-footer-enabled="0"
+                    data-lm-footer-mode="custom"
+                    data-lm-footer-template-id="footer-12"
+
+            ><span>Open Using Data Attributes</span></button>
         </div>
 
-        <script>
-            function generateRandomPosition() {
-                function getRandomInt(min, max) {
-                    return Math.floor(Math.random() * (max - min + 1)) + min;
-                }
+        <template id="footer-12">
+            <div class="text-center d-flex jc-between ai-center">
+                <button type="button" class="btn btn-primary">What?</button>
+                <button type="button" class="btn btn-primary">When?</button>
+                <button type="button" class="btn btn-primary">Why?</button>
+            </div>
+        </template>
 
-                return {
-                    top: getRandomInt(-400, 400),
-                    left: getRandomInt(-400, 400),
-                    bottom: getRandomInt(-400, 400),
-                    right: getRandomInt(-400, 400)
-                };
-            }
+        <script src="./demo.js" defer></script>
 
-            // Example usage:
-            //console.log(generateRandomPosition());
+        <template id="modal-content-1234">
+            <form>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
 
-        </script>
-
-        <script>
-
-            /**
-             * Generates a guid
-             *
-             * @returns {string}
-             */
-
-            function guid() {
-                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-                    let r = Math.random() * 16 | 0,
-                        v = c === 'x' ? r : (r & 0x3 | 0x8);
-
-                    return v.toString(16);
-                });
-            };
-
-
-            let modalManager = null;
-
-            document.addEventListener('DOMContentLoaded', function () {
-
-
-
-                modalManager = new LayeredModalManager({
-
-                    baseShiftDistance : {
-                        top : 100,
-                        left: 0,
-                    },
-                    hideXButton : 0,
-                    cssClass: {
-                        modalClose: 'damn-modal'
-                    },
-                    zIndex : 1,
-                    transitionDuration: 100,
-                });
-
-                let embedCode = `<iframe width="560" height="315" src="https://www.youtube.com/embed/IzQ3gFRj0Bc?si=ezVQJ1aTV2P-NkPE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>`;
-
-                document.getElementById('openVideoModal').addEventListener('click', () => {
-                    modalManager.addModal({
-                        userSelect: false,
-                        draggable: false,
-                        dragHandle: ``,
-                        body : {
-                            noPadding : true,
-                            aspectRatio : 16/9
-                        },
-                        /*transitionDuration : 100,*/
-                        header: {
-                            enabled: 0,
-                            content: `<h3>The big lie about nuclear waste</h3>`
-                        },
-                        content: embedCode,
-                        footer: {
-                            enabled: 0,
-                            content: `<div class="d-flex fd-row jc-center gap-3">
-<button class='damn-modal lm-btn lm-btn-warning'>Close 33</button>
-<button class='damn-modal lm-btn lm-btn-success'>Close 33</button>
-<button class='damn-modal lm-btn lm-btn-info'>Close 33</button>
-</div>`,
-                            mode: 'custom',
-                            onOk: function () {
-                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Is ok?`);
-                                this.hide();
-                            }
-                        },
-                        onShow: function () {
-
-                            /*let pos = generateRandomPosition();
-
-                            this.adjustMargin(pos);*/
-
-                            console.log('Shown');
-
-                            console.log(this.getParams().shiftDistance);
-
-                        },
-                        onHide: function () {
-
-                            console.log('Hidden');
-
-                        },
-
-                        width : {
-                            value : 800,
-                            unit : 'px'
-                        }
-
-                    });
-                });
-
-
-                // Add a modal
-                document.getElementById('openModal').addEventListener('click', () => {
-
-                    let dragId = guid();
-
-                    modalManager.addModal({
-                        userSelect : false,
-                        draggable : true,
-                        dragHandle : ``,
-                        /*transitionDuration : 100,*/
-                        header: {
-                            enabled : 1,
-                            content : `<h3>Modal Title @ ${new Date}</h3>`
-                        },
-                        content: `<div><p>This is a modal content.<div id='drag-me-${dragId}'>Click and drag!</div> <button class="move-btn">✥</button>
-</p></div>`,
-                        footer: {
-                            enabled : 1,
-                            content: `<div class="d-flex fd-row jc-center gap-3">
-<button class='damn-modal lm-btn lm-btn-warning'>Close 33</button>
-<button class='damn-modal lm-btn lm-btn-success'>Close 33</button>
-<button class='damn-modal lm-btn lm-btn-info'>Close 33</button>
-</div>`,
-                            mode : 'custom',
-                            onOk : function() {
-                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Is ok?`);
-                                this.hide();
-                            }
-                        },
-                        onShow : function() {
-
-                            /*let pos = generateRandomPosition();
-
-                            this.adjustMargin(pos);*/
-
-                            console.log('Shown');
-
-                            console.log(this.getParams().shiftDistance);
-
-                        },
-                        onHide : function() {
-
-                            console.log('Hidden');
-
-                        },
-
-
-                    });
-                });
-
-                // Remove top modal
-                document.getElementById('closeModal').addEventListener('click', () => {
-                    modalManager.removeModal(() => {
-                        //console.log('Stack Size: ', modalManager.stackSize());
-                    });
-                });
-            });
-
-
-
-        </script>
+        </template>
     </body>
 </html>

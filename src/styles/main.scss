@@ -17,7 +17,7 @@ body {
     align-items: center;
 
     &.secondary {
-        background: rgba(0, 0, 0, 0);
+        background: rgba(0, 0, 0, 0.25);
     }
 
     *:not(.icon) {
@@ -41,7 +41,8 @@ body {
     position: relative;
 
     @media screen and (max-width: 1023px) {
-        max-width: 90% !important;
+        max-width: 90vw !important;
+        max-height: 90vh !important;
         margin-left: auto !important;
         margin-right: auto !important;
     }

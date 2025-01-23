@@ -11,6 +11,8 @@ interface CssClassNames {
 interface HeaderParams {
     enabled : number;
     content : string;
+    title : string;
+    titleTag : string;
 }
 
 interface BodyParams {
@@ -181,7 +183,21 @@ export class LayeredModal {
         let header: Partial<HeaderParams> = _.objValueAsObject(params, 'header');
 
         header.enabled = _.objValueAsIntFlag(header, 'enabled', 1);
-        header.content = _.objValueAsString(header, 'content', '<h2>Modal Header</h2>');
+        header.content = _.objValueAsString(header, 'content', '');
+        header.title = _.objValueAsString(header, 'title', 'Modal Header');
+        header.titleTag = _.objValueAsString(header, 'titleTag', 'h2');
+
+        if(!header.titleTag) {
+            header.titleTag = 'h2';
+        }
+
+        if(!header.content) {
+            if(!header.title) {
+                header.title = 'Modal Header';
+            }
+
+            header.content = `<${header.titleTag}>${header.title}</${header.titleTag}>`;
+        }
 
         this.#params.header = header as HeaderParams;
 
@@ -603,6 +619,8 @@ export class LayeredModal {
         if(this.#params.cssClass?.modalClose) {
 
             let closeClass = this.#params.cssClass?.modalClose;
+
+            console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Binding ${closeClass} click trigger ...`);
 
             overlay
                 .querySelectorAll(`.${closeClass}`)
