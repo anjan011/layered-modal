@@ -38,9 +38,11 @@ declare module 'underscore' {
 
         guid(): string;
 
-        objValueAsMethod(o: any, k: string, d?:any) : any;
+        objValueAsMethod(o: any, k: string, d?: any): any;
 
-        isAlphanumeric(value : any) : boolean;
+        isAlphanumeric(value: any): boolean;
+
+        ensureSemicolon(str: string): string;
     }
 }
 
@@ -123,11 +125,11 @@ _.mixin({
             return d;
         }
 
-        if (typeof v === 'string'){
+        if (typeof v === 'string') {
 
             v = v.trim();
 
-            if(!/^[+-]?\d+$/.test(v)) {
+            if (!/^[+-]?\d+$/.test(v)) {
                 return d;
             }
 
@@ -152,7 +154,7 @@ _.mixin({
 
     asFloat: function (v: any, d: number = 0.0): number {
 
-        if(_.isArray(v)) {
+        if (_.isArray(v)) {
             return d;
         }
 
@@ -329,7 +331,7 @@ _.mixin({
      * @returns {boolean}
      */
 
-    objValueAsBool: function (o : object, k : string, d : boolean) : boolean {
+    objValueAsBool: function (o: object, k: string, d: boolean): boolean {
 
         return !!(this.objValue(o, k, d));
 
@@ -345,7 +347,7 @@ _.mixin({
      * @returns {Object}
      */
 
-    objValueAsArray: function (o : object, k : string, d : unknown[]) : unknown[] {
+    objValueAsArray: function (o: object, k: string, d: unknown[]): unknown[] {
 
         d = this.isArray(d) ? d : [];
 
@@ -363,7 +365,7 @@ _.mixin({
      * @returns {boolean}
      */
 
-    hasMethod: function (o : object, m : string) : boolean {
+    hasMethod: function (o: object, m: string): boolean {
 
         return this.isPlainObject(o) && (this.functions(o).indexOf(m) >= 0);
 
@@ -378,7 +380,7 @@ _.mixin({
      * @returns {boolean}
      */
 
-    hasProperty: function (o : object, k : string) : boolean {
+    hasProperty: function (o: object, k: string): boolean {
 
         return this.isPlainObject(o) && this.allKeys(o).indexOf(k) >= 0;
 
@@ -390,7 +392,7 @@ _.mixin({
      * @returns {string}
      */
 
-    guid: function () : string {
+    guid: function (): string {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
             let r = Math.random() * 16 | 0,
                 v = c === 'x' ? r : (r & 0x3 | 0x8);
@@ -408,6 +410,10 @@ _.mixin({
 
     isAlphanumeric(value: any): boolean {
         return typeof value === "string" && /^[a-z0-9]+$/i.test(value);
+    },
+
+    ensureSemicolon(str: string): string {
+        return str.trim().endsWith(";") ? str.trim() : str.trim() + ";";
     },
 
 });

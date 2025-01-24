@@ -1,72 +1,45 @@
 import _ from "./utils/mixins";
-import LayeredModalManager from "./layered-modal-manager";
-import {Position,Dimension} from "./interfaces/common";
+import {ModalManager} from "./modal-manager";
+import {Position, Dimension} from "./interfaces/common";
+import {
+    ModalBodyParams,
+    ModalCssClassNames,
+    ModalFooterParams,
+    ModalHeaderParams,
+    ModalParams
+} from "./interfaces/modal"
+import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
+import {HtmlAttributeGenerator} from "./generators/html-attribute-generator";
+import {CssRulesGenerator} from "./generators/css-rules-generator";
+import {DomUtils} from "./utils/dom";
+import {EmbedCodeGenerator} from "./generators/embed-code-generator";
 
-interface CssClassNames {
-    modal? : string;
-    modalOk? : string;
-    modalClose? : string;
-}
 
-interface HeaderParams {
-    enabled : number;
-    content : string;
-    title : string;
-    titleTag : string;
-}
+export class Modal {
 
-interface BodyParams {
-    noPadding : boolean;
-    aspectRatio? : number;
-}
+    /**
+     * Attributes generator ...
+     *
+     * @private
+     */
 
-interface FooterParams {
-    enabled: number;
-    content?: string;
-    mode : string;
-    onOk? : any;
-}
-
-interface LayeredModalParams {
-    id: string;
-    zIndex: number;
-    content?: string;
-    header?: HeaderParams;
-    footer?: FooterParams;
-    width?: Dimension;
-    height?: Dimension;
-    position: string;
-    shiftDistance? : Position;
-    transitionDuration? : number;
-    hideXButton? : number;
-    cssClass? : CssClassNames;
-    onShow? : Function | null;
-    onHide? : Function | null;
-    secondaryOverlay? : boolean;
-    stackIndex : number;
-    draggable: boolean;
-    dragHandle : string;
-    userSelect : boolean;
-    body : BodyParams
-}
-
-export class LayeredModal {
+    #attrGenerator = new HtmlAttributeGenerator();
 
     /**
      * The manager instance ...
      *
-     * @type LayeredModalManager
+     * @type ModalManager
      */
 
-    #manager!: LayeredModalManager;
+    #manager!: ModalManager;
 
     /**
      * Get modal manager ...
      *
-     * @return {LayeredModalManager}
+     * @return {ModalManager}
      */
 
-    getManager(): LayeredModalManager {
+    getManager(): ModalManager {
         return this.#manager;
     }
 
@@ -76,221 +49,30 @@ export class LayeredModal {
      * @param manager
      */
 
-    setManager(manager: LayeredModalManager) {
+    setManager(manager: ModalManager) {
         this.#manager = manager;
     }
 
 
-
-    #params: Partial<LayeredModalParams> = {
-        id : _.guid(),
-        zIndex : 1,
-        position : 'center'
+    #params: Partial<ModalParams> = {
+        id: _.guid(),
+        zIndex: 1,
+        position: 'middle-center'
     };
 
     /**
      * Gets params ...
      */
 
-    getParams(): Partial<LayeredModalParams> {
+    getParams(): Partial<ModalParams> {
         return this.#params;
     }
 
-    constructor(params: Partial<LayeredModalParams> = {}) {
+    constructor(params: Partial<ModalParams> = {}) {
 
-        this.prepareParams(params);
+        this.#params = ModalParameterParser.parse(params);
     }
 
-    /**
-     * Prepare params ...
-     */
-
-    prepareParams(params : Partial<LayeredModalParams>) {
-
-        /**
-         * Stack index ..
-         */
-
-
-        this.#params.stackIndex = _.objValueAsInt(params,'stackIndex');
-
-        /**
-         * Id ...
-         */
-
-        this.#params.id = _.objValueAsString(params, 'id');
-
-        if (!this.#params.id) {
-            this.#params.id = _.guid();
-        }
-
-        /**
-         * z-index ...
-         */
-
-        this.#params.zIndex = _.objValueAsInt(params, 'zIndex', 1);
-
-        if (this.#params.zIndex < 1) {
-            this.#params.zIndex = 1;
-        }
-
-        /**
-         * Shift distance ...
-         */
-
-        let _sd : Partial<Position>  = _.objValueAsObject(params, 'shiftDistance');
-
-        _sd.top = _.objValueAsInt(_sd,'top',0);
-        _sd.right = _.objValueAsInt(_sd,'right',0);
-        _sd.bottom = _.objValueAsInt(_sd,'bottom',0);
-        _sd.left = _.objValueAsInt(_sd,'left',0);
-
-        this.#params.shiftDistance = _sd as Position;
-
-        /**
-         * Fade transition duration ...
-         */
-
-        this.#params.transitionDuration = _.objValueAsInt(params, 'transitionDuration', 0);
-
-        if (this.#params.transitionDuration < 0) {
-            this.#params.transitionDuration = 0;
-        }
-
-        /**
-         * Hide X button?
-         */
-
-        this.#params.hideXButton = _.objValueAsIntFlag(params, 'hideXButton', 0);
-
-
-        /**
-         * Css Class ...
-         */
-
-        let cssClass : Partial<CssClassNames> = _.objValueAsObject(params, 'cssClass');
-
-        cssClass.modal = _.objValueAsString(cssClass, 'modal', '');
-        cssClass.modalClose = _.objValueAsString(cssClass, 'modalClose', 'modal-close');
-        cssClass.modalOk = _.objValueAsString(cssClass, 'modalOk', 'modal-ok');
-
-        this.#params.cssClass = cssClass as CssClassNames;
-
-        /**
-         * header ...
-         */
-
-        let header: Partial<HeaderParams> = _.objValueAsObject(params, 'header');
-
-        header.enabled = _.objValueAsIntFlag(header, 'enabled', 1);
-        header.content = _.objValueAsString(header, 'content', '');
-        header.title = _.objValueAsString(header, 'title', 'Modal Header');
-        header.titleTag = _.objValueAsString(header, 'titleTag', 'h2');
-
-        if(!header.titleTag) {
-            header.titleTag = 'h2';
-        }
-
-        if(!header.content) {
-            if(!header.title) {
-                header.title = 'Modal Header';
-            }
-
-            header.content = `<${header.titleTag}>${header.title}</${header.titleTag}>`;
-        }
-
-        this.#params.header = header as HeaderParams;
-
-        /**
-         * footer ...
-         */
-
-        let footer : Partial<FooterParams> = _.objValueAsObject(params, 'footer');
-
-        footer.enabled = _.objValueAsIntFlag(footer, 'enabled', 1);
-
-        footer.mode = _.objValueAsString(footer, 'mode', 'alert');
-
-        if (!['alert', 'confirm', 'custom'].includes(footer.mode)) {
-            footer.mode = 'alert';
-        }
-
-        if (footer.mode === 'custom') {
-            footer.content = _.objValueAsString(footer, 'content', `<div class="text-center"><button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass.modalClose}">Close</button></div>`);
-        }
-
-        footer.onOk = _.objValue(footer,'onOk');
-
-        this.#params.footer = footer as FooterParams;
-
-        /**
-         * Content ...
-         */
-
-        this.#params.content = _.objValueAsString(params, 'content', 'Modal content');
-
-        /**
-         * Width
-         */
-
-        let w : Partial<Dimension>  = _.objValueAsObject(params, 'width');
-
-        w.value = _.objValueAsFloat(w, 'value', 600);
-
-        if (w.value < 300) {
-            w.value = 300;
-        }
-
-        w.unit = _.objValueAsString(w, 'unit', 'px');
-
-        if (!w.unit) {
-            w.unit = 'px';
-        }
-
-        this.#params.width = w as Dimension;
-
-        /**
-         * Secondary Overlay?
-         */
-
-        this.#params.secondaryOverlay = _.objValueAsBool(params,'secondaryOverlay');
-
-        /**
-         * On show and on hide ...
-         */
-
-        this.#params.onShow = _.objValueAsMethod(params,'onShow',null);
-        this.#params.onHide = _.objValueAsMethod(params,'onHide',null);
-
-        /**
-         * Drag ...
-         */
-
-        this.#params.draggable = _.objValueAsBool(params,'draggable',false);
-        this.#params.dragHandle = _.objValueAsString(params,'dragHandle','');
-
-        /**
-         * User select ...
-         */
-
-        this.#params.userSelect = _.objValueAsBool(params, 'userSelect', true);
-
-        /**
-         * Body params ..
-         */
-
-        this.#params.body = _.objValueAsObject(params,'body') as BodyParams;
-
-        this.#params.body.noPadding = _.objValueAsBool(this.#params.body,'noPadding',false);
-
-        if(this.#params.body.hasOwnProperty('aspectRatio')) {
-            this.#params.body.aspectRatio = _.objValueAsFloat(this.#params.body,'aspectRatio',0);
-
-            if(this.#params.body.aspectRatio < 0) {
-                this.#params.body.aspectRatio = 0;
-            }
-        }
-    }
 
     /**
      * Raw instance id ...
@@ -298,8 +80,8 @@ export class LayeredModal {
      * @return {string}
      */
 
-    getId() : string {
-        return this.#params.id  ? this.#params.id : '';
+    getId(): string {
+        return this.#params.id ? this.#params.id : '';
     }
 
     /**
@@ -308,7 +90,7 @@ export class LayeredModal {
      * @return {string}
      */
 
-    getOverlayId() : string {
+    getOverlayId(): string {
         return `overlay-${this.getId()}`;
     }
 
@@ -318,7 +100,7 @@ export class LayeredModal {
      * @return {string}
      */
 
-    getModalId() : string {
+    getModalId(): string {
         return `modal-${this.getId()}`;
     }
 
@@ -334,12 +116,12 @@ export class LayeredModal {
      * @return {string}
      */
 
-    generateMarginShift() : string {
+    generateMarginShift(): string {
 
         let marginCss = '',
             sd = this.#params.shiftDistance;
 
-        if(sd?.top !== undefined && sd?.top > 0) {
+        if (sd?.top !== undefined && sd?.top > 0) {
             marginCss += `margin-top:${sd?.top}px;`;
         }
 
@@ -360,9 +142,6 @@ export class LayeredModal {
 
     }
 
-    generateWidthCss() : string {
-        return `width:${this.#params.width?.value}${this.#params.width?.unit};`;
-    }
 
     /**
      * Generate markup ...
@@ -370,66 +149,220 @@ export class LayeredModal {
      * @return {string}
      */
 
-    generateHtml() : string {
+    generateHtml(): string {
 
         const {zIndex, secondaryOverlay} = this.#params;
 
-        let modalInlineCss =
-            this.generateMarginShift() +
-            this.generateWidthCss() + `transition-duration: ${this.#params.transitionDuration}ms;`;
+        let cssClassList = [
+            'layered-modal-overlay'
+        ];
+
+        if (this.#params.position !== undefined) {
+            cssClassList.push(this.#params.position);
+        }
+
+        if(secondaryOverlay !== undefined && secondaryOverlay) {
+            cssClassList.push('secondary');
+        }
+
+        return `
+        <div id="${this.getOverlayId()}" class="${cssClassList.join(' ')}" style="z-index: ${zIndex};">
+            ${this.generateModalMarkup()}
+        </div>
+    `;
+    }
+
+    /**
+     * Modal markup ...
+     */
+
+    generateModalMarkup(): string {
+
+        // region [Inline CSS Styles ...]
+
+        let modalInlineCss = [
+            this.generateMarginShift(),
+            CssRulesGenerator.generateDimensionCss(this.#params.width, 'width'),
+            CssRulesGenerator.generateDimensionCss(this.#params.height, 'height'),
+            `transition-duration: ${this.#params.transitionDuration}ms;`,
+        ];
+
+        // endregion
+
+        // region [Css class list ...]
 
         let modalCssClassList = [
             'layered-modal',
             this.#params.cssClass?.modal,
         ];
 
-        if(this.#params.draggable) {
+        if (this.#params.draggable) {
             modalCssClassList.push('lm-draggable');
         }
 
-        if(!this.#params.userSelect) {
+        if (this.#params.userSelect !== undefined && !this.#params.userSelect) {
             modalCssClassList.push('no-user-select');
         }
 
-        return `
-        <div id="${this.getOverlayId()}" class="layered-modal-overlay ${secondaryOverlay ? 'secondary' : ''}" style="z-index: ${zIndex};">
-            <div id="${this.getModalId()}" class="${modalCssClassList.join(' ')}" style="${modalInlineCss}">
+        // endregion
+
+        return `<div id="${this.getModalId()}" class="${modalCssClassList.join(' ')}" style="${modalInlineCss.join('')}">
                 
-                ${this.#params.hideXButton !== undefined && this.#params.hideXButton <= 0 ? `<span class="x-btn ${this.#params.cssClass?.modalClose}">X</span>` : ''}
+                ${this.generateXButtonMarkup()}
             
                 ${this.generateHeaderMarkup()}
                 ${this.generateBodyMarkup()}
                 ${this.generateFooterMarkup()}
-            </div>
-        </div>
-    `;
+            </div>`;
+    }
+
+    /**
+     * Close button markup at the top right corner ...
+     */
+
+    generateXButtonMarkup(): string {
+
+        if(this.#params.xButton === undefined) {
+            return '';
+        }
+
+        let btn = this.#params.xButton;
+
+        console.log(btn);
+
+        if(!btn.enabled) {
+            return '';
+        }
+
+        return `<span class="x-btn ${btn.cssClass} ${this.#params.cssClass?.modalClose}" ${btn.inlineStyles ? `style="${btn.inlineStyles}"`:''}>${btn.content}</span>`;
     }
 
     /**
      * Generates markup for body ...
      */
 
-    generateBodyMarkup() : string {
+    generateBodyMarkup(): string {
 
-        let classList = [
-            'layered-modal-body'
-        ];
+        let body = this.#params.body;
 
-        let styles = [];
-
-        if(this.#params.body !== undefined) {
-            if(this.#params.body.aspectRatio !== undefined) {
-                if (this.#params.body.aspectRatio > 0 ) {
-                    styles.push(`aspect-ratio: ${this.#params.body.aspectRatio};`);
-                }
-            }
+        if (typeof body === "undefined") {
+            throw new Error('Modal body content not defined');
         }
 
-        if(this.#params.body !== undefined && this.#params.body?.noPadding){
+        // region [Css Classes ...]
+
+        let classList = [
+            body.cssClass
+        ];
+
+        if (body.noPadding) {
             classList.push('no-padding');
         }
 
-        return `<div class="${classList.join(' ')}" style="${styles.join('')}">${this.#params.content}</div>`;
+        // endregion
+
+        // region [Inline styles ...]
+
+        let styles = [
+
+        ];
+
+        if(body.inlineStyles !== undefined) {
+            styles.push(_.ensureSemicolon(body.inlineStyles as string));
+        }
+
+        if (body.aspectRatio !== undefined) {
+            if (body.aspectRatio > 0) {
+                styles.push(`aspect-ratio: ${body.aspectRatio};`);
+            }
+        }
+
+        if(body.maxHeight !== undefined) {
+            let maxHeight = CssRulesGenerator.generateDimensionCss(body.maxHeight,'max-height');
+
+            if(maxHeight) {
+                styles.push(maxHeight);
+            }
+        }
+
+        // endregion
+
+        let bodyAttrs = this.#attrGenerator.generateAttributes({
+            class: classList,
+            style: styles
+        });
+
+        let content = '';
+
+        if (body.contentType === 'html') {
+            content = body.content as string;
+        } else if (body.contentType === 'iframe') {
+            content = body.iframeCode as string;
+
+            if (!DomUtils.isValidIframe(content)) {
+                content = 'Invalid iframe code';
+            }
+
+        } else if (body.contentType === 'function') {
+
+            let returnValue = null;
+
+            if (typeof body.functionName === 'string') {
+                returnValue = DomUtils.getFunctionResult(body.functionName, body.functionArguments);
+            } else if (typeof body.functionName === 'function') {
+
+                returnValue = body.functionName.apply(null, [body.functionArguments]);
+
+            }
+
+            if (typeof returnValue !== 'string') {
+                throw new Error(`${body.functionName} return value must be a string data type`);
+            }
+
+            content = returnValue;
+
+        } else if (body.contentType === 'template') {
+
+            let templateId = _.objValueAsString(body,'templateId');
+
+            if(templateId === '') {
+                content = 'Template element id is required';
+            } else {
+
+                let templateElement = document.getElementById(templateId);
+
+                if(templateElement === null || !(templateElement instanceof HTMLTemplateElement)) {
+
+                    content = `Template element not found by ID: ${templateId}`;
+
+                } else {
+                    content = templateElement.innerHTML;
+                }
+
+            }
+
+        } else if (body.contentType === 'image') {
+
+            content = 'Image type ...';
+
+        } else if (body.contentType === 'ajax') {
+            content = 'Ajax type ...';
+        } else if (body.contentType === 'youtube-video') {
+
+            let embedCode = EmbedCodeGenerator.fromYouTubeVideo(body.videoUrl ?? '');
+
+            if (!embedCode) {
+                content = "Invalid youtube video url";
+            } else {
+                content = embedCode;
+            }
+        }
+
+        if (content === '') {
+            content = 'Modal content not found';
+        }
+
+        return `<div ${bodyAttrs}>${content}</div>`;
 
     }
 
@@ -443,17 +376,25 @@ export class LayeredModal {
 
         let header = this.#params.header;
 
-        if (header?.enabled !== undefined && header?.enabled <= 0) {
+        if(header === undefined) {
+            return '';
+        }
+
+        if (header?.enabled !== undefined && !header?.enabled) {
             return '';
         }
 
         let classList = [];
 
-        if(this.#params.draggable && this.#params.dragHandle === '') {
+        if (this.#params.draggable && this.#params.dragHandle === '') {
             classList.push('lm-drag-handle');
         }
 
-        return `<div id="${this.getModalHeaderId()}" class="layered-modal-header ${classList.join(' ')}">${header?.content}</div>`;
+        if(header.cssClass) {
+            classList.push(header.cssClass);
+        }
+
+        return `<div id="${this.getModalHeaderId()}" class="layered-modal-header ${classList.join(' ')}" style="${header.inlineStyles}">${header?.content}</div>`;
 
     }
 
@@ -467,21 +408,25 @@ export class LayeredModal {
 
         let footer = this.#params.footer;
 
-        if (footer?.enabled !== undefined && footer?.enabled <= 0) {
+        if(footer === undefined) {
+            return '';
+        }
+
+        if (footer?.enabled !== undefined && !footer?.enabled) {
             return '';
         }
 
         if (footer?.mode === 'custom') {
-            return `<div class="layered-modal-footer">${footer.content}</div>`;
+            return `<div class="layered-modal-footer ${footer.cssClass}" style="${footer.inlineStyles}">${footer.content}</div>`;
         } else if (footer?.mode === 'alert') {
 
-            return `<div class="layered-modal-footer d-flex fd-row jc-center">
+            return `<div class="layered-modal-footer d-flex fd-row jc-center  ${footer.cssClass}" style="${footer.inlineStyles}">
     <button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass?.modalClose}">Close</button>
 </div>`;
 
         } else if (footer?.mode === 'confirm') {
 
-            return `<div class="layered-modal-footer d-flex fd-row jc-between">
+            return `<div class="layered-modal-footer d-flex fd-row jc-between  ${footer.cssClass}" style="${footer.inlineStyles}">
     <button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass?.modalClose}">Close</button>
     
     <button type="button" class="lm-btn lm-btn-success ${this.#params.cssClass?.modalOk}">Ok</button>
@@ -498,15 +443,17 @@ export class LayeredModal {
      */
 
     show() {
+
+
         document.body.insertAdjacentHTML('beforeend', this.generateHtml());
 
         let modal = document.getElementById(this.getModalId());
 
-        if(!modal) {
+        if (!modal) {
             return;
         }
 
-        modal.style.display = 'block'; // Make the modal visible
+        modal.style.display = 'flex'; // Make the modal visible
 
         setTimeout(() => {
             modal.style.opacity = '1'; // Fade in after the modal is displayed
@@ -520,13 +467,13 @@ export class LayeredModal {
 
     }
 
-    #timerHiding : any = null;
+    #timerHiding: any = null;
 
     /**
      * Hide the modal ...
      */
 
-    hide(callback : Function | null = null) {
+    hide(callback: Function | null = null) {
 
         /**
          * While an animation or transition is going on,
@@ -545,7 +492,6 @@ export class LayeredModal {
         }
 
 
-
         modal.style.opacity = '0'; // Fade out the modal
 
         this.#timerHiding = setTimeout(() => {
@@ -559,11 +505,9 @@ export class LayeredModal {
             }
 
 
-
             clearTimeout(this.#timerHiding);
 
             this.#timerHiding = null;
-
 
 
             /**
@@ -588,7 +532,6 @@ export class LayeredModal {
             this.getManager().adjustStackCssClassForModals();
 
 
-
             if (this.#params.onHide) {
                 this.#params.onHide.apply(this);
             }
@@ -608,7 +551,7 @@ export class LayeredModal {
 
         let overlay = document.getElementById(this.getOverlayId());
 
-        if(!overlay) {
+        if (!overlay) {
             return;
         }
 
@@ -616,11 +559,9 @@ export class LayeredModal {
          * Modal close trigger click handlers ...
          */
 
-        if(this.#params.cssClass?.modalClose) {
+        if (this.#params.cssClass?.modalClose) {
 
             let closeClass = this.#params.cssClass?.modalClose;
-
-            console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Binding ${closeClass} click trigger ...`);
 
             overlay
                 .querySelectorAll(`.${closeClass}`)
@@ -639,7 +580,7 @@ export class LayeredModal {
 
         if (_.isFunction(this.#params.footer?.onOk)) {
 
-            let okCssClass : string = '.' + this.#params.cssClass?.modalOk;
+            let okCssClass: string = '.' + this.#params.cssClass?.modalOk;
 
             overlay
                 .querySelectorAll(okCssClass)
@@ -648,8 +589,21 @@ export class LayeredModal {
                         _this.getParams().footer?.onOk.apply(_this);
                     });
                 });
-        }
+        } else if (_.isString(this.#params.footer?.onOk)) {
 
+            let functionName = this.#params.footer?.onOk;
+
+            let okCssClass: string = '.' + this.#params.cssClass?.modalOk;
+
+            overlay
+                .querySelectorAll(okCssClass)
+                .forEach(function (item) {
+                    item.addEventListener('click',  () => {
+
+                        DomUtils.executeFunction(functionName,'',_this);
+                    });
+                });
+        }
 
 
         /**
@@ -674,7 +628,7 @@ export class LayeredModal {
 
     handleDragEvents() {
 
-        if(!this.#params.draggable) {
+        if (!this.#params.draggable) {
             return;
         }
 
@@ -682,20 +636,20 @@ export class LayeredModal {
 
         let dragHandle = null;
 
-        if(this.#params.dragHandle !== '') {
+        if (this.#params.dragHandle !== '') {
             dragHandle = document.getElementById(this.#params.dragHandle as string);
         } else {
-            if(this.#params.header !== undefined && this.#params.header?.enabled > 0) {
+            if (this.#params.header !== undefined && this.#params.header?.enabled) {
                 dragHandle = document.getElementById(this.getModalHeaderId());
             }
 
         }
 
-        if(!dragHandle) {
+        if (!dragHandle) {
             dragHandle = modal;
         }
 
-        if(!dragHandle.classList.contains('lm-drag-handle')) {
+        if (!dragHandle.classList.contains('lm-drag-handle')) {
             dragHandle.classList.add('lm-drag-handle');
         }
 
@@ -738,11 +692,11 @@ export class LayeredModal {
         }
     }
 
-    toggleModalClass(className : string) {
+    toggleModalClass(className: string) {
 
         let modalElement = document.getElementById(this.getModalId());
 
-        if(modalElement) {
+        if (modalElement) {
             modalElement.classList.toggle(className);
         }
 
@@ -771,15 +725,15 @@ export class LayeredModal {
 
     }
 
-    adjustMargin(position : Position) {
+    adjustMargin(position: Position) {
 
         let element = document.getElementById(this.getModalId());
 
-        if(!element) {
+        if (!element) {
             return;
         }
 
-        if(position.top !== undefined) {
+        if (position.top !== undefined) {
             element.style.marginTop = `${position.top}px`;
         }
 
@@ -797,11 +751,11 @@ export class LayeredModal {
 
     }
 
-    setShiftingDistance(distance : Position,adjustMargins : boolean = true) {
+    setShiftingDistance(distance: Position, adjustMargins: boolean = true) {
 
         this.#params.shiftDistance = distance;
 
-        if(adjustMargins) {
+        if (adjustMargins) {
             this.adjustMargin(distance);
         }
 

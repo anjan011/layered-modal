@@ -1,4 +1,4 @@
-import { LayeredModalManager } from "./layered-modal-manager";
+import LayeredModalManager from "./layered-modal-manager";
 import { Position, Dimension } from "./interfaces/common";
 interface CssClassNames {
     modal?: string;
@@ -8,6 +8,12 @@ interface CssClassNames {
 interface HeaderParams {
     enabled: number;
     content: string;
+    title: string;
+    titleTag: string;
+}
+interface BodyParams {
+    noPadding: boolean;
+    aspectRatio?: number;
 }
 interface FooterParams {
     enabled: number;
@@ -28,9 +34,14 @@ interface LayeredModalParams {
     transitionDuration?: number;
     hideXButton?: number;
     cssClass?: CssClassNames;
-    onShow?: any;
-    onHide?: any;
-    secondaryOverlay?: number;
+    onShow?: Function | null;
+    onHide?: Function | null;
+    secondaryOverlay?: boolean;
+    stackIndex: number;
+    draggable: boolean;
+    dragHandle: string;
+    userSelect: boolean;
+    body: BodyParams;
 }
 export declare class LayeredModal {
     #private;
@@ -42,12 +53,20 @@ export declare class LayeredModal {
     getId(): string;
     getOverlayId(): string;
     getModalId(): string;
+    getModalHeaderId(): string;
     generateMarginShift(): string;
     generateWidthCss(): string;
     generateHtml(): string;
+    generateBodyMarkup(): string;
     generateHeaderMarkup(): string;
     generateFooterMarkup(): string | undefined;
     show(): void;
     hide(callback?: Function | null): void;
+    handleDragEvents(): void;
+    toggleModalClass(className: string): void;
+    addModalClass(className: string): void;
+    removeModalClass(className: string): void;
+    adjustMargin(position: Position): void;
+    setShiftingDistance(distance: Position, adjustMargins?: boolean): void;
 }
 export {};

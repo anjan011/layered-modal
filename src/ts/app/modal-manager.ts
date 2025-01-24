@@ -1,12 +1,14 @@
-import {LayeredModal} from './layered-modal';
+import {Modal} from './modal';
 import {Dimension, Position} from "./interfaces/common";
 import {DomUtils} from "./utils/dom";
 import _ from "./utils/mixins";
+import {ModalParams, ModalXButton} from "./interfaces/modal";
+import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 
 
 interface LayeredModalManagerParams {
 
-    hideXButton: number;
+    xButton : Partial<ModalXButton>
     zIndex: number;
     baseShiftDistance?: Partial<Position>;
     cssClass?: Partial<CssClassNames>;
@@ -21,14 +23,13 @@ interface CssClassNames {
 }
 
 
-export default class LayeredModalManager {
+export class ModalManager {
 
     #params: Partial<LayeredModalManagerParams> = {
-        hideXButton: 0,
         zIndex: 1
     };
 
-    #stack: Array<LayeredModal> = [];
+    #stack: Array<Modal> = [];
 
     constructor(params: Partial<LayeredModalManagerParams> = {}) {
 
@@ -55,13 +56,6 @@ export default class LayeredModalManager {
      */
 
     prepareParams(params: Partial<LayeredModalManagerParams>) {
-
-
-        /**
-         * Hide X button ...
-         */
-
-        this.#params.hideXButton = _.objValueAsIntFlag(params, 'hideXButton', 0);
 
         /**
          * z-index ...
@@ -107,6 +101,14 @@ export default class LayeredModalManager {
         if (this.#params.transitionDuration < 0) {
             this.#params.transitionDuration = 0;
         }
+
+        /**
+         * X Button ...
+         */
+
+        if(params.hasOwnProperty('xButton')) {
+            this.#params.xButton = _.objValueAsObject(params,'xButton');
+        }
     }
 
     /**
@@ -115,7 +117,7 @@ export default class LayeredModalManager {
      * @param params
      */
 
-    addModal(params: any) {
+    addModal(params: any) : Modal {
 
         if (!_.isPlainObject(params)) {
             params = {};
@@ -165,7 +167,15 @@ export default class LayeredModalManager {
          * Hide X button?
          */
 
-        params.hideXButton = this.#params.hideXButton;
+        if(!params.hasOwnProperty('xButton')) {
+
+            if(this.#params.hasOwnProperty('xButton')) {
+                params.xButton = _.objValueAsObject(this.#params, 'xButton');
+            }
+
+        }
+
+
 
         /**
          * Css Class ....
@@ -192,16 +202,28 @@ export default class LayeredModalManager {
         /**
          * Instantiate the model and display it, then add to stack ...
          *
-         * @type {LayeredModal}
+         * @type {Modal}
          */
 
-        const newModal = new LayeredModal(params);
+        const newModal = new Modal(params);
 
         newModal.setManager(this);
 
-        newModal.show();
+        if(params.delayInMilliSeconds !== undefined && params.delayInMilliSeconds > 0) {
+
+            let ts = setTimeout(() => {
+                newModal.show();
+            },params.delayInMilliSeconds);
+
+        } else {
+            newModal.show();
+        }
+
+
 
         this.#stack.push(newModal);
+
+        return newModal;
     }
 
     /**
@@ -214,7 +236,7 @@ export default class LayeredModalManager {
             return
         }
 
-        const latestModal: LayeredModal = this.#stack[this.#stack.length - 1];
+        const latestModal: Modal = this.#stack[this.#stack.length - 1];
 
         if (latestModal) {
 
@@ -251,7 +273,7 @@ export default class LayeredModalManager {
      * @param index
      */
 
-    getStackedModal(index: number): LayeredModal | null {
+    getStackedModal(index: number): Modal | null {
 
         if (index < 0 || index >= this.#stack.length) {
             return null;
@@ -316,7 +338,7 @@ export default class LayeredModalManager {
 
         if (this.#stack.length === 1) {
 
-            let modal = this.#stack[0] as LayeredModal;
+            let modal = this.#stack[0] as Modal;
 
             if (modal) {
                 modal.removeModalClass('stacked');
@@ -327,7 +349,7 @@ export default class LayeredModalManager {
 
         for (let i = 0; i < this.#stack.length - 1; i += 1) {
 
-            let modal = this.#stack[i] as LayeredModal;
+            let modal = this.#stack[i] as Modal;
 
             if (modal) {
                 modal.addModalClass('stacked');
@@ -335,7 +357,7 @@ export default class LayeredModalManager {
 
         }
 
-        let modal = this.#stack[this.#stack.length - 1] as LayeredModal;
+        let modal = this.#stack[this.#stack.length - 1] as Modal;
 
         if (modal) {
             modal.removeModalClass('stacked');
@@ -361,7 +383,7 @@ export default class LayeredModalManager {
 
             const target = event.target as Element;
 
-            if ((t = target.closest("[data-layered-modal-trigger]"))) {
+            if ((t = target.closest("[data-lms-trigger]"))) {
 
                 /**
                  * if a button element or input element with button type
@@ -381,49 +403,62 @@ export default class LayeredModalManager {
 
                 let attrs = DomUtils.getDataAttributes(t as HTMLElement);
 
-                if(_.objValueAsIntFlag(attrs,'layered-modal-trigger',0) !== 1) {
+                if(_.objValueAsIntFlag(attrs,'lms-trigger',0) !== 1) {
                     return;
                 }
 
-                let modalParams : any = {
+                let contentType = _.objValueAsString(attrs, 'lm-b-content-type');
+
+                if(!ModalParameterParser.isValidBodyContentType(contentType)) {
+                    contentType = 'html';
+                }
+
+
+
+
+                let modalParams : Partial<ModalParams> = {
                     id : _.objValueAsString(attrs,'lm-id'),
-                    zIndex : _.objValueAsString(attrs,'lm-z-index'),
+                    zIndex : _.objValueAsInt(attrs,'lm-z-index',1),
+
                     header : {
-                        enabled : _.objValueAsIntFlag(attrs,'lm-header-enabled',1),
-                        title : _.objValueAsString(attrs, 'lm-header-title', 'Modal Title'),
-                        titleTag : _.objValueAsString(attrs, 'lm-header-title-tag', 'h2'),
+                        enabled : _.objValueAsIntFlag(attrs,'lm-h-enabled',1) > 0,
+                        title : _.objValueAsString(attrs, 'lm-h-title', 'Modal Title'),
+                        titleTag : _.objValueAsString(attrs, 'lm-h-title-tag', 'h2'),
                     },
                     cssClass : {
                         modal : _.objValueAsString(attrs,'lm-css-class'),
+                    },
+                    body : {
+                        contentType : contentType as any,
+                        content : _.objValueAsString(attrs, 'lm-b-content'),
+                        functionName : _.objValueAsString(attrs, 'lm-b-function-name'),
+                        functionArguments : _.objValueAsString(attrs, 'lm-b-function-args'),
+                        templateId : _.objValueAsString(attrs, 'lm-b-template-id'),
+                        videoUrl : _.objValueAsString(attrs,'lm-b-video-url'),
+                        cssClass : _.objValueAsString(attrs,'lm-b-css-class'),
+                        aspectRatio : _.objValueAsFloat(attrs,'lm-b-aspect-ratio'),
                     }
                 };
 
-                // region [Content]
+                // region [Modal width and height]
 
+                let width: Partial<Dimension> = {};
 
+                if (attrs.hasOwnProperty('lm-width-value')) {
+                    width.value = _.objValueAsFloat(attrs, 'lm-width-value');
+                    width.unit = _.objValueAsString(attrs, 'lm-width-unit', 'px');
 
+                    modalParams.width = width as Dimension;
 
+                }
 
-                let contentType = _.objValueAsString(attrs,'lm-content-type','html');
+                let height: Partial<Dimension> = {};
 
-                if(contentType === 'html') {
-                    modalParams.content = _.objValueAsString(attrs, 'lm-content-html', 'Enter content string ...');
-                } else if(contentType === 'function') {
+                if (attrs.hasOwnProperty('lm-height-value')) {
+                    height.value = _.objValueAsFloat(attrs, 'lm-height-value');
+                    height.unit = _.objValueAsString(attrs, 'lm-height-unit', 'px');
 
-                    let functionName =_.objValueAsString(attrs, 'lm-content-function');
-                    let functionArgs =_.objValueAsString(attrs, 'lm-content-function-args');
-
-                    modalParams.content = this.getFunctionResult(functionName,functionArgs);
-
-
-                } else if(contentType === 'template') {
-
-                    let templateId = _.objValueAsString(attrs,'lm-content-template-id');
-
-                    modalParams.content = this.getContentFromTemplateElement(templateId);
-
-                } else {
-                    modalParams.content = 'Unable to determine content from any possible sources ...';
+                    modalParams.height = height as Dimension;
                 }
 
                 // endregion
@@ -441,11 +476,17 @@ export default class LayeredModalManager {
 
                     footer.content = this.getContentFromTemplateElement(templateId);
 
+                } else if(footer.mode === 'confirm') {
+
+                    footer.onOk = _.objValueAsString(attrs, 'lm-footer-on-ok');
+
                 }
 
                 modalParams.footer = footer;
 
                 // endregion
+
+                console.log(modalParams);
 
                 this.addModal(modalParams);
 
@@ -476,7 +517,7 @@ export default class LayeredModalManager {
 
     }
 
-    getFunctionResult(funcName: string, functionArgs : string): any | null {
+    getFunctionResult__(funcName: string, functionArgs : string): any | null {
 
         if (typeof (window as any)[funcName] === "function") {
             let val =  (window as any)[funcName].apply(null,[functionArgs]);
@@ -492,28 +533,3 @@ export default class LayeredModalManager {
         }
     }
 }
-
-/*
-interface LayeredModalParams {
-    id: string;
-    zIndex: number;
-    content?: string;
-    header?: HeaderParams;
-    footer?: FooterParams;
-    width?: Dimension;
-    height?: Dimension;
-    position: string;
-    shiftDistance?: Position;
-    transitionDuration?: number;
-    hideXButton?: number;
-    cssClass?: CssClassNames;
-    onShow?: Function | null;
-    onHide?: Function | null;
-    secondaryOverlay?: boolean;
-    stackIndex: number;
-    draggable: boolean;
-    dragHandle: string;
-    userSelect: boolean;
-    body: BodyParams
-}
-*/

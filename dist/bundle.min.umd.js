@@ -1,0 +1,3278 @@
+/*
+ * ATTENTION: The "eval" devtool has been used (maybe by default in mode: "development").
+ * This devtool is neither made for production nor for readable output files.
+ * It uses "eval()" calls to create a separate source file in the browser devtools.
+ * If you are trying to read the output file, select a different devtool (https://webpack.js.org/configuration/devtool/)
+ * or disable the default devtool with "devtool: false".
+ * If you are looking for production-ready output files, see mode: "production" (https://webpack.js.org/configuration/mode/).
+ */
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["LayeredModalSystem"] = factory();
+	else
+		root["LayeredModalSystem"] = factory();
+})(typeof self !== 'undefined' ? self : this, () => {
+return /******/ (() => { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./node_modules/ansi-html-community/index.js":
+/*!***************************************************!*\
+  !*** ./node_modules/ansi-html-community/index.js ***!
+  \***************************************************/
+/***/ ((module) => {
+
+"use strict";
+eval("\n\nmodule.exports = ansiHTML\n\n// Reference to https://github.com/sindresorhus/ansi-regex\nvar _regANSI = /(?:(?:\\u001b\\[)|\\u009b)(?:(?:[0-9]{1,3})?(?:(?:;[0-9]{0,3})*)?[A-M|f-m])|\\u001b[A-M]/\n\nvar _defColors = {\n  reset: ['fff', '000'], // [FOREGROUD_COLOR, BACKGROUND_COLOR]\n  black: '000',\n  red: 'ff0000',\n  green: '209805',\n  yellow: 'e8bf03',\n  blue: '0000ff',\n  magenta: 'ff00ff',\n  cyan: '00ffee',\n  lightgrey: 'f0f0f0',\n  darkgrey: '888'\n}\nvar _styles = {\n  30: 'black',\n  31: 'red',\n  32: 'green',\n  33: 'yellow',\n  34: 'blue',\n  35: 'magenta',\n  36: 'cyan',\n  37: 'lightgrey'\n}\nvar _openTags = {\n  '1': 'font-weight:bold', // bold\n  '2': 'opacity:0.5', // dim\n  '3': '<i>', // italic\n  '4': '<u>', // underscore\n  '8': 'display:none', // hidden\n  '9': '<del>' // delete\n}\nvar _closeTags = {\n  '23': '</i>', // reset italic\n  '24': '</u>', // reset underscore\n  '29': '</del>' // reset delete\n}\n\n;[0, 21, 22, 27, 28, 39, 49].forEach(function (n) {\n  _closeTags[n] = '</span>'\n})\n\n/**\n * Converts text with ANSI color codes to HTML markup.\n * @param {String} text\n * @returns {*}\n */\nfunction ansiHTML (text) {\n  // Returns the text if the string has no ANSI escape code.\n  if (!_regANSI.test(text)) {\n    return text\n  }\n\n  // Cache opened sequence.\n  var ansiCodes = []\n  // Replace with markup.\n  var ret = text.replace(/\\033\\[(\\d+)m/g, function (match, seq) {\n    var ot = _openTags[seq]\n    if (ot) {\n      // If current sequence has been opened, close it.\n      if (!!~ansiCodes.indexOf(seq)) { // eslint-disable-line no-extra-boolean-cast\n        ansiCodes.pop()\n        return '</span>'\n      }\n      // Open tag.\n      ansiCodes.push(seq)\n      return ot[0] === '<' ? ot : '<span style=\"' + ot + ';\">'\n    }\n\n    var ct = _closeTags[seq]\n    if (ct) {\n      // Pop sequence\n      ansiCodes.pop()\n      return ct\n    }\n    return ''\n  })\n\n  // Make sure tags are closed.\n  var l = ansiCodes.length\n  ;(l > 0) && (ret += Array(l + 1).join('</span>'))\n\n  return ret\n}\n\n/**\n * Customize colors.\n * @param {Object} colors reference to _defColors\n */\nansiHTML.setColors = function (colors) {\n  if (typeof colors !== 'object') {\n    throw new Error('`colors` parameter must be an Object.')\n  }\n\n  var _finalColors = {}\n  for (var key in _defColors) {\n    var hex = colors.hasOwnProperty(key) ? colors[key] : null\n    if (!hex) {\n      _finalColors[key] = _defColors[key]\n      continue\n    }\n    if ('reset' === key) {\n      if (typeof hex === 'string') {\n        hex = [hex]\n      }\n      if (!Array.isArray(hex) || hex.length === 0 || hex.some(function (h) {\n        return typeof h !== 'string'\n      })) {\n        throw new Error('The value of `' + key + '` property must be an Array and each item could only be a hex string, e.g.: FF0000')\n      }\n      var defHexColor = _defColors[key]\n      if (!hex[0]) {\n        hex[0] = defHexColor[0]\n      }\n      if (hex.length === 1 || !hex[1]) {\n        hex = [hex[0]]\n        hex.push(defHexColor[1])\n      }\n\n      hex = hex.slice(0, 2)\n    } else if (typeof hex !== 'string') {\n      throw new Error('The value of `' + key + '` property must be a hex string, e.g.: FF0000')\n    }\n    _finalColors[key] = hex\n  }\n  _setTags(_finalColors)\n}\n\n/**\n * Reset colors.\n */\nansiHTML.reset = function () {\n  _setTags(_defColors)\n}\n\n/**\n * Expose tags, including open and close.\n * @type {Object}\n */\nansiHTML.tags = {}\n\nif (Object.defineProperty) {\n  Object.defineProperty(ansiHTML.tags, 'open', {\n    get: function () { return _openTags }\n  })\n  Object.defineProperty(ansiHTML.tags, 'close', {\n    get: function () { return _closeTags }\n  })\n} else {\n  ansiHTML.tags.open = _openTags\n  ansiHTML.tags.close = _closeTags\n}\n\nfunction _setTags (colors) {\n  // reset all\n  _openTags['0'] = 'font-weight:normal;opacity:1;color:#' + colors.reset[0] + ';background:#' + colors.reset[1]\n  // inverse\n  _openTags['7'] = 'color:#' + colors.reset[1] + ';background:#' + colors.reset[0]\n  // dark grey\n  _openTags['90'] = 'color:#' + colors.darkgrey\n\n  for (var code in _styles) {\n    var color = _styles[code]\n    var oriColor = colors[color] || '000'\n    _openTags[code] = 'color:#' + oriColor\n    code = parseInt(code)\n    _openTags[(code + 10).toString()] = 'background:#' + oriColor\n  }\n}\n\nansiHTML.reset()\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/ansi-html-community/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/events/events.js":
+/*!***************************************!*\
+  !*** ./node_modules/events/events.js ***!
+  \***************************************/
+/***/ ((module) => {
+
+"use strict";
+eval("// Copyright Joyent, Inc. and other Node contributors.\n//\n// Permission is hereby granted, free of charge, to any person obtaining a\n// copy of this software and associated documentation files (the\n// \"Software\"), to deal in the Software without restriction, including\n// without limitation the rights to use, copy, modify, merge, publish,\n// distribute, sublicense, and/or sell copies of the Software, and to permit\n// persons to whom the Software is furnished to do so, subject to the\n// following conditions:\n//\n// The above copyright notice and this permission notice shall be included\n// in all copies or substantial portions of the Software.\n//\n// THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS\n// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF\n// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN\n// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,\n// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR\n// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE\n// USE OR OTHER DEALINGS IN THE SOFTWARE.\n\n\n\nvar R = typeof Reflect === 'object' ? Reflect : null\nvar ReflectApply = R && typeof R.apply === 'function'\n  ? R.apply\n  : function ReflectApply(target, receiver, args) {\n    return Function.prototype.apply.call(target, receiver, args);\n  }\n\nvar ReflectOwnKeys\nif (R && typeof R.ownKeys === 'function') {\n  ReflectOwnKeys = R.ownKeys\n} else if (Object.getOwnPropertySymbols) {\n  ReflectOwnKeys = function ReflectOwnKeys(target) {\n    return Object.getOwnPropertyNames(target)\n      .concat(Object.getOwnPropertySymbols(target));\n  };\n} else {\n  ReflectOwnKeys = function ReflectOwnKeys(target) {\n    return Object.getOwnPropertyNames(target);\n  };\n}\n\nfunction ProcessEmitWarning(warning) {\n  if (console && console.warn) console.warn(warning);\n}\n\nvar NumberIsNaN = Number.isNaN || function NumberIsNaN(value) {\n  return value !== value;\n}\n\nfunction EventEmitter() {\n  EventEmitter.init.call(this);\n}\nmodule.exports = EventEmitter;\nmodule.exports.once = once;\n\n// Backwards-compat with node 0.10.x\nEventEmitter.EventEmitter = EventEmitter;\n\nEventEmitter.prototype._events = undefined;\nEventEmitter.prototype._eventsCount = 0;\nEventEmitter.prototype._maxListeners = undefined;\n\n// By default EventEmitters will print a warning if more than 10 listeners are\n// added to it. This is a useful default which helps finding memory leaks.\nvar defaultMaxListeners = 10;\n\nfunction checkListener(listener) {\n  if (typeof listener !== 'function') {\n    throw new TypeError('The \"listener\" argument must be of type Function. Received type ' + typeof listener);\n  }\n}\n\nObject.defineProperty(EventEmitter, 'defaultMaxListeners', {\n  enumerable: true,\n  get: function() {\n    return defaultMaxListeners;\n  },\n  set: function(arg) {\n    if (typeof arg !== 'number' || arg < 0 || NumberIsNaN(arg)) {\n      throw new RangeError('The value of \"defaultMaxListeners\" is out of range. It must be a non-negative number. Received ' + arg + '.');\n    }\n    defaultMaxListeners = arg;\n  }\n});\n\nEventEmitter.init = function() {\n\n  if (this._events === undefined ||\n      this._events === Object.getPrototypeOf(this)._events) {\n    this._events = Object.create(null);\n    this._eventsCount = 0;\n  }\n\n  this._maxListeners = this._maxListeners || undefined;\n};\n\n// Obviously not all Emitters should be limited to 10. This function allows\n// that to be increased. Set to zero for unlimited.\nEventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {\n  if (typeof n !== 'number' || n < 0 || NumberIsNaN(n)) {\n    throw new RangeError('The value of \"n\" is out of range. It must be a non-negative number. Received ' + n + '.');\n  }\n  this._maxListeners = n;\n  return this;\n};\n\nfunction _getMaxListeners(that) {\n  if (that._maxListeners === undefined)\n    return EventEmitter.defaultMaxListeners;\n  return that._maxListeners;\n}\n\nEventEmitter.prototype.getMaxListeners = function getMaxListeners() {\n  return _getMaxListeners(this);\n};\n\nEventEmitter.prototype.emit = function emit(type) {\n  var args = [];\n  for (var i = 1; i < arguments.length; i++) args.push(arguments[i]);\n  var doError = (type === 'error');\n\n  var events = this._events;\n  if (events !== undefined)\n    doError = (doError && events.error === undefined);\n  else if (!doError)\n    return false;\n\n  // If there is no 'error' event listener then throw.\n  if (doError) {\n    var er;\n    if (args.length > 0)\n      er = args[0];\n    if (er instanceof Error) {\n      // Note: The comments on the `throw` lines are intentional, they show\n      // up in Node's output if this results in an unhandled exception.\n      throw er; // Unhandled 'error' event\n    }\n    // At least give some kind of context to the user\n    var err = new Error('Unhandled error.' + (er ? ' (' + er.message + ')' : ''));\n    err.context = er;\n    throw err; // Unhandled 'error' event\n  }\n\n  var handler = events[type];\n\n  if (handler === undefined)\n    return false;\n\n  if (typeof handler === 'function') {\n    ReflectApply(handler, this, args);\n  } else {\n    var len = handler.length;\n    var listeners = arrayClone(handler, len);\n    for (var i = 0; i < len; ++i)\n      ReflectApply(listeners[i], this, args);\n  }\n\n  return true;\n};\n\nfunction _addListener(target, type, listener, prepend) {\n  var m;\n  var events;\n  var existing;\n\n  checkListener(listener);\n\n  events = target._events;\n  if (events === undefined) {\n    events = target._events = Object.create(null);\n    target._eventsCount = 0;\n  } else {\n    // To avoid recursion in the case that type === \"newListener\"! Before\n    // adding it to the listeners, first emit \"newListener\".\n    if (events.newListener !== undefined) {\n      target.emit('newListener', type,\n                  listener.listener ? listener.listener : listener);\n\n      // Re-assign `events` because a newListener handler could have caused the\n      // this._events to be assigned to a new object\n      events = target._events;\n    }\n    existing = events[type];\n  }\n\n  if (existing === undefined) {\n    // Optimize the case of one listener. Don't need the extra array object.\n    existing = events[type] = listener;\n    ++target._eventsCount;\n  } else {\n    if (typeof existing === 'function') {\n      // Adding the second element, need to change to array.\n      existing = events[type] =\n        prepend ? [listener, existing] : [existing, listener];\n      // If we've already got an array, just append.\n    } else if (prepend) {\n      existing.unshift(listener);\n    } else {\n      existing.push(listener);\n    }\n\n    // Check for listener leak\n    m = _getMaxListeners(target);\n    if (m > 0 && existing.length > m && !existing.warned) {\n      existing.warned = true;\n      // No error code for this since it is a Warning\n      // eslint-disable-next-line no-restricted-syntax\n      var w = new Error('Possible EventEmitter memory leak detected. ' +\n                          existing.length + ' ' + String(type) + ' listeners ' +\n                          'added. Use emitter.setMaxListeners() to ' +\n                          'increase limit');\n      w.name = 'MaxListenersExceededWarning';\n      w.emitter = target;\n      w.type = type;\n      w.count = existing.length;\n      ProcessEmitWarning(w);\n    }\n  }\n\n  return target;\n}\n\nEventEmitter.prototype.addListener = function addListener(type, listener) {\n  return _addListener(this, type, listener, false);\n};\n\nEventEmitter.prototype.on = EventEmitter.prototype.addListener;\n\nEventEmitter.prototype.prependListener =\n    function prependListener(type, listener) {\n      return _addListener(this, type, listener, true);\n    };\n\nfunction onceWrapper() {\n  if (!this.fired) {\n    this.target.removeListener(this.type, this.wrapFn);\n    this.fired = true;\n    if (arguments.length === 0)\n      return this.listener.call(this.target);\n    return this.listener.apply(this.target, arguments);\n  }\n}\n\nfunction _onceWrap(target, type, listener) {\n  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };\n  var wrapped = onceWrapper.bind(state);\n  wrapped.listener = listener;\n  state.wrapFn = wrapped;\n  return wrapped;\n}\n\nEventEmitter.prototype.once = function once(type, listener) {\n  checkListener(listener);\n  this.on(type, _onceWrap(this, type, listener));\n  return this;\n};\n\nEventEmitter.prototype.prependOnceListener =\n    function prependOnceListener(type, listener) {\n      checkListener(listener);\n      this.prependListener(type, _onceWrap(this, type, listener));\n      return this;\n    };\n\n// Emits a 'removeListener' event if and only if the listener was removed.\nEventEmitter.prototype.removeListener =\n    function removeListener(type, listener) {\n      var list, events, position, i, originalListener;\n\n      checkListener(listener);\n\n      events = this._events;\n      if (events === undefined)\n        return this;\n\n      list = events[type];\n      if (list === undefined)\n        return this;\n\n      if (list === listener || list.listener === listener) {\n        if (--this._eventsCount === 0)\n          this._events = Object.create(null);\n        else {\n          delete events[type];\n          if (events.removeListener)\n            this.emit('removeListener', type, list.listener || listener);\n        }\n      } else if (typeof list !== 'function') {\n        position = -1;\n\n        for (i = list.length - 1; i >= 0; i--) {\n          if (list[i] === listener || list[i].listener === listener) {\n            originalListener = list[i].listener;\n            position = i;\n            break;\n          }\n        }\n\n        if (position < 0)\n          return this;\n\n        if (position === 0)\n          list.shift();\n        else {\n          spliceOne(list, position);\n        }\n\n        if (list.length === 1)\n          events[type] = list[0];\n\n        if (events.removeListener !== undefined)\n          this.emit('removeListener', type, originalListener || listener);\n      }\n\n      return this;\n    };\n\nEventEmitter.prototype.off = EventEmitter.prototype.removeListener;\n\nEventEmitter.prototype.removeAllListeners =\n    function removeAllListeners(type) {\n      var listeners, events, i;\n\n      events = this._events;\n      if (events === undefined)\n        return this;\n\n      // not listening for removeListener, no need to emit\n      if (events.removeListener === undefined) {\n        if (arguments.length === 0) {\n          this._events = Object.create(null);\n          this._eventsCount = 0;\n        } else if (events[type] !== undefined) {\n          if (--this._eventsCount === 0)\n            this._events = Object.create(null);\n          else\n            delete events[type];\n        }\n        return this;\n      }\n\n      // emit removeListener for all listeners on all events\n      if (arguments.length === 0) {\n        var keys = Object.keys(events);\n        var key;\n        for (i = 0; i < keys.length; ++i) {\n          key = keys[i];\n          if (key === 'removeListener') continue;\n          this.removeAllListeners(key);\n        }\n        this.removeAllListeners('removeListener');\n        this._events = Object.create(null);\n        this._eventsCount = 0;\n        return this;\n      }\n\n      listeners = events[type];\n\n      if (typeof listeners === 'function') {\n        this.removeListener(type, listeners);\n      } else if (listeners !== undefined) {\n        // LIFO order\n        for (i = listeners.length - 1; i >= 0; i--) {\n          this.removeListener(type, listeners[i]);\n        }\n      }\n\n      return this;\n    };\n\nfunction _listeners(target, type, unwrap) {\n  var events = target._events;\n\n  if (events === undefined)\n    return [];\n\n  var evlistener = events[type];\n  if (evlistener === undefined)\n    return [];\n\n  if (typeof evlistener === 'function')\n    return unwrap ? [evlistener.listener || evlistener] : [evlistener];\n\n  return unwrap ?\n    unwrapListeners(evlistener) : arrayClone(evlistener, evlistener.length);\n}\n\nEventEmitter.prototype.listeners = function listeners(type) {\n  return _listeners(this, type, true);\n};\n\nEventEmitter.prototype.rawListeners = function rawListeners(type) {\n  return _listeners(this, type, false);\n};\n\nEventEmitter.listenerCount = function(emitter, type) {\n  if (typeof emitter.listenerCount === 'function') {\n    return emitter.listenerCount(type);\n  } else {\n    return listenerCount.call(emitter, type);\n  }\n};\n\nEventEmitter.prototype.listenerCount = listenerCount;\nfunction listenerCount(type) {\n  var events = this._events;\n\n  if (events !== undefined) {\n    var evlistener = events[type];\n\n    if (typeof evlistener === 'function') {\n      return 1;\n    } else if (evlistener !== undefined) {\n      return evlistener.length;\n    }\n  }\n\n  return 0;\n}\n\nEventEmitter.prototype.eventNames = function eventNames() {\n  return this._eventsCount > 0 ? ReflectOwnKeys(this._events) : [];\n};\n\nfunction arrayClone(arr, n) {\n  var copy = new Array(n);\n  for (var i = 0; i < n; ++i)\n    copy[i] = arr[i];\n  return copy;\n}\n\nfunction spliceOne(list, index) {\n  for (; index + 1 < list.length; index++)\n    list[index] = list[index + 1];\n  list.pop();\n}\n\nfunction unwrapListeners(arr) {\n  var ret = new Array(arr.length);\n  for (var i = 0; i < ret.length; ++i) {\n    ret[i] = arr[i].listener || arr[i];\n  }\n  return ret;\n}\n\nfunction once(emitter, name) {\n  return new Promise(function (resolve, reject) {\n    function errorListener(err) {\n      emitter.removeListener(name, resolver);\n      reject(err);\n    }\n\n    function resolver() {\n      if (typeof emitter.removeListener === 'function') {\n        emitter.removeListener('error', errorListener);\n      }\n      resolve([].slice.call(arguments));\n    };\n\n    eventTargetAgnosticAddListener(emitter, name, resolver, { once: true });\n    if (name !== 'error') {\n      addErrorHandlerIfEventEmitter(emitter, errorListener, { once: true });\n    }\n  });\n}\n\nfunction addErrorHandlerIfEventEmitter(emitter, handler, flags) {\n  if (typeof emitter.on === 'function') {\n    eventTargetAgnosticAddListener(emitter, 'error', handler, flags);\n  }\n}\n\nfunction eventTargetAgnosticAddListener(emitter, name, listener, flags) {\n  if (typeof emitter.on === 'function') {\n    if (flags.once) {\n      emitter.once(name, listener);\n    } else {\n      emitter.on(name, listener);\n    }\n  } else if (typeof emitter.addEventListener === 'function') {\n    // EventTarget does not have `error` event semantics like Node\n    // EventEmitters, we do not listen for `error` events here.\n    emitter.addEventListener(name, function wrapListener(arg) {\n      // IE does not have builtin `{ once: true }` support so we\n      // have to do it manually.\n      if (flags.once) {\n        emitter.removeEventListener(name, wrapListener);\n      }\n      listener(arg);\n    });\n  } else {\n    throw new TypeError('The \"emitter\" argument must be of type EventEmitter. Received type ' + typeof emitter);\n  }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/events/events.js?");
+
+/***/ }),
+
+/***/ "./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js":
+/*!*******************************************************************************!*\
+  !*** ./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js ***!
+  \*******************************************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+"use strict";
+eval("\n\n/* eslint-env browser */\n/*\n  eslint-disable\n  no-console,\n  func-names\n*/\n\n/** @typedef {any} TODO */\n\nvar normalizeUrl = __webpack_require__(/*! ./normalize-url */ \"./node_modules/mini-css-extract-plugin/dist/hmr/normalize-url.js\");\nvar srcByModuleId = Object.create(null);\nvar noDocument = typeof document === \"undefined\";\nvar forEach = Array.prototype.forEach;\n\n/**\n * @param {function} fn\n * @param {number} time\n * @returns {(function(): void)|*}\n */\nfunction debounce(fn, time) {\n  var timeout = 0;\n  return function () {\n    // @ts-ignore\n    var self = this;\n    // eslint-disable-next-line prefer-rest-params\n    var args = arguments;\n    var functionCall = function functionCall() {\n      return fn.apply(self, args);\n    };\n    clearTimeout(timeout);\n\n    // @ts-ignore\n    timeout = setTimeout(functionCall, time);\n  };\n}\nfunction noop() {}\n\n/**\n * @param {TODO} moduleId\n * @returns {TODO}\n */\nfunction getCurrentScriptUrl(moduleId) {\n  var src = srcByModuleId[moduleId];\n  if (!src) {\n    if (document.currentScript) {\n      src = ( /** @type {HTMLScriptElement} */document.currentScript).src;\n    } else {\n      var scripts = document.getElementsByTagName(\"script\");\n      var lastScriptTag = scripts[scripts.length - 1];\n      if (lastScriptTag) {\n        src = lastScriptTag.src;\n      }\n    }\n    srcByModuleId[moduleId] = src;\n  }\n\n  /**\n   * @param {string} fileMap\n   * @returns {null | string[]}\n   */\n  return function (fileMap) {\n    if (!src) {\n      return null;\n    }\n    var splitResult = src.split(/([^\\\\/]+)\\.js$/);\n    var filename = splitResult && splitResult[1];\n    if (!filename) {\n      return [src.replace(\".js\", \".css\")];\n    }\n    if (!fileMap) {\n      return [src.replace(\".js\", \".css\")];\n    }\n    return fileMap.split(\",\").map(function (mapRule) {\n      var reg = new RegExp(\"\".concat(filename, \"\\\\.js$\"), \"g\");\n      return normalizeUrl(src.replace(reg, \"\".concat(mapRule.replace(/{fileName}/g, filename), \".css\")));\n    });\n  };\n}\n\n/**\n * @param {TODO} el\n * @param {string} [url]\n */\nfunction updateCss(el, url) {\n  if (!url) {\n    if (!el.href) {\n      return;\n    }\n\n    // eslint-disable-next-line\n    url = el.href.split(\"?\")[0];\n  }\n  if (!isUrlRequest( /** @type {string} */url)) {\n    return;\n  }\n  if (el.isLoaded === false) {\n    // We seem to be about to replace a css link that hasn't loaded yet.\n    // We're probably changing the same file more than once.\n    return;\n  }\n  if (!url || !(url.indexOf(\".css\") > -1)) {\n    return;\n  }\n\n  // eslint-disable-next-line no-param-reassign\n  el.visited = true;\n  var newEl = el.cloneNode();\n  newEl.isLoaded = false;\n  newEl.addEventListener(\"load\", function () {\n    if (newEl.isLoaded) {\n      return;\n    }\n    newEl.isLoaded = true;\n    el.parentNode.removeChild(el);\n  });\n  newEl.addEventListener(\"error\", function () {\n    if (newEl.isLoaded) {\n      return;\n    }\n    newEl.isLoaded = true;\n    el.parentNode.removeChild(el);\n  });\n  newEl.href = \"\".concat(url, \"?\").concat(Date.now());\n  if (el.nextSibling) {\n    el.parentNode.insertBefore(newEl, el.nextSibling);\n  } else {\n    el.parentNode.appendChild(newEl);\n  }\n}\n\n/**\n * @param {string} href\n * @param {TODO} src\n * @returns {TODO}\n */\nfunction getReloadUrl(href, src) {\n  var ret;\n\n  // eslint-disable-next-line no-param-reassign\n  href = normalizeUrl(href);\n  src.some(\n  /**\n   * @param {string} url\n   */\n  // eslint-disable-next-line array-callback-return\n  function (url) {\n    if (href.indexOf(src) > -1) {\n      ret = url;\n    }\n  });\n  return ret;\n}\n\n/**\n * @param {string} [src]\n * @returns {boolean}\n */\nfunction reloadStyle(src) {\n  if (!src) {\n    return false;\n  }\n  var elements = document.querySelectorAll(\"link\");\n  var loaded = false;\n  forEach.call(elements, function (el) {\n    if (!el.href) {\n      return;\n    }\n    var url = getReloadUrl(el.href, src);\n    if (!isUrlRequest(url)) {\n      return;\n    }\n    if (el.visited === true) {\n      return;\n    }\n    if (url) {\n      updateCss(el, url);\n      loaded = true;\n    }\n  });\n  return loaded;\n}\nfunction reloadAll() {\n  var elements = document.querySelectorAll(\"link\");\n  forEach.call(elements, function (el) {\n    if (el.visited === true) {\n      return;\n    }\n    updateCss(el);\n  });\n}\n\n/**\n * @param {string} url\n * @returns {boolean}\n */\nfunction isUrlRequest(url) {\n  // An URL is not an request if\n\n  // It is not http or https\n  if (!/^[a-zA-Z][a-zA-Z\\d+\\-.]*:/.test(url)) {\n    return false;\n  }\n  return true;\n}\n\n/**\n * @param {TODO} moduleId\n * @param {TODO} options\n * @returns {TODO}\n */\nmodule.exports = function (moduleId, options) {\n  if (noDocument) {\n    console.log(\"no window.document found, will not HMR CSS\");\n    return noop;\n  }\n  var getScriptSrc = getCurrentScriptUrl(moduleId);\n  function update() {\n    var src = getScriptSrc(options.filename);\n    var reloaded = reloadStyle(src);\n    if (options.locals) {\n      console.log(\"[HMR] Detected local css modules. Reload all css\");\n      reloadAll();\n      return;\n    }\n    if (reloaded) {\n      console.log(\"[HMR] css reload %s\", src.join(\" \"));\n    } else {\n      console.log(\"[HMR] Reload all css\");\n      reloadAll();\n    }\n  }\n  return debounce(update, 50);\n};\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js?");
+
+/***/ }),
+
+/***/ "./node_modules/mini-css-extract-plugin/dist/hmr/normalize-url.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/mini-css-extract-plugin/dist/hmr/normalize-url.js ***!
+  \************************************************************************/
+/***/ ((module) => {
+
+"use strict";
+eval("\n\n/* eslint-disable */\n\n/**\n * @param {string[]} pathComponents\n * @returns {string}\n */\nfunction normalizeUrl(pathComponents) {\n  return pathComponents.reduce(function (accumulator, item) {\n    switch (item) {\n      case \"..\":\n        accumulator.pop();\n        break;\n      case \".\":\n        break;\n      default:\n        accumulator.push(item);\n    }\n    return accumulator;\n  }, /** @type {string[]} */[]).join(\"/\");\n}\n\n/**\n * @param {string} urlString\n * @returns {string}\n */\nmodule.exports = function (urlString) {\n  urlString = urlString.trim();\n  if (/^data:/i.test(urlString)) {\n    return urlString;\n  }\n  var protocol = urlString.indexOf(\"//\") !== -1 ? urlString.split(\"//\")[0] + \"//\" : \"\";\n  var components = urlString.replace(new RegExp(protocol, \"i\"), \"\").split(\"/\");\n  var host = components[0].toLowerCase().replace(/\\.$/, \"\");\n  components[0] = \"\";\n  var path = normalizeUrl(components);\n  return protocol + host + path;\n};\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/mini-css-extract-plugin/dist/hmr/normalize-url.js?");
+
+/***/ }),
+
+/***/ "./src/styles/main.scss":
+/*!******************************!*\
+  !*** ./src/styles/main.scss ***!
+  \******************************/
+/***/ ((module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n// extracted by mini-css-extract-plugin\n\n    if(true) {\n      (function() {\n        var localsJsonString = undefined;\n        // 1737761825444\n        var cssReload = __webpack_require__(/*! ../../node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js */ \"./node_modules/mini-css-extract-plugin/dist/hmr/hotModuleReplacement.js\")(module.id, {});\n        // only invalidate when locals change\n        if (\n          module.hot.data &&\n          module.hot.data.value &&\n          module.hot.data.value !== localsJsonString\n        ) {\n          module.hot.invalidate();\n        } else {\n          module.hot.accept();\n        }\n        module.hot.dispose(function(data) {\n          data.value = localsJsonString;\n          cssReload();\n        });\n      })();\n    }\n  \n\n//# sourceURL=webpack://LayeredModalSystem/./src/styles/main.scss?");
+
+/***/ }),
+
+/***/ "./src/ts/app/generators/css-rules-generator.ts":
+/*!******************************************************!*\
+  !*** ./src/ts/app/generators/css-rules-generator.ts ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   CssRulesGenerator: () => (/* binding */ CssRulesGenerator)\n/* harmony export */ });\nclass CssRulesGenerator {\n    static generateDimensionCss(dimension, cssProperty = '') {\n        if (!cssProperty.trim()) {\n            return '';\n        }\n        if (typeof dimension === \"undefined\") {\n            return '';\n        }\n        if (typeof dimension.value === \"undefined\") {\n            return '';\n        }\n        let value = dimension.value;\n        let unit = dimension.unit;\n        if (!unit) {\n            unit = 'px';\n        }\n        if (value === 0) {\n            unit = '';\n        }\n        return `${cssProperty.trim()}:${value}${unit};`;\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/generators/css-rules-generator.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/generators/embed-code-generator.ts":
+/*!*******************************************************!*\
+  !*** ./src/ts/app/generators/embed-code-generator.ts ***!
+  \*******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   EmbedCodeGenerator: () => (/* binding */ EmbedCodeGenerator)\n/* harmony export */ });\nclass EmbedCodeGenerator {\n    static fromYouTubeVideo(url, width = 560, height = 315) {\n        const match = url.match(/(?:https?:\\/\\/)?(?:www\\.)?(?:youtube\\.com\\/(?:watch\\?v=|embed\\/|v\\/|shorts\\/)|youtu\\.be\\/)([\\w-]{11})/);\n        if (!match) {\n            return null;\n        }\n        const videoId = match[1];\n        return `<iframe width=\"${width}\" height=\"${height}\" src=\"https://www.youtube.com/embed/${videoId}\" \n                frameborder=\"0\" allowfullscreen></iframe>`;\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/generators/embed-code-generator.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/generators/html-attribute-generator.ts":
+/*!***********************************************************!*\
+  !*** ./src/ts/app/generators/html-attribute-generator.ts ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   HtmlAttributeGenerator: () => (/* binding */ HtmlAttributeGenerator)\n/* harmony export */ });\nclass HtmlAttributeGenerator {\n    encodeValue(value) {\n        return value.replace(/[\"&<>]/g, (char) => {\n            switch (char) {\n                case '\"':\n                    return '&quot;';\n                case '&':\n                    return '&amp;';\n                case '<':\n                    return '&lt;';\n                case '>':\n                    return '&gt;';\n                default:\n                    return char;\n            }\n        });\n    }\n    processObject(prefix, obj) {\n        return Object.entries(obj).flatMap(([key, value]) => {\n            const newKey = prefix ? `${prefix}-${key}` : key;\n            return typeof value === 'object' && !Array.isArray(value)\n                ? this.processObject(newKey, value)\n                : [[newKey, value]];\n        });\n    }\n    generateAttributes(attributes) {\n        return Object.entries(attributes)\n            .flatMap(([key, value]) => {\n            if (typeof value === 'string' || typeof value === 'number') {\n                return [[key, value]];\n            }\n            else if (Array.isArray(value)) {\n                const filteredValues = value\n                    .filter(v => typeof v === 'string' || typeof v === 'number')\n                    .join(' ');\n                return filteredValues ? [[key, filteredValues]] : [];\n            }\n            else if (typeof value === 'object' && value !== null) {\n                return this.processObject(key, value);\n            }\n            return [];\n        })\n            .map(([key, value]) => `${key}=\"${this.encodeValue(String(value))}\"`)\n            .join(' ');\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/generators/html-attribute-generator.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/modal-manager.ts":
+/*!*************************************!*\
+  !*** ./src/ts/app/modal-manager.ts ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   ModalManager: () => (/* binding */ ModalManager)\n/* harmony export */ });\n/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal */ \"./src/ts/app/modal.ts\");\n/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/dom */ \"./src/ts/app/utils/dom.ts\");\n/* harmony import */ var _utils_mixins__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils/mixins */ \"./src/ts/app/utils/mixins.ts\");\n/* harmony import */ var _parsers_parameters_modal_parameter_parser__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./parsers/parameters/modal-parameter-parser */ \"./src/ts/app/parsers/parameters/modal-parameter-parser.ts\");\n\n\n\n\nclass ModalManager {\n    #params = {\n        zIndex: 1\n    };\n    #stack = [];\n    constructor(params = {}) {\n        this.prepareParams(params);\n        this.bindEvents();\n    }\n    prepareParams(params) {\n        this.#params.zIndex = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(params, 'zIndex', 1);\n        if (this.#params.zIndex < 1) {\n            this.#params.zIndex = 1;\n        }\n        let bsd = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsObject(params, 'baseShiftDistance');\n        bsd.top = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(bsd, 'top', 0);\n        bsd.right = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(bsd, 'right', 0);\n        bsd.bottom = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(bsd, 'bottom', 0);\n        bsd.left = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(bsd, 'left', 0);\n        this.#params.baseShiftDistance = bsd;\n        let cssClass = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsObject(params, 'cssClass');\n        cssClass.modal = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(cssClass, 'modal', '');\n        cssClass.modalOk = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(cssClass, 'modalOk', 'modal-ok');\n        cssClass.modalClose = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(cssClass, 'modalClose', 'modal-close');\n        this.#params.cssClass = cssClass;\n        this.#params.transitionDuration = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(params, 'transitionDuration', 0);\n        if (this.#params.transitionDuration < 0) {\n            this.#params.transitionDuration = 0;\n        }\n        if (params.hasOwnProperty('xButton')) {\n            this.#params.xButton = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsObject(params, 'xButton');\n        }\n    }\n    addModal(params) {\n        if (!_utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].isPlainObject(params)) {\n            params = {};\n        }\n        params.zIndex = (this.#params.zIndex ? this.#params.zIndex : 1)\n            + this.#stack.length;\n        params.secondaryOverlay = this.#stack.length > 0;\n        if (this.#stack.length > 0) {\n            params.shiftDistance = { ...this.#params.baseShiftDistance };\n            let prevModal = this.#stack[this.#stack.length - 1];\n            let shiftDistance = prevModal.getParams().shiftDistance;\n            params.shiftDistance.top += shiftDistance?.top;\n            params.shiftDistance.right += shiftDistance?.right;\n            params.shiftDistance.bottom += shiftDistance?.bottom;\n            params.shiftDistance.left += shiftDistance?.left;\n        }\n        else {\n            params.shiftDistance = {\n                top: 0,\n                right: 0,\n                bottom: 0,\n                left: 0,\n            };\n        }\n        if (!params.hasOwnProperty('xButton')) {\n            if (this.#params.hasOwnProperty('xButton')) {\n                params.xButton = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsObject(this.#params, 'xButton');\n            }\n        }\n        if (!params.hasOwnProperty('cssClass')) {\n            params.cssClass = this.#params.cssClass;\n        }\n        if (!params.hasOwnProperty('transitionDuration')) {\n            params.transitionDuration = this.#params.transitionDuration;\n        }\n        params.stackIndex = this.#stack.length;\n        const newModal = new _modal__WEBPACK_IMPORTED_MODULE_0__.Modal(params);\n        newModal.setManager(this);\n        if (params.delayInMilliSeconds !== undefined && params.delayInMilliSeconds > 0) {\n            let ts = setTimeout(() => {\n                newModal.show();\n            }, params.delayInMilliSeconds);\n        }\n        else {\n            newModal.show();\n        }\n        this.#stack.push(newModal);\n        return newModal;\n    }\n    removeModal(callback = null) {\n        if (this.#stack.length === 0) {\n            return;\n        }\n        const latestModal = this.#stack[this.#stack.length - 1];\n        if (latestModal) {\n            latestModal.hide(() => {\n                this.popStack();\n                if (callback !== null && _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].isFunction(callback)) {\n                    callback.apply(this);\n                }\n            });\n        }\n    }\n    popStack() {\n        if (this.#stack.length === 0) {\n            return null;\n        }\n        return this.#stack.pop();\n    }\n    stackSize() {\n        return this.#stack.length;\n    }\n    getStackedModal(index) {\n        if (index < 0 || index >= this.#stack.length) {\n            return null;\n        }\n        return this.#stack[index];\n    }\n    bindEvents() {\n        let _this = this;\n        const throttledEscHandler = this.throttle(this.handleEscapeKey, 300);\n        document.addEventListener('keydown', throttledEscHandler);\n        this.bindTriggerClickUsingDataAttributes();\n    }\n    handleEscapeKey(event) {\n        let _this = this;\n        if (event.key === 'Escape' || event.keyCode === 27) {\n            _this.removeModal();\n        }\n    }\n    throttle(func, limit) {\n        let _this = this;\n        let lastCall = 0;\n        return function (...args) {\n            const now = Date.now();\n            if (now - lastCall >= limit) {\n                lastCall = now;\n                func.apply(_this, args);\n            }\n        };\n    }\n    adjustStackCssClassForModals() {\n        if (this.#stack.length === 0) {\n            return;\n        }\n        if (this.#stack.length === 1) {\n            let modal = this.#stack[0];\n            if (modal) {\n                modal.removeModalClass('stacked');\n            }\n            return;\n        }\n        for (let i = 0; i < this.#stack.length - 1; i += 1) {\n            let modal = this.#stack[i];\n            if (modal) {\n                modal.addModalClass('stacked');\n            }\n        }\n        let modal = this.#stack[this.#stack.length - 1];\n        if (modal) {\n            modal.removeModalClass('stacked');\n        }\n    }\n    bindTriggerClickUsingDataAttributes() {\n        document.addEventListener(\"click\", (event) => {\n            if (!event.target) {\n                return;\n            }\n            let t = null;\n            const target = event.target;\n            if ((t = target.closest(\"[data-lms-trigger]\"))) {\n                if (t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {\n                    if (t.disabled) {\n                        return;\n                    }\n                }\n                else if (t.classList.contains('disabled')) {\n                    return;\n                }\n                let attrs = _utils_dom__WEBPACK_IMPORTED_MODULE_1__.DomUtils.getDataAttributes(t);\n                if (_utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsIntFlag(attrs, 'lms-trigger', 0) !== 1) {\n                    return;\n                }\n                let contentType = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-content-type');\n                if (!_parsers_parameters_modal_parameter_parser__WEBPACK_IMPORTED_MODULE_3__[\"default\"].isValidBodyContentType(contentType)) {\n                    contentType = 'html';\n                }\n                let modalParams = {\n                    id: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-id'),\n                    zIndex: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsInt(attrs, 'lm-z-index', 1),\n                    header: {\n                        enabled: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsIntFlag(attrs, 'lm-h-enabled', 1) > 0,\n                        title: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-h-title', 'Modal Title'),\n                        titleTag: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-h-title-tag', 'h2'),\n                    },\n                    cssClass: {\n                        modal: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-css-class'),\n                    },\n                    body: {\n                        contentType: contentType,\n                        content: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-content'),\n                        functionName: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-function-name'),\n                        functionArguments: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-function-args'),\n                        templateId: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-template-id'),\n                        videoUrl: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-video-url'),\n                        cssClass: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-b-css-class'),\n                        aspectRatio: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsFloat(attrs, 'lm-b-aspect-ratio'),\n                    }\n                };\n                let width = {};\n                if (attrs.hasOwnProperty('lm-width-value')) {\n                    width.value = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsFloat(attrs, 'lm-width-value');\n                    width.unit = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-width-unit', 'px');\n                    modalParams.width = width;\n                }\n                let height = {};\n                if (attrs.hasOwnProperty('lm-height-value')) {\n                    height.value = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsFloat(attrs, 'lm-height-value');\n                    height.unit = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-height-unit', 'px');\n                    modalParams.height = height;\n                }\n                let footer = {\n                    enabled: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsIntFlag(attrs, 'lm-footer-enabled', 1),\n                    mode: _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-footer-mode', 'confirm'),\n                };\n                if (footer.mode === 'custom') {\n                    let templateId = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-footer-template-id');\n                    footer.content = this.getContentFromTemplateElement(templateId);\n                }\n                else if (footer.mode === 'confirm') {\n                    footer.onOk = _utils_mixins__WEBPACK_IMPORTED_MODULE_2__[\"default\"].objValueAsString(attrs, 'lm-footer-on-ok');\n                }\n                modalParams.footer = footer;\n                console.log(modalParams);\n                this.addModal(modalParams);\n            }\n        });\n    }\n    getContentFromTemplateElement(templateId) {\n        if (!templateId) {\n            return 'Template element id is required';\n        }\n        else {\n            let elem = document.getElementById(templateId);\n            if (!elem) {\n                return `No template tag found with id: ${templateId}`;\n            }\n            else if (!(elem instanceof HTMLTemplateElement)) {\n                return `Element found with id ${templateId} is not a <template> element`;\n            }\n            else {\n                return elem.innerHTML;\n            }\n        }\n    }\n    getFunctionResult__(funcName, functionArgs) {\n        if (typeof window[funcName] === \"function\") {\n            let val = window[funcName].apply(null, [functionArgs]);\n            if (typeof val === 'string') {\n                return val;\n            }\n            else {\n                return `Function ${funcName} does not return string data type.`;\n            }\n        }\n        else {\n            return `Function ${funcName} not found.`;\n        }\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/modal-manager.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/modal.ts":
+/*!*****************************!*\
+  !*** ./src/ts/app/modal.ts ***!
+  \*****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   Modal: () => (/* binding */ Modal)\n/* harmony export */ });\n/* harmony import */ var _utils_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./utils/mixins */ \"./src/ts/app/utils/mixins.ts\");\n/* harmony import */ var _parsers_parameters_modal_parameter_parser__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./parsers/parameters/modal-parameter-parser */ \"./src/ts/app/parsers/parameters/modal-parameter-parser.ts\");\n/* harmony import */ var _generators_html_attribute_generator__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./generators/html-attribute-generator */ \"./src/ts/app/generators/html-attribute-generator.ts\");\n/* harmony import */ var _generators_css_rules_generator__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./generators/css-rules-generator */ \"./src/ts/app/generators/css-rules-generator.ts\");\n/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/dom */ \"./src/ts/app/utils/dom.ts\");\n/* harmony import */ var _generators_embed_code_generator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./generators/embed-code-generator */ \"./src/ts/app/generators/embed-code-generator.ts\");\n\n\n\n\n\n\nclass Modal {\n    #attrGenerator = new _generators_html_attribute_generator__WEBPACK_IMPORTED_MODULE_2__.HtmlAttributeGenerator();\n    #manager;\n    getManager() {\n        return this.#manager;\n    }\n    setManager(manager) {\n        this.#manager = manager;\n    }\n    #params = {\n        id: _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].guid(),\n        zIndex: 1,\n        position: 'middle-center'\n    };\n    getParams() {\n        return this.#params;\n    }\n    constructor(params = {}) {\n        this.#params = _parsers_parameters_modal_parameter_parser__WEBPACK_IMPORTED_MODULE_1__[\"default\"].parse(params);\n    }\n    getId() {\n        return this.#params.id ? this.#params.id : '';\n    }\n    getOverlayId() {\n        return `overlay-${this.getId()}`;\n    }\n    getModalId() {\n        return `modal-${this.getId()}`;\n    }\n    getModalHeaderId() {\n        return `modal-header-${this.getId()}`;\n    }\n    generateMarginShift() {\n        let marginCss = '', sd = this.#params.shiftDistance;\n        if (sd?.top !== undefined && sd?.top > 0) {\n            marginCss += `margin-top:${sd?.top}px;`;\n        }\n        if (sd?.right !== undefined && sd?.right > 0) {\n            marginCss += `margin-right:${sd?.right}px;`;\n        }\n        if (sd?.bottom !== undefined && sd?.bottom > 0) {\n            marginCss += `margin-bottom:${sd?.bottom}px;`;\n        }\n        if (sd?.left !== undefined && sd?.left > 0) {\n            marginCss += `margin-left:${sd?.left}px;`;\n        }\n        return marginCss;\n    }\n    generateHtml() {\n        const { zIndex, secondaryOverlay } = this.#params;\n        let cssClassList = [\n            'layered-modal-overlay'\n        ];\n        if (this.#params.position !== undefined) {\n            cssClassList.push(this.#params.position);\n        }\n        if (secondaryOverlay !== undefined && secondaryOverlay) {\n            cssClassList.push('secondary');\n        }\n        return `\n        <div id=\"${this.getOverlayId()}\" class=\"${cssClassList.join(' ')}\" style=\"z-index: ${zIndex};\">\n            ${this.generateModalMarkup()}\n        </div>\n    `;\n    }\n    generateModalMarkup() {\n        let modalInlineCss = [\n            this.generateMarginShift(),\n            _generators_css_rules_generator__WEBPACK_IMPORTED_MODULE_3__.CssRulesGenerator.generateDimensionCss(this.#params.width, 'width'),\n            _generators_css_rules_generator__WEBPACK_IMPORTED_MODULE_3__.CssRulesGenerator.generateDimensionCss(this.#params.height, 'height'),\n            `transition-duration: ${this.#params.transitionDuration}ms;`,\n        ];\n        let modalCssClassList = [\n            'layered-modal',\n            this.#params.cssClass?.modal,\n        ];\n        if (this.#params.draggable) {\n            modalCssClassList.push('lm-draggable');\n        }\n        if (this.#params.userSelect !== undefined && !this.#params.userSelect) {\n            modalCssClassList.push('no-user-select');\n        }\n        return `<div id=\"${this.getModalId()}\" class=\"${modalCssClassList.join(' ')}\" style=\"${modalInlineCss.join('')}\">\n                \n                ${this.generateXButtonMarkup()}\n            \n                ${this.generateHeaderMarkup()}\n                ${this.generateBodyMarkup()}\n                ${this.generateFooterMarkup()}\n            </div>`;\n    }\n    generateXButtonMarkup() {\n        if (this.#params.xButton === undefined) {\n            return '';\n        }\n        let btn = this.#params.xButton;\n        console.log(btn);\n        if (!btn.enabled) {\n            return '';\n        }\n        return `<span class=\"x-btn ${btn.cssClass} ${this.#params.cssClass?.modalClose}\" ${btn.inlineStyles ? `style=\"${btn.inlineStyles}\"` : ''}>${btn.content}</span>`;\n    }\n    generateBodyMarkup() {\n        let body = this.#params.body;\n        if (typeof body === \"undefined\") {\n            throw new Error('Modal body content not defined');\n        }\n        let classList = [\n            body.cssClass\n        ];\n        if (body.noPadding) {\n            classList.push('no-padding');\n        }\n        let styles = [];\n        if (body.inlineStyles !== undefined) {\n            styles.push(_utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].ensureSemicolon(body.inlineStyles));\n        }\n        if (body.aspectRatio !== undefined) {\n            if (body.aspectRatio > 0) {\n                styles.push(`aspect-ratio: ${body.aspectRatio};`);\n            }\n        }\n        if (body.maxHeight !== undefined) {\n            let maxHeight = _generators_css_rules_generator__WEBPACK_IMPORTED_MODULE_3__.CssRulesGenerator.generateDimensionCss(body.maxHeight, 'max-height');\n            if (maxHeight) {\n                styles.push(maxHeight);\n            }\n        }\n        let bodyAttrs = this.#attrGenerator.generateAttributes({\n            class: classList,\n            style: styles\n        });\n        let content = '';\n        if (body.contentType === 'html') {\n            content = body.content;\n        }\n        else if (body.contentType === 'iframe') {\n            content = body.iframeCode;\n            if (!_utils_dom__WEBPACK_IMPORTED_MODULE_4__.DomUtils.isValidIframe(content)) {\n                content = 'Invalid iframe code';\n            }\n        }\n        else if (body.contentType === 'function') {\n            let returnValue = null;\n            if (typeof body.functionName === 'string') {\n                returnValue = _utils_dom__WEBPACK_IMPORTED_MODULE_4__.DomUtils.getFunctionResult(body.functionName, body.functionArguments);\n            }\n            else if (typeof body.functionName === 'function') {\n                returnValue = body.functionName.apply(null, [body.functionArguments]);\n            }\n            if (typeof returnValue !== 'string') {\n                throw new Error(`${body.functionName} return value must be a string data type`);\n            }\n            content = returnValue;\n        }\n        else if (body.contentType === 'template') {\n            let templateId = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'templateId');\n            if (templateId === '') {\n                content = 'Template element id is required';\n            }\n            else {\n                let templateElement = document.getElementById(templateId);\n                if (templateElement === null || !(templateElement instanceof HTMLTemplateElement)) {\n                    content = `Template element not found by ID: ${templateId}`;\n                }\n                else {\n                    content = templateElement.innerHTML;\n                }\n            }\n        }\n        else if (body.contentType === 'image') {\n            content = 'Image type ...';\n        }\n        else if (body.contentType === 'ajax') {\n            content = 'Ajax type ...';\n        }\n        else if (body.contentType === 'youtube-video') {\n            let embedCode = _generators_embed_code_generator__WEBPACK_IMPORTED_MODULE_5__.EmbedCodeGenerator.fromYouTubeVideo(body.videoUrl ?? '');\n            if (!embedCode) {\n                content = \"Invalid youtube video url\";\n            }\n            else {\n                content = embedCode;\n            }\n        }\n        if (content === '') {\n            content = 'Modal content not found';\n        }\n        return `<div ${bodyAttrs}>${content}</div>`;\n    }\n    generateHeaderMarkup() {\n        let header = this.#params.header;\n        if (header === undefined) {\n            return '';\n        }\n        if (header?.enabled !== undefined && !header?.enabled) {\n            return '';\n        }\n        let classList = [];\n        if (this.#params.draggable && this.#params.dragHandle === '') {\n            classList.push('lm-drag-handle');\n        }\n        if (header.cssClass) {\n            classList.push(header.cssClass);\n        }\n        return `<div id=\"${this.getModalHeaderId()}\" class=\"layered-modal-header ${classList.join(' ')}\" style=\"${header.inlineStyles}\">${header?.content}</div>`;\n    }\n    generateFooterMarkup() {\n        let footer = this.#params.footer;\n        if (footer === undefined) {\n            return '';\n        }\n        if (footer?.enabled !== undefined && !footer?.enabled) {\n            return '';\n        }\n        if (footer?.mode === 'custom') {\n            return `<div class=\"layered-modal-footer ${footer.cssClass}\" style=\"${footer.inlineStyles}\">${footer.content}</div>`;\n        }\n        else if (footer?.mode === 'alert') {\n            return `<div class=\"layered-modal-footer d-flex fd-row jc-center  ${footer.cssClass}\" style=\"${footer.inlineStyles}\">\n    <button type=\"button\" class=\"lm-btn lm-btn-error ${this.#params.cssClass?.modalClose}\">Close</button>\n</div>`;\n        }\n        else if (footer?.mode === 'confirm') {\n            return `<div class=\"layered-modal-footer d-flex fd-row jc-between  ${footer.cssClass}\" style=\"${footer.inlineStyles}\">\n    <button type=\"button\" class=\"lm-btn lm-btn-error ${this.#params.cssClass?.modalClose}\">Close</button>\n    \n    <button type=\"button\" class=\"lm-btn lm-btn-success ${this.#params.cssClass?.modalOk}\">Ok</button>\n</div>`;\n        }\n    }\n    show() {\n        document.body.insertAdjacentHTML('beforeend', this.generateHtml());\n        let modal = document.getElementById(this.getModalId());\n        if (!modal) {\n            return;\n        }\n        modal.style.display = 'flex';\n        setTimeout(() => {\n            modal.style.opacity = '1';\n            this.getManager().adjustStackCssClassForModals();\n            this.#bindEvents();\n        }, this.#params.transitionDuration);\n    }\n    #timerHiding = null;\n    hide(callback = null) {\n        if (this.#timerHiding !== null) {\n            return;\n        }\n        let modal = document.getElementById(this.getModalId());\n        if (!modal) {\n            return;\n        }\n        modal.style.opacity = '0';\n        this.#timerHiding = setTimeout(() => {\n            modal.style.display = 'none';\n            const overlay = document.getElementById(this.getOverlayId());\n            if (overlay) {\n                overlay.remove();\n            }\n            clearTimeout(this.#timerHiding);\n            this.#timerHiding = null;\n            if (callback !== null && _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].isFunction(callback)) {\n                callback.apply(this);\n            }\n            else {\n                this.getManager().popStack();\n            }\n            this.getManager().adjustStackCssClassForModals();\n            if (this.#params.onHide) {\n                this.#params.onHide.apply(this);\n            }\n        }, this.#params.transitionDuration);\n    }\n    #bindEvents() {\n        let _this = this;\n        let overlay = document.getElementById(this.getOverlayId());\n        if (!overlay) {\n            return;\n        }\n        if (this.#params.cssClass?.modalClose) {\n            let closeClass = this.#params.cssClass?.modalClose;\n            overlay\n                .querySelectorAll(`.${closeClass}`)\n                .forEach(function (item) {\n                item.addEventListener('click', function () {\n                    _this.getManager().removeModal();\n                });\n            });\n        }\n        if (_utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].isFunction(this.#params.footer?.onOk)) {\n            let okCssClass = '.' + this.#params.cssClass?.modalOk;\n            overlay\n                .querySelectorAll(okCssClass)\n                .forEach(function (item) {\n                item.addEventListener('click', function () {\n                    _this.getParams().footer?.onOk.apply(_this);\n                });\n            });\n        }\n        else if (_utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].isString(this.#params.footer?.onOk)) {\n            let functionName = this.#params.footer?.onOk;\n            let okCssClass = '.' + this.#params.cssClass?.modalOk;\n            overlay\n                .querySelectorAll(okCssClass)\n                .forEach(function (item) {\n                item.addEventListener('click', () => {\n                    _utils_dom__WEBPACK_IMPORTED_MODULE_4__.DomUtils.executeFunction(functionName, '', _this);\n                });\n            });\n        }\n        if (_this.#params.onShow) {\n            _this.#params.onShow.apply(this);\n        }\n        this.handleDragEvents();\n    }\n    handleDragEvents() {\n        if (!this.#params.draggable) {\n            return;\n        }\n        const modal = document.getElementById(this.getModalId());\n        let dragHandle = null;\n        if (this.#params.dragHandle !== '') {\n            dragHandle = document.getElementById(this.#params.dragHandle);\n        }\n        else {\n            if (this.#params.header !== undefined && this.#params.header?.enabled) {\n                dragHandle = document.getElementById(this.getModalHeaderId());\n            }\n        }\n        if (!dragHandle) {\n            dragHandle = modal;\n        }\n        if (!dragHandle.classList.contains('lm-drag-handle')) {\n            dragHandle.classList.add('lm-drag-handle');\n        }\n        let isDragging = false;\n        let startX, startY;\n        let marginLeft = 0;\n        let marginTop = 0;\n        dragHandle.addEventListener(\"mousedown\", function (event) {\n            isDragging = true;\n            startX = event.clientX;\n            startY = event.clientY;\n            marginLeft = parseInt(window.getComputedStyle(modal).marginLeft, 10) || 0;\n            marginTop = parseInt(window.getComputedStyle(modal).marginTop, 10) || 0;\n            document.addEventListener(\"mousemove\", drag);\n            document.addEventListener(\"mouseup\", stopDrag);\n        });\n        function drag(event) {\n            if (!isDragging)\n                return;\n            const deltaX = event.clientX - startX;\n            const deltaY = event.clientY - startY;\n            modal.style.marginLeft = `${marginLeft + deltaX}px`;\n            modal.style.marginTop = `${marginTop + deltaY}px`;\n        }\n        function stopDrag() {\n            isDragging = false;\n            document.removeEventListener(\"mousemove\", drag);\n            document.removeEventListener(\"mouseup\", stopDrag);\n        }\n    }\n    toggleModalClass(className) {\n        let modalElement = document.getElementById(this.getModalId());\n        if (modalElement) {\n            modalElement.classList.toggle(className);\n        }\n    }\n    addModalClass(className) {\n        let modalElement = document.getElementById(this.getModalId());\n        if (modalElement) {\n            modalElement.classList.add(className);\n        }\n    }\n    removeModalClass(className) {\n        let modalElement = document.getElementById(this.getModalId());\n        if (modalElement) {\n            modalElement.classList.remove(className);\n        }\n    }\n    adjustMargin(position) {\n        let element = document.getElementById(this.getModalId());\n        if (!element) {\n            return;\n        }\n        if (position.top !== undefined) {\n            element.style.marginTop = `${position.top}px`;\n        }\n        if (position.right !== undefined) {\n            element.style.marginRight = `${position.right}px`;\n        }\n        if (position.bottom !== undefined) {\n            element.style.marginBottom = `${position.bottom}px`;\n        }\n        if (position.left !== undefined) {\n            element.style.marginLeft = `${position.left}px`;\n        }\n    }\n    setShiftingDistance(distance, adjustMargins = true) {\n        this.#params.shiftDistance = distance;\n        if (adjustMargins) {\n            this.adjustMargin(distance);\n        }\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/modal.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/parsers/parameters/modal-parameter-parser.ts":
+/*!*****************************************************************!*\
+  !*** ./src/ts/app/parsers/parameters/modal-parameter-parser.ts ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ ModalParameterParser)\n/* harmony export */ });\n/* harmony import */ var _utils_mixins__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../utils/mixins */ \"./src/ts/app/utils/mixins.ts\");\n\nclass ModalParameterParser {\n    static parse(params) {\n        params.stackIndex = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(params, 'stackIndex');\n        params.id = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(params, 'id');\n        if (!params.id) {\n            params.id = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].guid();\n        }\n        params.zIndex = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(params, 'zIndex', 1);\n        if (params.zIndex < 1) {\n            params.zIndex = 1;\n        }\n        let _sd = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'shiftDistance');\n        _sd.top = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(_sd, 'top', 0);\n        _sd.right = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(_sd, 'right', 0);\n        _sd.bottom = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(_sd, 'bottom', 0);\n        _sd.left = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(_sd, 'left', 0);\n        params.shiftDistance = _sd;\n        params.transitionDuration = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(params, 'transitionDuration', 0);\n        if (params.transitionDuration < 0) {\n            params.transitionDuration = 0;\n        }\n        let cssClass = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'cssClass');\n        cssClass.modal = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(cssClass, 'modal', '');\n        cssClass.modalClose = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(cssClass, 'modalClose', 'modal-close');\n        cssClass.modalOk = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(cssClass, 'modalOk', 'modal-ok');\n        params.cssClass = cssClass;\n        let header = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'header');\n        header.enabled = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(header, 'enabled', false);\n        header.content = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(header, 'content', '');\n        header.title = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(header, 'title', 'Modal Header');\n        header.titleTag = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(header, 'titleTag', 'h2');\n        header.cssClass = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(header, 'cssClass');\n        header.inlineStyles = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(header, 'inlineStyles');\n        if (!header.titleTag) {\n            header.titleTag = 'h2';\n        }\n        if (!header.content) {\n            if (!header.title) {\n                header.title = 'Modal Header';\n            }\n            header.content = `<${header.titleTag}>${header.title}</${header.titleTag}>`;\n        }\n        params.header = header;\n        let footer = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'footer');\n        footer.enabled = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(footer, 'enabled', false);\n        footer.cssClass = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(footer, 'cssClass');\n        footer.inlineStyles = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(footer, 'inlineStyles');\n        footer.mode = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(footer, 'mode', 'alert');\n        if (!['alert', 'confirm', 'custom'].includes(footer.mode)) {\n            footer.mode = 'alert';\n        }\n        if (footer.mode === 'custom') {\n            footer.content = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(footer, 'content', `<div class=\"text-center\"><button type=\"button\" class=\"lm-btn lm-btn-error ${params.cssClass.modalClose}\">Close</button></div>`);\n        }\n        footer.onOk = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValue(footer, 'onOk');\n        params.footer = footer;\n        if (params.hasOwnProperty('width')) {\n            let w = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'width');\n            w.value = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsFloat(w, 'value', 600);\n            if (w.value < 300) {\n                w.value = 300;\n            }\n            w.unit = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(w, 'unit', 'px');\n            if (!w.unit) {\n                w.unit = 'px';\n            }\n            params.width = w;\n        }\n        if (params.hasOwnProperty('height')) {\n            let h = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'height');\n            h.value = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsFloat(h, 'value', 0);\n            h.unit = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(h, 'unit', 'px');\n            if (!h.unit) {\n                h.unit = 'px';\n            }\n            params.height = h;\n        }\n        params.secondaryOverlay = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(params, 'secondaryOverlay');\n        params.onShow = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsMethod(params, 'onShow', null);\n        params.onHide = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsMethod(params, 'onHide', null);\n        params.draggable = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(params, 'draggable', false);\n        params.dragHandle = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(params, 'dragHandle', '');\n        params.userSelect = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(params, 'userSelect', false);\n        params.body = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'body');\n        ModalParameterParser.parseBody(params.body);\n        params.xButton = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(params, 'xButton');\n        ModalParameterParser.parseXButton(params.xButton);\n        let position = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(params, 'position');\n        if (ModalParameterParser.isValidPosition(position)) {\n            params.position = position;\n        }\n        else {\n            params.position = 'middle-center';\n        }\n        if (params.hasOwnProperty('delayInMilliSeconds')) {\n            params.delayInMilliSeconds = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsInt(params, 'delayInMilliSeconds', 0);\n            if (params.delayInMilliSeconds < 0) {\n                params.delayInMilliSeconds = 0;\n            }\n        }\n        return params;\n    }\n    static parseXButton(obj) {\n        obj.enabled = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(obj, 'enabled', true);\n        obj.content = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(obj, 'content', 'X');\n        if (!obj.content) {\n            obj.content = 'X';\n        }\n        obj.cssClass = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(obj, 'cssClass');\n        if (obj.hasOwnProperty('inlineStyles')) {\n            obj.inlineStyles = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(obj, 'inlineStyles');\n        }\n    }\n    static parseBody(body) {\n        body.cssClass = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'cssClass');\n        if (body.cssClass.indexOf('layered-modal-body') === -1) {\n            body.cssClass += ' layered-modal-body';\n        }\n        body.cssClass = body.cssClass.trim();\n        body.inlineStyles = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'inlineStyles');\n        if (body.hasOwnProperty('maxHeight')) {\n            let maxHeight = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(body, 'maxHeight');\n            maxHeight.value = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsFloat(maxHeight, 'value');\n            maxHeight.unit = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(maxHeight, 'unit', 'px');\n            body.maxHeight = maxHeight;\n        }\n        body.noPadding = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsBool(body, 'noPadding', false);\n        if (body.hasOwnProperty('aspectRatio')) {\n            body.aspectRatio = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsFloat(body, 'aspectRatio', 0);\n        }\n        let contentType = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'contentType');\n        if (ModalParameterParser.isValidBodyContentType(contentType)) {\n            body.contentType = contentType;\n        }\n        else {\n            body.contentType = 'html';\n        }\n        if (body.contentType === 'html') {\n            body.content = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'content');\n        }\n        else if (body.contentType === 'function') {\n            body.functionName = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValue(body, 'functionName');\n            body.functionArguments = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValue(body, 'functionArguments');\n        }\n        else if (body.contentType === 'iframe') {\n            body.iframeCode = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'iframeCode');\n        }\n        else if (body.contentType === 'ajax') {\n            let ap = body.ajaxParams = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(body, 'ajaxParams');\n            ap.url = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(ap, 'url');\n            ap.method = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(ap, 'method', 'GET').toUpperCase();\n        }\n        else if (body.contentType === 'image') {\n            let ip = body.imageParams = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsObject(body, 'imageParams');\n            ip.url = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(ip, 'url');\n            ip.alt = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(ip, 'alt');\n            ip.title = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(ip, 'title');\n            ip.caption = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(ip, 'caption');\n        }\n        else if (body.contentType === 'youtube-video') {\n            body.videoUrl = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'videoUrl');\n        }\n        else if (body.contentType === 'template') {\n            body.templateId = _utils_mixins__WEBPACK_IMPORTED_MODULE_0__[\"default\"].objValueAsString(body, 'templateId');\n        }\n    }\n    static isValidBodyContentType(type) {\n        return [\"function\", \"html\", \"iframe\", \"image\", \"ajax\", \"youtube-video\", \"template\"].includes(type);\n    }\n    static isValidPosition(position) {\n        return [\"top-left\", \"top-center\", \"top-right\", \"middle-left\", \"middle-center\", \"middle-right\", \"bottom-left\", \"bottom-center\", \"bottom-right\"].includes(position);\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/parsers/parameters/modal-parameter-parser.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/utils/dom.ts":
+/*!*********************************!*\
+  !*** ./src/ts/app/utils/dom.ts ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   DomUtils: () => (/* binding */ DomUtils)\n/* harmony export */ });\nclass DomUtils {\n    static getDataAttributes(element) {\n        const dataAttrs = {};\n        [...element.attributes].forEach((attr) => {\n            if (attr.name.startsWith(\"data-\")) {\n                const key = attr.name.slice(5);\n                dataAttrs[key] = attr.value;\n            }\n        });\n        return dataAttrs;\n    }\n    static getFunctionResult(funcName, functionArgs, context = null) {\n        if (typeof window[funcName] === \"function\") {\n            let val = window[funcName].apply(context, [functionArgs]);\n            if (typeof val === 'string') {\n                return val;\n            }\n            else {\n                return `Function ${funcName} does not return string data type.`;\n            }\n        }\n        else {\n            return `Function ${funcName} not found.`;\n        }\n    }\n    static executeFunction(funcName, functionArgs, context = null) {\n        if (typeof window[funcName] === \"function\") {\n            window[funcName].apply(context, [functionArgs]);\n        }\n    }\n    static isValidIframe(html) {\n        const parser = new DOMParser();\n        const doc = parser.parseFromString(html, \"text/html\");\n        const iframe = doc.body.firstElementChild;\n        if (!iframe || iframe.tagName.toLowerCase() !== \"iframe\") {\n            return false;\n        }\n        const src = iframe.getAttribute(\"src\");\n        return !(!src || !/^https?:\\/\\/[\\w.-]+(?:\\.[a-z]{2,})+(?:\\/.*)?$/i.test(src));\n    }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/utils/dom.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/app/utils/mixins.ts":
+/*!************************************!*\
+  !*** ./src/ts/app/utils/mixins.ts ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var underscore__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! underscore */ \"./node_modules/underscore/modules/index-all.js\");\n\nunderscore__WEBPACK_IMPORTED_MODULE_0__[\"default\"].mixin({\n    isPlainObject: function (o) {\n        return this.isObject(o)\n            && !this.isFunction(o)\n            && !this.isArray(o)\n            && (Object.getPrototypeOf(o) === Object.prototype);\n    },\n    asObject: function (v, d) {\n        if (!this.isPlainObject(d)) {\n            d = {};\n        }\n        return this.isPlainObject(v) ? v : d;\n    },\n    asString: function (v, d) {\n        if (this.isUndefined(d) || this.isNull(d)) {\n            d = '';\n        }\n        if (!v || this.isUndefined(v) || this.isNull(v)) {\n            v = d;\n        }\n        if (!this.isString(v)) {\n            return d;\n        }\n        return v;\n    },\n    asInt: function (v, d = 0) {\n        d = Number.isInteger(d) ? d : 0;\n        if (underscore__WEBPACK_IMPORTED_MODULE_0__[\"default\"].isArray(v)) {\n            return d;\n        }\n        if (typeof v === 'string') {\n            v = v.trim();\n            if (!/^[+-]?\\d+$/.test(v)) {\n                return d;\n            }\n        }\n        v = parseInt(v);\n        if (isNaN(v)) {\n            return d;\n        }\n        return v;\n    },\n    asFloat: function (v, d = 0.0) {\n        if (underscore__WEBPACK_IMPORTED_MODULE_0__[\"default\"].isArray(v)) {\n            return d;\n        }\n        if (typeof v === 'string') {\n            v = v.trim();\n            if (!/^[+-]?(?:\\d+|\\.\\d+)(?:\\.\\d*)?$/.test(v)) {\n                return d;\n            }\n        }\n        v = parseFloat(v);\n        if (isNaN(v)) {\n            return d;\n        }\n        return v;\n    },\n    asArray: function (v, d) {\n        if (!this.isArray(d)) {\n            d = [];\n        }\n        return this.isArray(v) ? v : d;\n    },\n    objOwnValue: function (o, k, d) {\n        return this.isPlainObject(o) && this.has(o, k) ? o[k] : d;\n    },\n    objValue: function (o, k, d) {\n        return this.isPlainObject(o) && this.hasProperty(o, k) ? o[k] : d;\n    },\n    objValueAsString: function (o, k, d) {\n        if (this.isUndefined(d) || this.isNull(d)) {\n            d = '';\n        }\n        let val = this.objValue(o, k, d);\n        return this.isString(val) ? val : d;\n    },\n    objValueAsObject: function (o, k, d = {}) {\n        if (!this.isPlainObject(o)) {\n            return d;\n        }\n        if (!this.isPlainObject(d)) {\n            d = {};\n        }\n        let val = this.objValue(o, k, d);\n        return this.isPlainObject(val) ? val : d;\n    },\n    objValueAsInt: function (o, k, d) {\n        let val = this.objValue(o, k, d);\n        val = parseInt(val);\n        if (isNaN(val)) {\n            val = 0;\n        }\n        return val;\n    },\n    objValueAsIntFlag: function (o, k, d = 0) {\n        let val = this.objValue(o, k, d);\n        val = parseInt(val);\n        if (isNaN(val)) {\n            val = d;\n        }\n        return val > 0 ? 1 : 0;\n    },\n    objValueAsFloat: function (o, k, d) {\n        let val = this.objValue(o, k, d);\n        val = parseFloat(val);\n        if (isNaN(val)) {\n            val = 0.0;\n        }\n        return val;\n    },\n    objValueAsBool: function (o, k, d) {\n        return !!(this.objValue(o, k, d));\n    },\n    objValueAsArray: function (o, k, d) {\n        d = this.isArray(d) ? d : [];\n        let val = this.objValue(o, k, d);\n        return this.isArray(val) ? val : d;\n    },\n    hasMethod: function (o, m) {\n        return this.isPlainObject(o) && (this.functions(o).indexOf(m) >= 0);\n    },\n    hasProperty: function (o, k) {\n        return this.isPlainObject(o) && this.allKeys(o).indexOf(k) >= 0;\n    },\n    guid: function () {\n        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {\n            let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);\n            return v.toString(16);\n        });\n    },\n    objValueAsMethod: function (o, k, d = null) {\n        let val = this.objValue(o, k, d);\n        return this.isFunction(val) ? val : d;\n    },\n    isAlphanumeric(value) {\n        return typeof value === \"string\" && /^[a-z0-9]+$/i.test(value);\n    },\n    ensureSemicolon(str) {\n        return str.trim().endsWith(\";\") ? str.trim() : str.trim() + \";\";\n    },\n});\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (underscore__WEBPACK_IMPORTED_MODULE_0__[\"default\"]);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/app/utils/mixins.ts?");
+
+/***/ }),
+
+/***/ "./src/ts/index.ts":
+/*!*************************!*\
+  !*** ./src/ts/index.ts ***!
+  \*************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   Modal: () => (/* reexport safe */ _app_modal__WEBPACK_IMPORTED_MODULE_2__.Modal),\n/* harmony export */   ModalManager: () => (/* reexport safe */ _app_modal_manager__WEBPACK_IMPORTED_MODULE_3__.ModalManager),\n/* harmony export */   _: () => (/* reexport safe */ _app_utils_mixins__WEBPACK_IMPORTED_MODULE_1__[\"default\"])\n/* harmony export */ });\n/* harmony import */ var _styles_main_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../styles/main.scss */ \"./src/styles/main.scss\");\n/* harmony import */ var _app_utils_mixins__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./app/utils/mixins */ \"./src/ts/app/utils/mixins.ts\");\n/* harmony import */ var _app_modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./app/modal */ \"./src/ts/app/modal.ts\");\n/* harmony import */ var _app_modal_manager__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./app/modal-manager */ \"./src/ts/app/modal-manager.ts\");\n\n\n\n\n\n\n\n//# sourceURL=webpack://LayeredModalSystem/./src/ts/index.ts?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/clients/WebSocketClient.js":
+/*!***************************************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/clients/WebSocketClient.js ***!
+  \***************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ WebSocketClient)\n/* harmony export */ });\n/* harmony import */ var _utils_log_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../utils/log.js */ \"./node_modules/webpack-dev-server/client/utils/log.js\");\nfunction _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError(\"Cannot call a class as a function\"); }\nfunction _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, \"value\" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }\nfunction _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, \"prototype\", { writable: !1 }), e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == typeof i ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != typeof i) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\n\nvar WebSocketClient = /*#__PURE__*/function () {\n  /**\n   * @param {string} url\n   */\n  function WebSocketClient(url) {\n    _classCallCheck(this, WebSocketClient);\n    this.client = new WebSocket(url);\n    this.client.onerror = function (error) {\n      _utils_log_js__WEBPACK_IMPORTED_MODULE_0__.log.error(error);\n    };\n  }\n\n  /**\n   * @param {(...args: any[]) => void} f\n   */\n  return _createClass(WebSocketClient, [{\n    key: \"onOpen\",\n    value: function onOpen(f) {\n      this.client.onopen = f;\n    }\n\n    /**\n     * @param {(...args: any[]) => void} f\n     */\n  }, {\n    key: \"onClose\",\n    value: function onClose(f) {\n      this.client.onclose = f;\n    }\n\n    // call f with the message string as the first argument\n    /**\n     * @param {(...args: any[]) => void} f\n     */\n  }, {\n    key: \"onMessage\",\n    value: function onMessage(f) {\n      this.client.onmessage = function (e) {\n        f(e.data);\n      };\n    }\n  }]);\n}();\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/clients/WebSocketClient.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=127.0.0.1&port=8080&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=true&live-reload=true":
+/*!*************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=127.0.0.1&port=8080&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=true&live-reload=true ***!
+  \*************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("var __resourceQuery = \"?protocol=ws%3A&hostname=127.0.0.1&port=8080&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=true&live-reload=true\";\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   createSocketURL: () => (/* binding */ createSocketURL),\n/* harmony export */   getCurrentScriptSource: () => (/* binding */ getCurrentScriptSource),\n/* harmony export */   parseURL: () => (/* binding */ parseURL)\n/* harmony export */ });\n/* harmony import */ var webpack_hot_log_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! webpack/hot/log.js */ \"./node_modules/webpack/hot/log.js\");\n/* harmony import */ var webpack_hot_log_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(webpack_hot_log_js__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var webpack_hot_emitter_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! webpack/hot/emitter.js */ \"./node_modules/webpack/hot/emitter.js\");\n/* harmony import */ var webpack_hot_emitter_js__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(webpack_hot_emitter_js__WEBPACK_IMPORTED_MODULE_1__);\n/* harmony import */ var _socket_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./socket.js */ \"./node_modules/webpack-dev-server/client/socket.js\");\n/* harmony import */ var _overlay_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./overlay.js */ \"./node_modules/webpack-dev-server/client/overlay.js\");\n/* harmony import */ var _utils_log_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./utils/log.js */ \"./node_modules/webpack-dev-server/client/utils/log.js\");\n/* harmony import */ var _utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./utils/sendMessage.js */ \"./node_modules/webpack-dev-server/client/utils/sendMessage.js\");\n/* harmony import */ var _progress_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./progress.js */ \"./node_modules/webpack-dev-server/client/progress.js\");\nfunction ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }\nfunction _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }\nfunction _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == typeof i ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != typeof i) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\n/* global __resourceQuery, __webpack_hash__ */\n/// <reference types=\"webpack/module\" />\n\n\n\n\n\n\n\n\n/**\n * @typedef {Object} OverlayOptions\n * @property {boolean | (error: Error) => boolean} [warnings]\n * @property {boolean | (error: Error) => boolean} [errors]\n * @property {boolean | (error: Error) => boolean} [runtimeErrors]\n * @property {string} [trustedTypesPolicyName]\n */\n\n/**\n * @typedef {Object} Options\n * @property {boolean} hot\n * @property {boolean} liveReload\n * @property {boolean} progress\n * @property {boolean | OverlayOptions} overlay\n * @property {string} [logging]\n * @property {number} [reconnect]\n */\n\n/**\n * @typedef {Object} Status\n * @property {boolean} isUnloading\n * @property {string} currentHash\n * @property {string} [previousHash]\n */\n\n/**\n * @param {boolean | { warnings?: boolean | string; errors?: boolean | string; runtimeErrors?: boolean | string; }} overlayOptions\n */\nvar decodeOverlayOptions = function decodeOverlayOptions(overlayOptions) {\n  if (typeof overlayOptions === \"object\") {\n    [\"warnings\", \"errors\", \"runtimeErrors\"].forEach(function (property) {\n      if (typeof overlayOptions[property] === \"string\") {\n        var overlayFilterFunctionString = decodeURIComponent(overlayOptions[property]);\n\n        // eslint-disable-next-line no-new-func\n        overlayOptions[property] = new Function(\"message\", \"var callback = \".concat(overlayFilterFunctionString, \"\\n        return callback(message)\"));\n      }\n    });\n  }\n};\n\n/**\n * @type {Status}\n */\nvar status = {\n  isUnloading: false,\n  // eslint-disable-next-line camelcase\n  currentHash: __webpack_require__.h()\n};\n\n/**\n * @returns {string}\n */\nvar getCurrentScriptSource = function getCurrentScriptSource() {\n  // `document.currentScript` is the most accurate way to find the current script,\n  // but is not supported in all browsers.\n  if (document.currentScript) {\n    return document.currentScript.getAttribute(\"src\");\n  }\n\n  // Fallback to getting all scripts running in the document.\n  var scriptElements = document.scripts || [];\n  var scriptElementsWithSrc = Array.prototype.filter.call(scriptElements, function (element) {\n    return element.getAttribute(\"src\");\n  });\n  if (scriptElementsWithSrc.length > 0) {\n    var currentScript = scriptElementsWithSrc[scriptElementsWithSrc.length - 1];\n    return currentScript.getAttribute(\"src\");\n  }\n\n  // Fail as there was no script to use.\n  throw new Error(\"[webpack-dev-server] Failed to get current script source.\");\n};\n\n/**\n * @param {string} resourceQuery\n * @returns {{ [key: string]: string | boolean }}\n */\nvar parseURL = function parseURL(resourceQuery) {\n  /** @type {{ [key: string]: string }} */\n  var result = {};\n  if (typeof resourceQuery === \"string\" && resourceQuery !== \"\") {\n    var searchParams = resourceQuery.slice(1).split(\"&\");\n    for (var i = 0; i < searchParams.length; i++) {\n      var pair = searchParams[i].split(\"=\");\n      result[pair[0]] = decodeURIComponent(pair[1]);\n    }\n  } else {\n    // Else, get the url from the <script> this file was called with.\n    var scriptSource = getCurrentScriptSource();\n    var scriptSourceURL;\n    try {\n      // The placeholder `baseURL` with `window.location.href`,\n      // is to allow parsing of path-relative or protocol-relative URLs,\n      // and will have no effect if `scriptSource` is a fully valid URL.\n      scriptSourceURL = new URL(scriptSource, self.location.href);\n    } catch (error) {\n      // URL parsing failed, do nothing.\n      // We will still proceed to see if we can recover using `resourceQuery`\n    }\n    if (scriptSourceURL) {\n      result = scriptSourceURL;\n      result.fromCurrentScript = true;\n    }\n  }\n  return result;\n};\nvar parsedResourceQuery = parseURL(__resourceQuery);\nvar enabledFeatures = {\n  \"Hot Module Replacement\": false,\n  \"Live Reloading\": false,\n  Progress: false,\n  Overlay: false\n};\n\n/** @type {Options} */\nvar options = {\n  hot: false,\n  liveReload: false,\n  progress: false,\n  overlay: false\n};\nif (parsedResourceQuery.hot === \"true\") {\n  options.hot = true;\n  enabledFeatures[\"Hot Module Replacement\"] = true;\n}\nif (parsedResourceQuery[\"live-reload\"] === \"true\") {\n  options.liveReload = true;\n  enabledFeatures[\"Live Reloading\"] = true;\n}\nif (parsedResourceQuery.progress === \"true\") {\n  options.progress = true;\n  enabledFeatures.Progress = true;\n}\nif (parsedResourceQuery.overlay) {\n  try {\n    options.overlay = JSON.parse(parsedResourceQuery.overlay);\n  } catch (e) {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.error(\"Error parsing overlay options from resource query:\", e);\n  }\n\n  // Fill in default \"true\" params for partially-specified objects.\n  if (typeof options.overlay === \"object\") {\n    options.overlay = _objectSpread({\n      errors: true,\n      warnings: true,\n      runtimeErrors: true\n    }, options.overlay);\n    decodeOverlayOptions(options.overlay);\n  }\n  enabledFeatures.Overlay = true;\n}\nif (parsedResourceQuery.logging) {\n  options.logging = parsedResourceQuery.logging;\n}\nif (typeof parsedResourceQuery.reconnect !== \"undefined\") {\n  options.reconnect = Number(parsedResourceQuery.reconnect);\n}\n\n/**\n * @param {string} level\n */\nvar setAllLogLevel = function setAllLogLevel(level) {\n  // This is needed because the HMR logger operate separately from dev server logger\n  webpack_hot_log_js__WEBPACK_IMPORTED_MODULE_0___default().setLogLevel(level === \"verbose\" || level === \"log\" ? \"info\" : level);\n  (0,_utils_log_js__WEBPACK_IMPORTED_MODULE_4__.setLogLevel)(level);\n};\nif (options.logging) {\n  setAllLogLevel(options.logging);\n}\nvar logEnabledFeatures = function logEnabledFeatures(features) {\n  var listEnabledFeatures = Object.keys(features);\n  if (!features || listEnabledFeatures.length === 0) {\n    return;\n  }\n  var logString = \"Server started:\";\n\n  // Server started: Hot Module Replacement enabled, Live Reloading enabled, Overlay disabled.\n  for (var i = 0; i < listEnabledFeatures.length; i++) {\n    var key = listEnabledFeatures[i];\n    logString += \" \".concat(key, \" \").concat(features[key] ? \"enabled\" : \"disabled\", \",\");\n  }\n  // replace last comma with a period\n  logString = logString.slice(0, -1).concat(\".\");\n  _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(logString);\n};\nlogEnabledFeatures(enabledFeatures);\nself.addEventListener(\"beforeunload\", function () {\n  status.isUnloading = true;\n});\nvar overlay = typeof window !== \"undefined\" ? (0,_overlay_js__WEBPACK_IMPORTED_MODULE_3__.createOverlay)(typeof options.overlay === \"object\" ? {\n  trustedTypesPolicyName: options.overlay.trustedTypesPolicyName,\n  catchRuntimeError: options.overlay.runtimeErrors\n} : {\n  trustedTypesPolicyName: false,\n  catchRuntimeError: options.overlay\n}) : {\n  send: function send() {}\n};\n\n/**\n * @param {Options} options\n * @param {Status} currentStatus\n */\nvar reloadApp = function reloadApp(_ref, currentStatus) {\n  var hot = _ref.hot,\n    liveReload = _ref.liveReload;\n  if (currentStatus.isUnloading) {\n    return;\n  }\n  var currentHash = currentStatus.currentHash,\n    previousHash = currentStatus.previousHash;\n  var isInitial = currentHash.indexOf(/** @type {string} */previousHash) >= 0;\n  if (isInitial) {\n    return;\n  }\n\n  /**\n   * @param {Window} rootWindow\n   * @param {number} intervalId\n   */\n  function applyReload(rootWindow, intervalId) {\n    clearInterval(intervalId);\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"App updated. Reloading...\");\n    rootWindow.location.reload();\n  }\n  var search = self.location.search.toLowerCase();\n  var allowToHot = search.indexOf(\"webpack-dev-server-hot=false\") === -1;\n  var allowToLiveReload = search.indexOf(\"webpack-dev-server-live-reload=false\") === -1;\n  if (hot && allowToHot) {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"App hot update...\");\n    webpack_hot_emitter_js__WEBPACK_IMPORTED_MODULE_1___default().emit(\"webpackHotUpdate\", currentStatus.currentHash);\n    if (typeof self !== \"undefined\" && self.window) {\n      // broadcast update to window\n      self.postMessage(\"webpackHotUpdate\".concat(currentStatus.currentHash), \"*\");\n    }\n  }\n  // allow refreshing the page only if liveReload isn't disabled\n  else if (liveReload && allowToLiveReload) {\n    var rootWindow = self;\n\n    // use parent window for reload (in case we're in an iframe with no valid src)\n    var intervalId = self.setInterval(function () {\n      if (rootWindow.location.protocol !== \"about:\") {\n        // reload immediately if protocol is valid\n        applyReload(rootWindow, intervalId);\n      } else {\n        rootWindow = rootWindow.parent;\n        if (rootWindow.parent === rootWindow) {\n          // if parent equals current window we've reached the root which would continue forever, so trigger a reload anyways\n          applyReload(rootWindow, intervalId);\n        }\n      }\n    });\n  }\n};\nvar ansiRegex = new RegExp([\"[\\\\u001B\\\\u009B][[\\\\]()#;?]*(?:(?:(?:(?:;[-a-zA-Z\\\\d\\\\/#&.:=?%@~_]+)*|[a-zA-Z\\\\d]+(?:;[-a-zA-Z\\\\d\\\\/#&.:=?%@~_]*)*)?\\\\u0007)\", \"(?:(?:\\\\d{1,4}(?:;\\\\d{0,4})*)?[\\\\dA-PR-TZcf-nq-uy=><~]))\"].join(\"|\"), \"g\");\n\n/**\n *\n * Strip [ANSI escape codes](https://en.wikipedia.org/wiki/ANSI_escape_code) from a string.\n * Adapted from code originally released by Sindre Sorhus\n * Licensed the MIT License\n *\n * @param {string} string\n * @return {string}\n */\nvar stripAnsi = function stripAnsi(string) {\n  if (typeof string !== \"string\") {\n    throw new TypeError(\"Expected a `string`, got `\".concat(typeof string, \"`\"));\n  }\n  return string.replace(ansiRegex, \"\");\n};\nvar onSocketMessage = {\n  hot: function hot() {\n    if (parsedResourceQuery.hot === \"false\") {\n      return;\n    }\n    options.hot = true;\n  },\n  liveReload: function liveReload() {\n    if (parsedResourceQuery[\"live-reload\"] === \"false\") {\n      return;\n    }\n    options.liveReload = true;\n  },\n  invalid: function invalid() {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"App updated. Recompiling...\");\n\n    // Fixes #1042. overlay doesn't clear if errors are fixed but warnings remain.\n    if (options.overlay) {\n      overlay.send({\n        type: \"DISMISS\"\n      });\n    }\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"Invalid\");\n  },\n  /**\n   * @param {string} hash\n   */\n  hash: function hash(_hash) {\n    status.previousHash = status.currentHash;\n    status.currentHash = _hash;\n  },\n  logging: setAllLogLevel,\n  /**\n   * @param {boolean} value\n   */\n  overlay: function overlay(value) {\n    if (typeof document === \"undefined\") {\n      return;\n    }\n    options.overlay = value;\n    decodeOverlayOptions(options.overlay);\n  },\n  /**\n   * @param {number} value\n   */\n  reconnect: function reconnect(value) {\n    if (parsedResourceQuery.reconnect === \"false\") {\n      return;\n    }\n    options.reconnect = value;\n  },\n  /**\n   * @param {boolean} value\n   */\n  progress: function progress(value) {\n    options.progress = value;\n  },\n  /**\n   * @param {{ pluginName?: string, percent: number, msg: string }} data\n   */\n  \"progress-update\": function progressUpdate(data) {\n    if (options.progress) {\n      _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"\".concat(data.pluginName ? \"[\".concat(data.pluginName, \"] \") : \"\").concat(data.percent, \"% - \").concat(data.msg, \".\"));\n    }\n    if ((0,_progress_js__WEBPACK_IMPORTED_MODULE_6__.isProgressSupported)()) {\n      if (typeof options.progress === \"string\") {\n        var progress = document.querySelector(\"wds-progress\");\n        if (!progress) {\n          (0,_progress_js__WEBPACK_IMPORTED_MODULE_6__.defineProgressElement)();\n          progress = document.createElement(\"wds-progress\");\n          document.body.appendChild(progress);\n        }\n        progress.setAttribute(\"progress\", data.percent);\n        progress.setAttribute(\"type\", options.progress);\n      }\n    }\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"Progress\", data);\n  },\n  \"still-ok\": function stillOk() {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"Nothing changed.\");\n    if (options.overlay) {\n      overlay.send({\n        type: \"DISMISS\"\n      });\n    }\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"StillOk\");\n  },\n  ok: function ok() {\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"Ok\");\n    if (options.overlay) {\n      overlay.send({\n        type: \"DISMISS\"\n      });\n    }\n    reloadApp(options, status);\n  },\n  /**\n   * @param {string} file\n   */\n  \"static-changed\": function staticChanged(file) {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"\".concat(file ? \"\\\"\".concat(file, \"\\\"\") : \"Content\", \" from static directory was changed. Reloading...\"));\n    self.location.reload();\n  },\n  /**\n   * @param {Error[]} warnings\n   * @param {any} params\n   */\n  warnings: function warnings(_warnings, params) {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.warn(\"Warnings while compiling.\");\n    var printableWarnings = _warnings.map(function (error) {\n      var _formatProblem = (0,_overlay_js__WEBPACK_IMPORTED_MODULE_3__.formatProblem)(\"warning\", error),\n        header = _formatProblem.header,\n        body = _formatProblem.body;\n      return \"\".concat(header, \"\\n\").concat(stripAnsi(body));\n    });\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"Warnings\", printableWarnings);\n    for (var i = 0; i < printableWarnings.length; i++) {\n      _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.warn(printableWarnings[i]);\n    }\n    var overlayWarningsSetting = typeof options.overlay === \"boolean\" ? options.overlay : options.overlay && options.overlay.warnings;\n    if (overlayWarningsSetting) {\n      var warningsToDisplay = typeof overlayWarningsSetting === \"function\" ? _warnings.filter(overlayWarningsSetting) : _warnings;\n      if (warningsToDisplay.length) {\n        overlay.send({\n          type: \"BUILD_ERROR\",\n          level: \"warning\",\n          messages: _warnings\n        });\n      }\n    }\n    if (params && params.preventReloading) {\n      return;\n    }\n    reloadApp(options, status);\n  },\n  /**\n   * @param {Error[]} errors\n   */\n  errors: function errors(_errors) {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.error(\"Errors while compiling. Reload prevented.\");\n    var printableErrors = _errors.map(function (error) {\n      var _formatProblem2 = (0,_overlay_js__WEBPACK_IMPORTED_MODULE_3__.formatProblem)(\"error\", error),\n        header = _formatProblem2.header,\n        body = _formatProblem2.body;\n      return \"\".concat(header, \"\\n\").concat(stripAnsi(body));\n    });\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"Errors\", printableErrors);\n    for (var i = 0; i < printableErrors.length; i++) {\n      _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.error(printableErrors[i]);\n    }\n    var overlayErrorsSettings = typeof options.overlay === \"boolean\" ? options.overlay : options.overlay && options.overlay.errors;\n    if (overlayErrorsSettings) {\n      var errorsToDisplay = typeof overlayErrorsSettings === \"function\" ? _errors.filter(overlayErrorsSettings) : _errors;\n      if (errorsToDisplay.length) {\n        overlay.send({\n          type: \"BUILD_ERROR\",\n          level: \"error\",\n          messages: _errors\n        });\n      }\n    }\n  },\n  /**\n   * @param {Error} error\n   */\n  error: function error(_error) {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.error(_error);\n  },\n  close: function close() {\n    _utils_log_js__WEBPACK_IMPORTED_MODULE_4__.log.info(\"Disconnected!\");\n    if (options.overlay) {\n      overlay.send({\n        type: \"DISMISS\"\n      });\n    }\n    (0,_utils_sendMessage_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(\"Close\");\n  }\n};\n\n/**\n * @param {{ protocol?: string, auth?: string, hostname?: string, port?: string, pathname?: string, search?: string, hash?: string, slashes?: boolean }} objURL\n * @returns {string}\n */\nvar formatURL = function formatURL(objURL) {\n  var protocol = objURL.protocol || \"\";\n  if (protocol && protocol.substr(-1) !== \":\") {\n    protocol += \":\";\n  }\n  var auth = objURL.auth || \"\";\n  if (auth) {\n    auth = encodeURIComponent(auth);\n    auth = auth.replace(/%3A/i, \":\");\n    auth += \"@\";\n  }\n  var host = \"\";\n  if (objURL.hostname) {\n    host = auth + (objURL.hostname.indexOf(\":\") === -1 ? objURL.hostname : \"[\".concat(objURL.hostname, \"]\"));\n    if (objURL.port) {\n      host += \":\".concat(objURL.port);\n    }\n  }\n  var pathname = objURL.pathname || \"\";\n  if (objURL.slashes) {\n    host = \"//\".concat(host || \"\");\n    if (pathname && pathname.charAt(0) !== \"/\") {\n      pathname = \"/\".concat(pathname);\n    }\n  } else if (!host) {\n    host = \"\";\n  }\n  var search = objURL.search || \"\";\n  if (search && search.charAt(0) !== \"?\") {\n    search = \"?\".concat(search);\n  }\n  var hash = objURL.hash || \"\";\n  if (hash && hash.charAt(0) !== \"#\") {\n    hash = \"#\".concat(hash);\n  }\n  pathname = pathname.replace(/[?#]/g,\n  /**\n   * @param {string} match\n   * @returns {string}\n   */\n  function (match) {\n    return encodeURIComponent(match);\n  });\n  search = search.replace(\"#\", \"%23\");\n  return \"\".concat(protocol).concat(host).concat(pathname).concat(search).concat(hash);\n};\n\n/**\n * @param {URL & { fromCurrentScript?: boolean }} parsedURL\n * @returns {string}\n */\nvar createSocketURL = function createSocketURL(parsedURL) {\n  var hostname = parsedURL.hostname;\n\n  // Node.js module parses it as `::`\n  // `new URL(urlString, [baseURLString])` parses it as '[::]'\n  var isInAddrAny = hostname === \"0.0.0.0\" || hostname === \"::\" || hostname === \"[::]\";\n\n  // why do we need this check?\n  // hostname n/a for file protocol (example, when using electron, ionic)\n  // see: https://github.com/webpack/webpack-dev-server/pull/384\n  if (isInAddrAny && self.location.hostname && self.location.protocol.indexOf(\"http\") === 0) {\n    hostname = self.location.hostname;\n  }\n  var socketURLProtocol = parsedURL.protocol || self.location.protocol;\n\n  // When https is used in the app, secure web sockets are always necessary because the browser doesn't accept non-secure web sockets.\n  if (socketURLProtocol === \"auto:\" || hostname && isInAddrAny && self.location.protocol === \"https:\") {\n    socketURLProtocol = self.location.protocol;\n  }\n  socketURLProtocol = socketURLProtocol.replace(/^(?:http|.+-extension|file)/i, \"ws\");\n  var socketURLAuth = \"\";\n\n  // `new URL(urlString, [baseURLstring])` doesn't have `auth` property\n  // Parse authentication credentials in case we need them\n  if (parsedURL.username) {\n    socketURLAuth = parsedURL.username;\n\n    // Since HTTP basic authentication does not allow empty username,\n    // we only include password if the username is not empty.\n    if (parsedURL.password) {\n      // Result: <username>:<password>\n      socketURLAuth = socketURLAuth.concat(\":\", parsedURL.password);\n    }\n  }\n\n  // In case the host is a raw IPv6 address, it can be enclosed in\n  // the brackets as the brackets are needed in the final URL string.\n  // Need to remove those as url.format blindly adds its own set of brackets\n  // if the host string contains colons. That would lead to non-working\n  // double brackets (e.g. [[::]]) host\n  //\n  // All of these web socket url params are optionally passed in through resourceQuery,\n  // so we need to fall back to the default if they are not provided\n  var socketURLHostname = (hostname || self.location.hostname || \"localhost\").replace(/^\\[(.*)\\]$/, \"$1\");\n  var socketURLPort = parsedURL.port;\n  if (!socketURLPort || socketURLPort === \"0\") {\n    socketURLPort = self.location.port;\n  }\n\n  // If path is provided it'll be passed in via the resourceQuery as a\n  // query param so it has to be parsed out of the querystring in order for the\n  // client to open the socket to the correct location.\n  var socketURLPathname = \"/ws\";\n  if (parsedURL.pathname && !parsedURL.fromCurrentScript) {\n    socketURLPathname = parsedURL.pathname;\n  }\n  return formatURL({\n    protocol: socketURLProtocol,\n    auth: socketURLAuth,\n    hostname: socketURLHostname,\n    port: socketURLPort,\n    pathname: socketURLPathname,\n    slashes: true\n  });\n};\nvar socketURL = createSocketURL(parsedResourceQuery);\n(0,_socket_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(socketURL, onSocketMessage, options.reconnect);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/modules/logger/index.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/modules/logger/index.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack_module, exports) => {
+
+eval("/******/ (function() { // webpackBootstrap\n/******/ \t\"use strict\";\n/******/ \tvar __webpack_modules__ = ({\n\n/***/ \"./client-src/modules/logger/tapable.js\":\n/*!**********************************************!*\\\n  !*** ./client-src/modules/logger/tapable.js ***!\n  \\**********************************************/\n/***/ (function(__unused_webpack_module, __nested_webpack_exports__, __nested_webpack_require_372__) {\n\n__nested_webpack_require_372__.r(__nested_webpack_exports__);\n/* harmony export */ __nested_webpack_require_372__.d(__nested_webpack_exports__, {\n/* harmony export */   SyncBailHook: function() { return /* binding */ SyncBailHook; }\n/* harmony export */ });\nfunction SyncBailHook() {\n  return {\n    call: function call() {}\n  };\n}\n\n/**\n * Client stub for tapable SyncBailHook\n */\n// eslint-disable-next-line import/prefer-default-export\n\n\n/***/ }),\n\n/***/ \"./node_modules/webpack/lib/logging/Logger.js\":\n/*!****************************************************!*\\\n  !*** ./node_modules/webpack/lib/logging/Logger.js ***!\n  \\****************************************************/\n/***/ (function(module) {\n\n/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n\n\n\nfunction _toConsumableArray(r) {\n  return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();\n}\nfunction _nonIterableSpread() {\n  throw new TypeError(\"Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\");\n}\nfunction _unsupportedIterableToArray(r, a) {\n  if (r) {\n    if (\"string\" == typeof r) return _arrayLikeToArray(r, a);\n    var t = {}.toString.call(r).slice(8, -1);\n    return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;\n  }\n}\nfunction _iterableToArray(r) {\n  if (\"undefined\" != typeof (typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }) && null != r[(typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }).iterator] || null != r[\"@@iterator\"]) return Array.from(r);\n}\nfunction _arrayWithoutHoles(r) {\n  if (Array.isArray(r)) return _arrayLikeToArray(r);\n}\nfunction _arrayLikeToArray(r, a) {\n  (null == a || a > r.length) && (a = r.length);\n  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];\n  return n;\n}\nfunction _classCallCheck(a, n) {\n  if (!(a instanceof n)) throw new TypeError(\"Cannot call a class as a function\");\n}\nfunction _defineProperties(e, r) {\n  for (var t = 0; t < r.length; t++) {\n    var o = r[t];\n    o.enumerable = o.enumerable || !1, o.configurable = !0, \"value\" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o);\n  }\n}\nfunction _createClass(e, r, t) {\n  return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, \"prototype\", {\n    writable: !1\n  }), e;\n}\nfunction _toPropertyKey(t) {\n  var i = _toPrimitive(t, \"string\");\n  return \"symbol\" == typeof i ? i : i + \"\";\n}\nfunction _toPrimitive(t, r) {\n  if (\"object\" != typeof t || !t) return t;\n  var e = t[(typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }).toPrimitive];\n  if (void 0 !== e) {\n    var i = e.call(t, r || \"default\");\n    if (\"object\" != typeof i) return i;\n    throw new TypeError(\"@@toPrimitive must return a primitive value.\");\n  }\n  return (\"string\" === r ? String : Number)(t);\n}\nvar LogType = Object.freeze({\n  error: (/** @type {\"error\"} */\"error\"),\n  // message, c style arguments\n  warn: (/** @type {\"warn\"} */\"warn\"),\n  // message, c style arguments\n  info: (/** @type {\"info\"} */\"info\"),\n  // message, c style arguments\n  log: (/** @type {\"log\"} */\"log\"),\n  // message, c style arguments\n  debug: (/** @type {\"debug\"} */\"debug\"),\n  // message, c style arguments\n\n  trace: (/** @type {\"trace\"} */\"trace\"),\n  // no arguments\n\n  group: (/** @type {\"group\"} */\"group\"),\n  // [label]\n  groupCollapsed: (/** @type {\"groupCollapsed\"} */\"groupCollapsed\"),\n  // [label]\n  groupEnd: (/** @type {\"groupEnd\"} */\"groupEnd\"),\n  // [label]\n\n  profile: (/** @type {\"profile\"} */\"profile\"),\n  // [profileName]\n  profileEnd: (/** @type {\"profileEnd\"} */\"profileEnd\"),\n  // [profileName]\n\n  time: (/** @type {\"time\"} */\"time\"),\n  // name, time as [seconds, nanoseconds]\n\n  clear: (/** @type {\"clear\"} */\"clear\"),\n  // no arguments\n  status: (/** @type {\"status\"} */\"status\") // message, arguments\n});\nmodule.exports.LogType = LogType;\n\n/** @typedef {typeof LogType[keyof typeof LogType]} LogTypeEnum */\n\nvar LOG_SYMBOL = (typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; })(\"webpack logger raw log method\");\nvar TIMERS_SYMBOL = (typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; })(\"webpack logger times\");\nvar TIMERS_AGGREGATES_SYMBOL = (typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; })(\"webpack logger aggregated times\");\nvar WebpackLogger = /*#__PURE__*/function () {\n  /**\n   * @param {function(LogTypeEnum, EXPECTED_ANY[]=): void} log log function\n   * @param {function(string | function(): string): WebpackLogger} getChildLogger function to create child logger\n   */\n  function WebpackLogger(log, getChildLogger) {\n    _classCallCheck(this, WebpackLogger);\n    this[LOG_SYMBOL] = log;\n    this.getChildLogger = getChildLogger;\n  }\n\n  /**\n   * @param {...EXPECTED_ANY} args args\n   */\n  return _createClass(WebpackLogger, [{\n    key: \"error\",\n    value: function error() {\n      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {\n        args[_key] = arguments[_key];\n      }\n      this[LOG_SYMBOL](LogType.error, args);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"warn\",\n    value: function warn() {\n      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {\n        args[_key2] = arguments[_key2];\n      }\n      this[LOG_SYMBOL](LogType.warn, args);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"info\",\n    value: function info() {\n      for (var _len3 = arguments.length, args = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {\n        args[_key3] = arguments[_key3];\n      }\n      this[LOG_SYMBOL](LogType.info, args);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"log\",\n    value: function log() {\n      for (var _len4 = arguments.length, args = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {\n        args[_key4] = arguments[_key4];\n      }\n      this[LOG_SYMBOL](LogType.log, args);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"debug\",\n    value: function debug() {\n      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {\n        args[_key5] = arguments[_key5];\n      }\n      this[LOG_SYMBOL](LogType.debug, args);\n    }\n\n    /**\n     * @param {EXPECTED_ANY} assertion assertion\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"assert\",\n    value: function assert(assertion) {\n      if (!assertion) {\n        for (var _len6 = arguments.length, args = new Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {\n          args[_key6 - 1] = arguments[_key6];\n        }\n        this[LOG_SYMBOL](LogType.error, args);\n      }\n    }\n  }, {\n    key: \"trace\",\n    value: function trace() {\n      this[LOG_SYMBOL](LogType.trace, [\"Trace\"]);\n    }\n  }, {\n    key: \"clear\",\n    value: function clear() {\n      this[LOG_SYMBOL](LogType.clear);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"status\",\n    value: function status() {\n      for (var _len7 = arguments.length, args = new Array(_len7), _key7 = 0; _key7 < _len7; _key7++) {\n        args[_key7] = arguments[_key7];\n      }\n      this[LOG_SYMBOL](LogType.status, args);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"group\",\n    value: function group() {\n      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {\n        args[_key8] = arguments[_key8];\n      }\n      this[LOG_SYMBOL](LogType.group, args);\n    }\n\n    /**\n     * @param {...EXPECTED_ANY} args args\n     */\n  }, {\n    key: \"groupCollapsed\",\n    value: function groupCollapsed() {\n      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {\n        args[_key9] = arguments[_key9];\n      }\n      this[LOG_SYMBOL](LogType.groupCollapsed, args);\n    }\n  }, {\n    key: \"groupEnd\",\n    value: function groupEnd() {\n      this[LOG_SYMBOL](LogType.groupEnd);\n    }\n\n    /**\n     * @param {string=} label label\n     */\n  }, {\n    key: \"profile\",\n    value: function profile(label) {\n      this[LOG_SYMBOL](LogType.profile, [label]);\n    }\n\n    /**\n     * @param {string=} label label\n     */\n  }, {\n    key: \"profileEnd\",\n    value: function profileEnd(label) {\n      this[LOG_SYMBOL](LogType.profileEnd, [label]);\n    }\n\n    /**\n     * @param {string} label label\n     */\n  }, {\n    key: \"time\",\n    value: function time(label) {\n      /** @type {Map<string | undefined, [number, number]>} */\n      this[TIMERS_SYMBOL] = this[TIMERS_SYMBOL] || new Map();\n      this[TIMERS_SYMBOL].set(label, process.hrtime());\n    }\n\n    /**\n     * @param {string=} label label\n     */\n  }, {\n    key: \"timeLog\",\n    value: function timeLog(label) {\n      var prev = this[TIMERS_SYMBOL] && this[TIMERS_SYMBOL].get(label);\n      if (!prev) {\n        throw new Error(\"No such label '\".concat(label, \"' for WebpackLogger.timeLog()\"));\n      }\n      var time = process.hrtime(prev);\n      this[LOG_SYMBOL](LogType.time, [label].concat(_toConsumableArray(time)));\n    }\n\n    /**\n     * @param {string=} label label\n     */\n  }, {\n    key: \"timeEnd\",\n    value: function timeEnd(label) {\n      var prev = this[TIMERS_SYMBOL] && this[TIMERS_SYMBOL].get(label);\n      if (!prev) {\n        throw new Error(\"No such label '\".concat(label, \"' for WebpackLogger.timeEnd()\"));\n      }\n      var time = process.hrtime(prev);\n      /** @type {Map<string | undefined, [number, number]>} */\n      this[TIMERS_SYMBOL].delete(label);\n      this[LOG_SYMBOL](LogType.time, [label].concat(_toConsumableArray(time)));\n    }\n\n    /**\n     * @param {string=} label label\n     */\n  }, {\n    key: \"timeAggregate\",\n    value: function timeAggregate(label) {\n      var prev = this[TIMERS_SYMBOL] && this[TIMERS_SYMBOL].get(label);\n      if (!prev) {\n        throw new Error(\"No such label '\".concat(label, \"' for WebpackLogger.timeAggregate()\"));\n      }\n      var time = process.hrtime(prev);\n      /** @type {Map<string | undefined, [number, number]>} */\n      this[TIMERS_SYMBOL].delete(label);\n      /** @type {Map<string | undefined, [number, number]>} */\n      this[TIMERS_AGGREGATES_SYMBOL] = this[TIMERS_AGGREGATES_SYMBOL] || new Map();\n      var current = this[TIMERS_AGGREGATES_SYMBOL].get(label);\n      if (current !== undefined) {\n        if (time[1] + current[1] > 1e9) {\n          time[0] += current[0] + 1;\n          time[1] = time[1] - 1e9 + current[1];\n        } else {\n          time[0] += current[0];\n          time[1] += current[1];\n        }\n      }\n      this[TIMERS_AGGREGATES_SYMBOL].set(label, time);\n    }\n\n    /**\n     * @param {string=} label label\n     */\n  }, {\n    key: \"timeAggregateEnd\",\n    value: function timeAggregateEnd(label) {\n      if (this[TIMERS_AGGREGATES_SYMBOL] === undefined) return;\n      var time = this[TIMERS_AGGREGATES_SYMBOL].get(label);\n      if (time === undefined) return;\n      this[TIMERS_AGGREGATES_SYMBOL].delete(label);\n      this[LOG_SYMBOL](LogType.time, [label].concat(_toConsumableArray(time)));\n    }\n  }]);\n}();\nmodule.exports.Logger = WebpackLogger;\n\n/***/ }),\n\n/***/ \"./node_modules/webpack/lib/logging/createConsoleLogger.js\":\n/*!*****************************************************************!*\\\n  !*** ./node_modules/webpack/lib/logging/createConsoleLogger.js ***!\n  \\*****************************************************************/\n/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_12144__) {\n\n/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n\n\n\nfunction _slicedToArray(r, e) {\n  return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest();\n}\nfunction _nonIterableRest() {\n  throw new TypeError(\"Invalid attempt to destructure non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\");\n}\nfunction _iterableToArrayLimit(r, l) {\n  var t = null == r ? null : \"undefined\" != typeof (typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }) && r[(typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }).iterator] || r[\"@@iterator\"];\n  if (null != t) {\n    var e,\n      n,\n      i,\n      u,\n      a = [],\n      f = !0,\n      o = !1;\n    try {\n      if (i = (t = t.call(r)).next, 0 === l) {\n        if (Object(t) !== t) return;\n        f = !1;\n      } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0);\n    } catch (r) {\n      o = !0, n = r;\n    } finally {\n      try {\n        if (!f && null != t.return && (u = t.return(), Object(u) !== u)) return;\n      } finally {\n        if (o) throw n;\n      }\n    }\n    return a;\n  }\n}\nfunction _arrayWithHoles(r) {\n  if (Array.isArray(r)) return r;\n}\nfunction _toConsumableArray(r) {\n  return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread();\n}\nfunction _nonIterableSpread() {\n  throw new TypeError(\"Invalid attempt to spread non-iterable instance.\\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.\");\n}\nfunction _unsupportedIterableToArray(r, a) {\n  if (r) {\n    if (\"string\" == typeof r) return _arrayLikeToArray(r, a);\n    var t = {}.toString.call(r).slice(8, -1);\n    return \"Object\" === t && r.constructor && (t = r.constructor.name), \"Map\" === t || \"Set\" === t ? Array.from(r) : \"Arguments\" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0;\n  }\n}\nfunction _iterableToArray(r) {\n  if (\"undefined\" != typeof (typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }) && null != r[(typeof Symbol !== \"undefined\" ? Symbol : function (i) { return i; }).iterator] || null != r[\"@@iterator\"]) return Array.from(r);\n}\nfunction _arrayWithoutHoles(r) {\n  if (Array.isArray(r)) return _arrayLikeToArray(r);\n}\nfunction _arrayLikeToArray(r, a) {\n  (null == a || a > r.length) && (a = r.length);\n  for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e];\n  return n;\n}\nvar _require = __nested_webpack_require_12144__(/*! ./Logger */ \"./node_modules/webpack/lib/logging/Logger.js\"),\n  LogType = _require.LogType;\n\n/** @typedef {import(\"../../declarations/WebpackOptions\").FilterItemTypes} FilterItemTypes */\n/** @typedef {import(\"../../declarations/WebpackOptions\").FilterTypes} FilterTypes */\n/** @typedef {import(\"./Logger\").LogTypeEnum} LogTypeEnum */\n\n/** @typedef {function(string): boolean} FilterFunction */\n/** @typedef {function(string, LogTypeEnum, EXPECTED_ANY[]=): void} LoggingFunction */\n\n/**\n * @typedef {object} LoggerConsole\n * @property {function(): void} clear\n * @property {function(): void} trace\n * @property {(...args: EXPECTED_ANY[]) => void} info\n * @property {(...args: EXPECTED_ANY[]) => void} log\n * @property {(...args: EXPECTED_ANY[]) => void} warn\n * @property {(...args: EXPECTED_ANY[]) => void} error\n * @property {(...args: EXPECTED_ANY[]) => void=} debug\n * @property {(...args: EXPECTED_ANY[]) => void=} group\n * @property {(...args: EXPECTED_ANY[]) => void=} groupCollapsed\n * @property {(...args: EXPECTED_ANY[]) => void=} groupEnd\n * @property {(...args: EXPECTED_ANY[]) => void=} status\n * @property {(...args: EXPECTED_ANY[]) => void=} profile\n * @property {(...args: EXPECTED_ANY[]) => void=} profileEnd\n * @property {(...args: EXPECTED_ANY[]) => void=} logTime\n */\n\n/**\n * @typedef {object} LoggerOptions\n * @property {false|true|\"none\"|\"error\"|\"warn\"|\"info\"|\"log\"|\"verbose\"} level loglevel\n * @property {FilterTypes|boolean} debug filter for debug logging\n * @property {LoggerConsole} console the console to log to\n */\n\n/**\n * @param {FilterItemTypes} item an input item\n * @returns {FilterFunction | undefined} filter function\n */\nvar filterToFunction = function filterToFunction(item) {\n  if (typeof item === \"string\") {\n    var regExp = new RegExp(\"[\\\\\\\\/]\".concat(item.replace(/[-[\\]{}()*+?.\\\\^$|]/g, \"\\\\$&\"), \"([\\\\\\\\/]|$|!|\\\\?)\"));\n    return function (ident) {\n      return regExp.test(ident);\n    };\n  }\n  if (item && typeof item === \"object\" && typeof item.test === \"function\") {\n    return function (ident) {\n      return item.test(ident);\n    };\n  }\n  if (typeof item === \"function\") {\n    return item;\n  }\n  if (typeof item === \"boolean\") {\n    return function () {\n      return item;\n    };\n  }\n};\n\n/**\n * @enum {number}\n */\nvar LogLevel = {\n  none: 6,\n  false: 6,\n  error: 5,\n  warn: 4,\n  info: 3,\n  log: 2,\n  true: 2,\n  verbose: 1\n};\n\n/**\n * @param {LoggerOptions} options options object\n * @returns {LoggingFunction} logging function\n */\nmodule.exports = function (_ref) {\n  var _ref$level = _ref.level,\n    level = _ref$level === void 0 ? \"info\" : _ref$level,\n    _ref$debug = _ref.debug,\n    debug = _ref$debug === void 0 ? false : _ref$debug,\n    console = _ref.console;\n  var debugFilters = /** @type {FilterFunction[]} */\n\n  typeof debug === \"boolean\" ? [function () {\n    return debug;\n  }] : /** @type {FilterItemTypes[]} */[].concat(debug).map(filterToFunction);\n  /** @type {number} */\n  var loglevel = LogLevel[\"\".concat(level)] || 0;\n\n  /**\n   * @param {string} name name of the logger\n   * @param {LogTypeEnum} type type of the log entry\n   * @param {EXPECTED_ANY[]=} args arguments of the log entry\n   * @returns {void}\n   */\n  var logger = function logger(name, type, args) {\n    var labeledArgs = function labeledArgs() {\n      if (Array.isArray(args)) {\n        if (args.length > 0 && typeof args[0] === \"string\") {\n          return [\"[\".concat(name, \"] \").concat(args[0])].concat(_toConsumableArray(args.slice(1)));\n        }\n        return [\"[\".concat(name, \"]\")].concat(_toConsumableArray(args));\n      }\n      return [];\n    };\n    var debug = debugFilters.some(function (f) {\n      return f(name);\n    });\n    switch (type) {\n      case LogType.debug:\n        if (!debug) return;\n        if (typeof console.debug === \"function\") {\n          console.debug.apply(console, _toConsumableArray(labeledArgs()));\n        } else {\n          console.log.apply(console, _toConsumableArray(labeledArgs()));\n        }\n        break;\n      case LogType.log:\n        if (!debug && loglevel > LogLevel.log) return;\n        console.log.apply(console, _toConsumableArray(labeledArgs()));\n        break;\n      case LogType.info:\n        if (!debug && loglevel > LogLevel.info) return;\n        console.info.apply(console, _toConsumableArray(labeledArgs()));\n        break;\n      case LogType.warn:\n        if (!debug && loglevel > LogLevel.warn) return;\n        console.warn.apply(console, _toConsumableArray(labeledArgs()));\n        break;\n      case LogType.error:\n        if (!debug && loglevel > LogLevel.error) return;\n        console.error.apply(console, _toConsumableArray(labeledArgs()));\n        break;\n      case LogType.trace:\n        if (!debug) return;\n        console.trace();\n        break;\n      case LogType.groupCollapsed:\n        if (!debug && loglevel > LogLevel.log) return;\n        if (!debug && loglevel > LogLevel.verbose) {\n          if (typeof console.groupCollapsed === \"function\") {\n            console.groupCollapsed.apply(console, _toConsumableArray(labeledArgs()));\n          } else {\n            console.log.apply(console, _toConsumableArray(labeledArgs()));\n          }\n          break;\n        }\n      // falls through\n      case LogType.group:\n        if (!debug && loglevel > LogLevel.log) return;\n        if (typeof console.group === \"function\") {\n          console.group.apply(console, _toConsumableArray(labeledArgs()));\n        } else {\n          console.log.apply(console, _toConsumableArray(labeledArgs()));\n        }\n        break;\n      case LogType.groupEnd:\n        if (!debug && loglevel > LogLevel.log) return;\n        if (typeof console.groupEnd === \"function\") {\n          console.groupEnd();\n        }\n        break;\n      case LogType.time:\n        {\n          if (!debug && loglevel > LogLevel.log) return;\n          var _args = _slicedToArray(/** @type {[string, number, number]} */\n            args, 3),\n            label = _args[0],\n            start = _args[1],\n            end = _args[2];\n          var ms = start * 1000 + end / 1000000;\n          var msg = \"[\".concat(name, \"] \").concat(label, \": \").concat(ms, \" ms\");\n          if (typeof console.logTime === \"function\") {\n            console.logTime(msg);\n          } else {\n            console.log(msg);\n          }\n          break;\n        }\n      case LogType.profile:\n        if (typeof console.profile === \"function\") {\n          console.profile.apply(console, _toConsumableArray(labeledArgs()));\n        }\n        break;\n      case LogType.profileEnd:\n        if (typeof console.profileEnd === \"function\") {\n          console.profileEnd.apply(console, _toConsumableArray(labeledArgs()));\n        }\n        break;\n      case LogType.clear:\n        if (!debug && loglevel > LogLevel.log) return;\n        if (typeof console.clear === \"function\") {\n          console.clear();\n        }\n        break;\n      case LogType.status:\n        if (!debug && loglevel > LogLevel.info) return;\n        if (typeof console.status === \"function\") {\n          if (!args || args.length === 0) {\n            console.status();\n          } else {\n            console.status.apply(console, _toConsumableArray(labeledArgs()));\n          }\n        } else if (args && args.length !== 0) {\n          console.info.apply(console, _toConsumableArray(labeledArgs()));\n        }\n        break;\n      default:\n        throw new Error(\"Unexpected LogType \".concat(type));\n    }\n  };\n  return logger;\n};\n\n/***/ }),\n\n/***/ \"./node_modules/webpack/lib/logging/runtime.js\":\n/*!*****************************************************!*\\\n  !*** ./node_modules/webpack/lib/logging/runtime.js ***!\n  \\*****************************************************/\n/***/ (function(module, __unused_webpack_exports, __nested_webpack_require_22489__) {\n\n/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n\n\n\nfunction _extends() {\n  return _extends = Object.assign ? Object.assign.bind() : function (n) {\n    for (var e = 1; e < arguments.length; e++) {\n      var t = arguments[e];\n      for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]);\n    }\n    return n;\n  }, _extends.apply(null, arguments);\n}\nvar _require = __nested_webpack_require_22489__(/*! tapable */ \"./client-src/modules/logger/tapable.js\"),\n  SyncBailHook = _require.SyncBailHook;\nvar _require2 = __nested_webpack_require_22489__(/*! ./Logger */ \"./node_modules/webpack/lib/logging/Logger.js\"),\n  Logger = _require2.Logger;\nvar createConsoleLogger = __nested_webpack_require_22489__(/*! ./createConsoleLogger */ \"./node_modules/webpack/lib/logging/createConsoleLogger.js\");\n\n/** @type {createConsoleLogger.LoggerOptions} */\nvar currentDefaultLoggerOptions = {\n  level: \"info\",\n  debug: false,\n  console: console\n};\nvar currentDefaultLogger = createConsoleLogger(currentDefaultLoggerOptions);\n\n/**\n * @param {string} name name of the logger\n * @returns {Logger} a logger\n */\nmodule.exports.getLogger = function (name) {\n  return new Logger(function (type, args) {\n    if (module.exports.hooks.log.call(name, type, args) === undefined) {\n      currentDefaultLogger(name, type, args);\n    }\n  }, function (childName) {\n    return module.exports.getLogger(\"\".concat(name, \"/\").concat(childName));\n  });\n};\n\n/**\n * @param {createConsoleLogger.LoggerOptions} options new options, merge with old options\n * @returns {void}\n */\nmodule.exports.configureDefaultLogger = function (options) {\n  _extends(currentDefaultLoggerOptions, options);\n  currentDefaultLogger = createConsoleLogger(currentDefaultLoggerOptions);\n};\nmodule.exports.hooks = {\n  log: new SyncBailHook([\"origin\", \"type\", \"args\"])\n};\n\n/***/ })\n\n/******/ \t});\n/************************************************************************/\n/******/ \t// The module cache\n/******/ \tvar __webpack_module_cache__ = {};\n/******/ \t\n/******/ \t// The require function\n/******/ \tfunction __nested_webpack_require_24566__(moduleId) {\n/******/ \t\t// Check if module is in cache\n/******/ \t\tvar cachedModule = __webpack_module_cache__[moduleId];\n/******/ \t\tif (cachedModule !== undefined) {\n/******/ \t\t\treturn cachedModule.exports;\n/******/ \t\t}\n/******/ \t\t// Create a new module (and put it into the cache)\n/******/ \t\tvar module = __webpack_module_cache__[moduleId] = {\n/******/ \t\t\t// no module.id needed\n/******/ \t\t\t// no module.loaded needed\n/******/ \t\t\texports: {}\n/******/ \t\t};\n/******/ \t\n/******/ \t\t// Execute the module function\n/******/ \t\t__webpack_modules__[moduleId](module, module.exports, __nested_webpack_require_24566__);\n/******/ \t\n/******/ \t\t// Return the exports of the module\n/******/ \t\treturn module.exports;\n/******/ \t}\n/******/ \t\n/************************************************************************/\n/******/ \t/* webpack/runtime/define property getters */\n/******/ \t!function() {\n/******/ \t\t// define getter functions for harmony exports\n/******/ \t\t__nested_webpack_require_24566__.d = function(exports, definition) {\n/******/ \t\t\tfor(var key in definition) {\n/******/ \t\t\t\tif(__nested_webpack_require_24566__.o(definition, key) && !__nested_webpack_require_24566__.o(exports, key)) {\n/******/ \t\t\t\t\tObject.defineProperty(exports, key, { enumerable: true, get: definition[key] });\n/******/ \t\t\t\t}\n/******/ \t\t\t}\n/******/ \t\t};\n/******/ \t}();\n/******/ \t\n/******/ \t/* webpack/runtime/hasOwnProperty shorthand */\n/******/ \t!function() {\n/******/ \t\t__nested_webpack_require_24566__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }\n/******/ \t}();\n/******/ \t\n/******/ \t/* webpack/runtime/make namespace object */\n/******/ \t!function() {\n/******/ \t\t// define __esModule on exports\n/******/ \t\t__nested_webpack_require_24566__.r = function(exports) {\n/******/ \t\t\tif(typeof Symbol !== 'undefined' && Symbol.toStringTag) {\n/******/ \t\t\t\tObject.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });\n/******/ \t\t\t}\n/******/ \t\t\tObject.defineProperty(exports, '__esModule', { value: true });\n/******/ \t\t};\n/******/ \t}();\n/******/ \t\n/************************************************************************/\nvar __nested_webpack_exports__ = {};\n// This entry needs to be wrapped in an IIFE because it needs to be isolated against other modules in the chunk.\n!function() {\n/*!********************************************!*\\\n  !*** ./client-src/modules/logger/index.js ***!\n  \\********************************************/\n__nested_webpack_require_24566__.r(__nested_webpack_exports__);\n/* harmony export */ __nested_webpack_require_24566__.d(__nested_webpack_exports__, {\n/* harmony export */   \"default\": function() { return /* reexport default export from named module */ webpack_lib_logging_runtime_js__WEBPACK_IMPORTED_MODULE_0__; }\n/* harmony export */ });\n/* harmony import */ var webpack_lib_logging_runtime_js__WEBPACK_IMPORTED_MODULE_0__ = __nested_webpack_require_24566__(/*! webpack/lib/logging/runtime.js */ \"./node_modules/webpack/lib/logging/runtime.js\");\n\n}();\nvar __webpack_export_target__ = exports;\nfor(var __webpack_i__ in __nested_webpack_exports__) __webpack_export_target__[__webpack_i__] = __nested_webpack_exports__[__webpack_i__];\nif(__nested_webpack_exports__.__esModule) Object.defineProperty(__webpack_export_target__, \"__esModule\", { value: true });\n/******/ })()\n;\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/modules/logger/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/overlay.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/overlay.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   createOverlay: () => (/* binding */ createOverlay),\n/* harmony export */   formatProblem: () => (/* binding */ formatProblem)\n/* harmony export */ });\n/* harmony import */ var ansi_html_community__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ansi-html-community */ \"./node_modules/ansi-html-community/index.js\");\n/* harmony import */ var ansi_html_community__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(ansi_html_community__WEBPACK_IMPORTED_MODULE_0__);\nfunction ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }\nfunction _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }\nfunction _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == typeof i ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != typeof i) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\n// The error overlay is inspired (and mostly copied) from Create React App (https://github.com/facebookincubator/create-react-app)\n// They, in turn, got inspired by webpack-hot-middleware (https://github.com/glenjamin/webpack-hot-middleware).\n\n\n\n/**\n * @type {(input: string, position: number) => string}\n */\nvar getCodePoint = String.prototype.codePointAt ? function (input, position) {\n  return input.codePointAt(position);\n} : function (input, position) {\n  return (input.charCodeAt(position) - 0xd800) * 0x400 + input.charCodeAt(position + 1) - 0xdc00 + 0x10000;\n};\n\n/**\n * @param {string} macroText\n * @param {RegExp} macroRegExp\n * @param {(input: string) => string} macroReplacer\n * @returns {string}\n */\nvar replaceUsingRegExp = function replaceUsingRegExp(macroText, macroRegExp, macroReplacer) {\n  macroRegExp.lastIndex = 0;\n  var replaceMatch = macroRegExp.exec(macroText);\n  var replaceResult;\n  if (replaceMatch) {\n    replaceResult = \"\";\n    var replaceLastIndex = 0;\n    do {\n      if (replaceLastIndex !== replaceMatch.index) {\n        replaceResult += macroText.substring(replaceLastIndex, replaceMatch.index);\n      }\n      var replaceInput = replaceMatch[0];\n      replaceResult += macroReplacer(replaceInput);\n      replaceLastIndex = replaceMatch.index + replaceInput.length;\n      // eslint-disable-next-line no-cond-assign\n    } while (replaceMatch = macroRegExp.exec(macroText));\n    if (replaceLastIndex !== macroText.length) {\n      replaceResult += macroText.substring(replaceLastIndex);\n    }\n  } else {\n    replaceResult = macroText;\n  }\n  return replaceResult;\n};\nvar references = {\n  \"<\": \"&lt;\",\n  \">\": \"&gt;\",\n  '\"': \"&quot;\",\n  \"'\": \"&apos;\",\n  \"&\": \"&amp;\"\n};\n\n/**\n * @param {string} text text\n * @returns {string}\n */\nfunction encode(text) {\n  if (!text) {\n    return \"\";\n  }\n  return replaceUsingRegExp(text, /[<>'\"&]/g, function (input) {\n    var result = references[input];\n    if (!result) {\n      var code = input.length > 1 ? getCodePoint(input, 0) : input.charCodeAt(0);\n      result = \"&#\".concat(code, \";\");\n    }\n    return result;\n  });\n}\n\n/**\n * @typedef {Object} StateDefinitions\n * @property {{[event: string]: { target: string; actions?: Array<string> }}} [on]\n */\n\n/**\n * @typedef {Object} Options\n * @property {{[state: string]: StateDefinitions}} states\n * @property {object} context;\n * @property {string} initial\n */\n\n/**\n * @typedef {Object} Implementation\n * @property {{[actionName: string]: (ctx: object, event: any) => object}} actions\n */\n\n/**\n * A simplified `createMachine` from `@xstate/fsm` with the following differences:\n *\n *  - the returned machine is technically a \"service\". No `interpret(machine).start()` is needed.\n *  - the state definition only support `on` and target must be declared with { target: 'nextState', actions: [] } explicitly.\n *  - event passed to `send` must be an object with `type` property.\n *  - actions implementation will be [assign action](https://xstate.js.org/docs/guides/context.html#assign-action) if you return any value.\n *  Do not return anything if you just want to invoke side effect.\n *\n * The goal of this custom function is to avoid installing the entire `'xstate/fsm'` package, while enabling modeling using\n * state machine. You can copy the first parameter into the editor at https://stately.ai/viz to visualize the state machine.\n *\n * @param {Options} options\n * @param {Implementation} implementation\n */\nfunction createMachine(_ref, _ref2) {\n  var states = _ref.states,\n    context = _ref.context,\n    initial = _ref.initial;\n  var actions = _ref2.actions;\n  var currentState = initial;\n  var currentContext = context;\n  return {\n    send: function send(event) {\n      var currentStateOn = states[currentState].on;\n      var transitionConfig = currentStateOn && currentStateOn[event.type];\n      if (transitionConfig) {\n        currentState = transitionConfig.target;\n        if (transitionConfig.actions) {\n          transitionConfig.actions.forEach(function (actName) {\n            var actionImpl = actions[actName];\n            var nextContextValue = actionImpl && actionImpl(currentContext, event);\n            if (nextContextValue) {\n              currentContext = _objectSpread(_objectSpread({}, currentContext), nextContextValue);\n            }\n          });\n        }\n      }\n    }\n  };\n}\n\n/**\n * @typedef {Object} ShowOverlayData\n * @property {'warning' | 'error'} level\n * @property {Array<string  | { moduleIdentifier?: string, moduleName?: string, loc?: string, message?: string }>} messages\n * @property {'build' | 'runtime'} messageSource\n */\n\n/**\n * @typedef {Object} CreateOverlayMachineOptions\n * @property {(data: ShowOverlayData) => void} showOverlay\n * @property {() => void} hideOverlay\n */\n\n/**\n * @param {CreateOverlayMachineOptions} options\n */\nvar createOverlayMachine = function createOverlayMachine(options) {\n  var hideOverlay = options.hideOverlay,\n    showOverlay = options.showOverlay;\n  return createMachine({\n    initial: \"hidden\",\n    context: {\n      level: \"error\",\n      messages: [],\n      messageSource: \"build\"\n    },\n    states: {\n      hidden: {\n        on: {\n          BUILD_ERROR: {\n            target: \"displayBuildError\",\n            actions: [\"setMessages\", \"showOverlay\"]\n          },\n          RUNTIME_ERROR: {\n            target: \"displayRuntimeError\",\n            actions: [\"setMessages\", \"showOverlay\"]\n          }\n        }\n      },\n      displayBuildError: {\n        on: {\n          DISMISS: {\n            target: \"hidden\",\n            actions: [\"dismissMessages\", \"hideOverlay\"]\n          },\n          BUILD_ERROR: {\n            target: \"displayBuildError\",\n            actions: [\"appendMessages\", \"showOverlay\"]\n          }\n        }\n      },\n      displayRuntimeError: {\n        on: {\n          DISMISS: {\n            target: \"hidden\",\n            actions: [\"dismissMessages\", \"hideOverlay\"]\n          },\n          RUNTIME_ERROR: {\n            target: \"displayRuntimeError\",\n            actions: [\"appendMessages\", \"showOverlay\"]\n          },\n          BUILD_ERROR: {\n            target: \"displayBuildError\",\n            actions: [\"setMessages\", \"showOverlay\"]\n          }\n        }\n      }\n    }\n  }, {\n    actions: {\n      dismissMessages: function dismissMessages() {\n        return {\n          messages: [],\n          level: \"error\",\n          messageSource: \"build\"\n        };\n      },\n      appendMessages: function appendMessages(context, event) {\n        return {\n          messages: context.messages.concat(event.messages),\n          level: event.level || context.level,\n          messageSource: event.type === \"RUNTIME_ERROR\" ? \"runtime\" : \"build\"\n        };\n      },\n      setMessages: function setMessages(context, event) {\n        return {\n          messages: event.messages,\n          level: event.level || context.level,\n          messageSource: event.type === \"RUNTIME_ERROR\" ? \"runtime\" : \"build\"\n        };\n      },\n      hideOverlay: hideOverlay,\n      showOverlay: showOverlay\n    }\n  });\n};\n\n/**\n *\n * @param {Error} error\n */\nvar parseErrorToStacks = function parseErrorToStacks(error) {\n  if (!error || !(error instanceof Error)) {\n    throw new Error(\"parseErrorToStacks expects Error object\");\n  }\n  if (typeof error.stack === \"string\") {\n    return error.stack.split(\"\\n\").filter(function (stack) {\n      return stack !== \"Error: \".concat(error.message);\n    });\n  }\n};\n\n/**\n * @callback ErrorCallback\n * @param {ErrorEvent} error\n * @returns {void}\n */\n\n/**\n * @param {ErrorCallback} callback\n */\nvar listenToRuntimeError = function listenToRuntimeError(callback) {\n  window.addEventListener(\"error\", callback);\n  return function cleanup() {\n    window.removeEventListener(\"error\", callback);\n  };\n};\n\n/**\n * @callback UnhandledRejectionCallback\n * @param {PromiseRejectionEvent} rejectionEvent\n * @returns {void}\n */\n\n/**\n * @param {UnhandledRejectionCallback} callback\n */\nvar listenToUnhandledRejection = function listenToUnhandledRejection(callback) {\n  window.addEventListener(\"unhandledrejection\", callback);\n  return function cleanup() {\n    window.removeEventListener(\"unhandledrejection\", callback);\n  };\n};\n\n// Styles are inspired by `react-error-overlay`\n\nvar msgStyles = {\n  error: {\n    backgroundColor: \"rgba(206, 17, 38, 0.1)\",\n    color: \"#fccfcf\"\n  },\n  warning: {\n    backgroundColor: \"rgba(251, 245, 180, 0.1)\",\n    color: \"#fbf5b4\"\n  }\n};\nvar iframeStyle = {\n  position: \"fixed\",\n  top: 0,\n  left: 0,\n  right: 0,\n  bottom: 0,\n  width: \"100vw\",\n  height: \"100vh\",\n  border: \"none\",\n  \"z-index\": 9999999999\n};\nvar containerStyle = {\n  position: \"fixed\",\n  boxSizing: \"border-box\",\n  left: 0,\n  top: 0,\n  right: 0,\n  bottom: 0,\n  width: \"100vw\",\n  height: \"100vh\",\n  fontSize: \"large\",\n  padding: \"2rem 2rem 4rem 2rem\",\n  lineHeight: \"1.2\",\n  whiteSpace: \"pre-wrap\",\n  overflow: \"auto\",\n  backgroundColor: \"rgba(0, 0, 0, 0.9)\",\n  color: \"white\"\n};\nvar headerStyle = {\n  color: \"#e83b46\",\n  fontSize: \"2em\",\n  whiteSpace: \"pre-wrap\",\n  fontFamily: \"sans-serif\",\n  margin: \"0 2rem 2rem 0\",\n  flex: \"0 0 auto\",\n  maxHeight: \"50%\",\n  overflow: \"auto\"\n};\nvar dismissButtonStyle = {\n  color: \"#ffffff\",\n  lineHeight: \"1rem\",\n  fontSize: \"1.5rem\",\n  padding: \"1rem\",\n  cursor: \"pointer\",\n  position: \"absolute\",\n  right: 0,\n  top: 0,\n  backgroundColor: \"transparent\",\n  border: \"none\"\n};\nvar msgTypeStyle = {\n  color: \"#e83b46\",\n  fontSize: \"1.2em\",\n  marginBottom: \"1rem\",\n  fontFamily: \"sans-serif\"\n};\nvar msgTextStyle = {\n  lineHeight: \"1.5\",\n  fontSize: \"1rem\",\n  fontFamily: \"Menlo, Consolas, monospace\"\n};\n\n// ANSI HTML\n\nvar colors = {\n  reset: [\"transparent\", \"transparent\"],\n  black: \"181818\",\n  red: \"E36049\",\n  green: \"B3CB74\",\n  yellow: \"FFD080\",\n  blue: \"7CAFC2\",\n  magenta: \"7FACCA\",\n  cyan: \"C3C2EF\",\n  lightgrey: \"EBE7E3\",\n  darkgrey: \"6D7891\"\n};\nansi_html_community__WEBPACK_IMPORTED_MODULE_0___default().setColors(colors);\n\n/**\n * @param {string} type\n * @param {string  | { file?: string, moduleName?: string, loc?: string, message?: string; stack?: string[] }} item\n * @returns {{ header: string, body: string }}\n */\nvar formatProblem = function formatProblem(type, item) {\n  var header = type === \"warning\" ? \"WARNING\" : \"ERROR\";\n  var body = \"\";\n  if (typeof item === \"string\") {\n    body += item;\n  } else {\n    var file = item.file || \"\";\n    // eslint-disable-next-line no-nested-ternary\n    var moduleName = item.moduleName ? item.moduleName.indexOf(\"!\") !== -1 ? \"\".concat(item.moduleName.replace(/^(\\s|\\S)*!/, \"\"), \" (\").concat(item.moduleName, \")\") : \"\".concat(item.moduleName) : \"\";\n    var loc = item.loc;\n    header += \"\".concat(moduleName || file ? \" in \".concat(moduleName ? \"\".concat(moduleName).concat(file ? \" (\".concat(file, \")\") : \"\") : file).concat(loc ? \" \".concat(loc) : \"\") : \"\");\n    body += item.message || \"\";\n  }\n  if (Array.isArray(item.stack)) {\n    item.stack.forEach(function (stack) {\n      if (typeof stack === \"string\") {\n        body += \"\\r\\n\".concat(stack);\n      }\n    });\n  }\n  return {\n    header: header,\n    body: body\n  };\n};\n\n/**\n * @typedef {Object} CreateOverlayOptions\n * @property {string | null} trustedTypesPolicyName\n * @property {boolean | (error: Error) => void} [catchRuntimeError]\n */\n\n/**\n *\n * @param {CreateOverlayOptions} options\n */\nvar createOverlay = function createOverlay(options) {\n  /** @type {HTMLIFrameElement | null | undefined} */\n  var iframeContainerElement;\n  /** @type {HTMLDivElement | null | undefined} */\n  var containerElement;\n  /** @type {HTMLDivElement | null | undefined} */\n  var headerElement;\n  /** @type {Array<(element: HTMLDivElement) => void>} */\n  var onLoadQueue = [];\n  /** @type {TrustedTypePolicy | undefined} */\n  var overlayTrustedTypesPolicy;\n\n  /**\n   *\n   * @param {HTMLElement} element\n   * @param {CSSStyleDeclaration} style\n   */\n  function applyStyle(element, style) {\n    Object.keys(style).forEach(function (prop) {\n      element.style[prop] = style[prop];\n    });\n  }\n\n  /**\n   * @param {string | null} trustedTypesPolicyName\n   */\n  function createContainer(trustedTypesPolicyName) {\n    // Enable Trusted Types if they are available in the current browser.\n    if (window.trustedTypes) {\n      overlayTrustedTypesPolicy = window.trustedTypes.createPolicy(trustedTypesPolicyName || \"webpack-dev-server#overlay\", {\n        createHTML: function createHTML(value) {\n          return value;\n        }\n      });\n    }\n    iframeContainerElement = document.createElement(\"iframe\");\n    iframeContainerElement.id = \"webpack-dev-server-client-overlay\";\n    iframeContainerElement.src = \"about:blank\";\n    applyStyle(iframeContainerElement, iframeStyle);\n    iframeContainerElement.onload = function () {\n      var contentElement = /** @type {Document} */\n      (/** @type {HTMLIFrameElement} */\n      iframeContainerElement.contentDocument).createElement(\"div\");\n      containerElement = /** @type {Document} */\n      (/** @type {HTMLIFrameElement} */\n      iframeContainerElement.contentDocument).createElement(\"div\");\n      contentElement.id = \"webpack-dev-server-client-overlay-div\";\n      applyStyle(contentElement, containerStyle);\n      headerElement = document.createElement(\"div\");\n      headerElement.innerText = \"Compiled with problems:\";\n      applyStyle(headerElement, headerStyle);\n      var closeButtonElement = document.createElement(\"button\");\n      applyStyle(closeButtonElement, dismissButtonStyle);\n      closeButtonElement.innerText = \"×\";\n      closeButtonElement.ariaLabel = \"Dismiss\";\n      closeButtonElement.addEventListener(\"click\", function () {\n        // eslint-disable-next-line no-use-before-define\n        overlayService.send({\n          type: \"DISMISS\"\n        });\n      });\n      contentElement.appendChild(headerElement);\n      contentElement.appendChild(closeButtonElement);\n      contentElement.appendChild(containerElement);\n\n      /** @type {Document} */\n      (/** @type {HTMLIFrameElement} */\n      iframeContainerElement.contentDocument).body.appendChild(contentElement);\n      onLoadQueue.forEach(function (onLoad) {\n        onLoad(/** @type {HTMLDivElement} */contentElement);\n      });\n      onLoadQueue = [];\n\n      /** @type {HTMLIFrameElement} */\n      iframeContainerElement.onload = null;\n    };\n    document.body.appendChild(iframeContainerElement);\n  }\n\n  /**\n   * @param {(element: HTMLDivElement) => void} callback\n   * @param {string | null} trustedTypesPolicyName\n   */\n  function ensureOverlayExists(callback, trustedTypesPolicyName) {\n    if (containerElement) {\n      containerElement.innerHTML = overlayTrustedTypesPolicy ? overlayTrustedTypesPolicy.createHTML(\"\") : \"\";\n      // Everything is ready, call the callback right away.\n      callback(containerElement);\n      return;\n    }\n    onLoadQueue.push(callback);\n    if (iframeContainerElement) {\n      return;\n    }\n    createContainer(trustedTypesPolicyName);\n  }\n\n  // Successful compilation.\n  function hide() {\n    if (!iframeContainerElement) {\n      return;\n    }\n\n    // Clean up and reset internal state.\n    document.body.removeChild(iframeContainerElement);\n    iframeContainerElement = null;\n    containerElement = null;\n  }\n\n  // Compilation with errors (e.g. syntax error or missing modules).\n  /**\n   * @param {string} type\n   * @param {Array<string  | { moduleIdentifier?: string, moduleName?: string, loc?: string, message?: string }>} messages\n   * @param {string | null} trustedTypesPolicyName\n   * @param {'build' | 'runtime'} messageSource\n   */\n  function show(type, messages, trustedTypesPolicyName, messageSource) {\n    ensureOverlayExists(function () {\n      headerElement.innerText = messageSource === \"runtime\" ? \"Uncaught runtime errors:\" : \"Compiled with problems:\";\n      messages.forEach(function (message) {\n        var entryElement = document.createElement(\"div\");\n        var msgStyle = type === \"warning\" ? msgStyles.warning : msgStyles.error;\n        applyStyle(entryElement, _objectSpread(_objectSpread({}, msgStyle), {}, {\n          padding: \"1rem 1rem 1.5rem 1rem\"\n        }));\n        var typeElement = document.createElement(\"div\");\n        var _formatProblem = formatProblem(type, message),\n          header = _formatProblem.header,\n          body = _formatProblem.body;\n        typeElement.innerText = header;\n        applyStyle(typeElement, msgTypeStyle);\n        if (message.moduleIdentifier) {\n          applyStyle(typeElement, {\n            cursor: \"pointer\"\n          });\n          // element.dataset not supported in IE\n          typeElement.setAttribute(\"data-can-open\", true);\n          typeElement.addEventListener(\"click\", function () {\n            fetch(\"/webpack-dev-server/open-editor?fileName=\".concat(message.moduleIdentifier));\n          });\n        }\n\n        // Make it look similar to our terminal.\n        var text = ansi_html_community__WEBPACK_IMPORTED_MODULE_0___default()(encode(body));\n        var messageTextNode = document.createElement(\"div\");\n        applyStyle(messageTextNode, msgTextStyle);\n        messageTextNode.innerHTML = overlayTrustedTypesPolicy ? overlayTrustedTypesPolicy.createHTML(text) : text;\n        entryElement.appendChild(typeElement);\n        entryElement.appendChild(messageTextNode);\n\n        /** @type {HTMLDivElement} */\n        containerElement.appendChild(entryElement);\n      });\n    }, trustedTypesPolicyName);\n  }\n  var overlayService = createOverlayMachine({\n    showOverlay: function showOverlay(_ref3) {\n      var _ref3$level = _ref3.level,\n        level = _ref3$level === void 0 ? \"error\" : _ref3$level,\n        messages = _ref3.messages,\n        messageSource = _ref3.messageSource;\n      return show(level, messages, options.trustedTypesPolicyName, messageSource);\n    },\n    hideOverlay: hide\n  });\n  if (options.catchRuntimeError) {\n    /**\n     * @param {Error | undefined} error\n     * @param {string} fallbackMessage\n     */\n    var handleError = function handleError(error, fallbackMessage) {\n      var errorObject = error instanceof Error ? error : new Error(error || fallbackMessage);\n      var shouldDisplay = typeof options.catchRuntimeError === \"function\" ? options.catchRuntimeError(errorObject) : true;\n      if (shouldDisplay) {\n        overlayService.send({\n          type: \"RUNTIME_ERROR\",\n          messages: [{\n            message: errorObject.message,\n            stack: parseErrorToStacks(errorObject)\n          }]\n        });\n      }\n    };\n    listenToRuntimeError(function (errorEvent) {\n      // error property may be empty in older browser like IE\n      var error = errorEvent.error,\n        message = errorEvent.message;\n      if (!error && !message) {\n        return;\n      }\n      handleError(error, message);\n    });\n    listenToUnhandledRejection(function (promiseRejectionEvent) {\n      var reason = promiseRejectionEvent.reason;\n      handleError(reason, \"Unknown promise rejection reason\");\n    });\n  }\n  return overlayService;\n};\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/overlay.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/progress.js":
+/*!************************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/progress.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   defineProgressElement: () => (/* binding */ defineProgressElement),\n/* harmony export */   isProgressSupported: () => (/* binding */ isProgressSupported)\n/* harmony export */ });\nfunction _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError(\"Cannot call a class as a function\"); }\nfunction _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, \"value\" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }\nfunction _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, \"prototype\", { writable: !1 }), e; }\nfunction _toPropertyKey(t) { var i = _toPrimitive(t, \"string\"); return \"symbol\" == typeof i ? i : i + \"\"; }\nfunction _toPrimitive(t, r) { if (\"object\" != typeof t || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || \"default\"); if (\"object\" != typeof i) return i; throw new TypeError(\"@@toPrimitive must return a primitive value.\"); } return (\"string\" === r ? String : Number)(t); }\nfunction _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }\nfunction _possibleConstructorReturn(t, e) { if (e && (\"object\" == typeof e || \"function\" == typeof e)) return e; if (void 0 !== e) throw new TypeError(\"Derived constructors may only return object or undefined\"); return _assertThisInitialized(t); }\nfunction _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError(\"this hasn't been initialised - super() hasn't been called\"); return e; }\nfunction _inherits(t, e) { if (\"function\" != typeof e && null !== e) throw new TypeError(\"Super expression must either be null or a function\"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, \"prototype\", { writable: !1 }), e && _setPrototypeOf(t, e); }\nfunction _wrapNativeSuper(t) { var r = \"function\" == typeof Map ? new Map() : void 0; return _wrapNativeSuper = function _wrapNativeSuper(t) { if (null === t || !_isNativeFunction(t)) return t; if (\"function\" != typeof t) throw new TypeError(\"Super expression must either be null or a function\"); if (void 0 !== r) { if (r.has(t)) return r.get(t); r.set(t, Wrapper); } function Wrapper() { return _construct(t, arguments, _getPrototypeOf(this).constructor); } return Wrapper.prototype = Object.create(t.prototype, { constructor: { value: Wrapper, enumerable: !1, writable: !0, configurable: !0 } }), _setPrototypeOf(Wrapper, t); }, _wrapNativeSuper(t); }\nfunction _construct(t, e, r) { if (_isNativeReflectConstruct()) return Reflect.construct.apply(null, arguments); var o = [null]; o.push.apply(o, e); var p = new (t.bind.apply(t, o))(); return r && _setPrototypeOf(p, r.prototype), p; }\nfunction _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }\nfunction _isNativeFunction(t) { try { return -1 !== Function.toString.call(t).indexOf(\"[native code]\"); } catch (n) { return \"function\" == typeof t; } }\nfunction _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }\nfunction _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }\nfunction _classPrivateMethodInitSpec(e, a) { _checkPrivateRedeclaration(e, a), a.add(e); }\nfunction _checkPrivateRedeclaration(e, t) { if (t.has(e)) throw new TypeError(\"Cannot initialize the same private elements twice on an object\"); }\nfunction _assertClassBrand(e, t, n) { if (\"function\" == typeof e ? e === t : e.has(t)) return arguments.length < 3 ? t : n; throw new TypeError(\"Private element is not present on this object\"); }\nfunction isProgressSupported() {\n  return \"customElements\" in self && !!HTMLElement.prototype.attachShadow;\n}\nfunction defineProgressElement() {\n  var _WebpackDevServerProgress;\n  if (customElements.get(\"wds-progress\")) {\n    return;\n  }\n  var _WebpackDevServerProgress_brand = /*#__PURE__*/new WeakSet();\n  var WebpackDevServerProgress = /*#__PURE__*/function (_HTMLElement) {\n    function WebpackDevServerProgress() {\n      var _this;\n      _classCallCheck(this, WebpackDevServerProgress);\n      _this = _callSuper(this, WebpackDevServerProgress);\n      _classPrivateMethodInitSpec(_this, _WebpackDevServerProgress_brand);\n      _this.attachShadow({\n        mode: \"open\"\n      });\n      _this.maxDashOffset = -219.99078369140625;\n      _this.animationTimer = null;\n      return _this;\n    }\n    _inherits(WebpackDevServerProgress, _HTMLElement);\n    return _createClass(WebpackDevServerProgress, [{\n      key: \"connectedCallback\",\n      value: function connectedCallback() {\n        _assertClassBrand(_WebpackDevServerProgress_brand, this, _reset).call(this);\n      }\n    }, {\n      key: \"attributeChangedCallback\",\n      value: function attributeChangedCallback(name, oldValue, newValue) {\n        if (name === \"progress\") {\n          _assertClassBrand(_WebpackDevServerProgress_brand, this, _update).call(this, Number(newValue));\n        } else if (name === \"type\") {\n          _assertClassBrand(_WebpackDevServerProgress_brand, this, _reset).call(this);\n        }\n      }\n    }], [{\n      key: \"observedAttributes\",\n      get: function get() {\n        return [\"progress\", \"type\"];\n      }\n    }]);\n  }(/*#__PURE__*/_wrapNativeSuper(HTMLElement));\n  _WebpackDevServerProgress = WebpackDevServerProgress;\n  function _reset() {\n    var _this$getAttribute, _Number;\n    clearTimeout(this.animationTimer);\n    this.animationTimer = null;\n    var typeAttr = (_this$getAttribute = this.getAttribute(\"type\")) === null || _this$getAttribute === void 0 ? void 0 : _this$getAttribute.toLowerCase();\n    this.type = typeAttr === \"circular\" ? \"circular\" : \"linear\";\n    var innerHTML = this.type === \"circular\" ? _circularTemplate.call(_WebpackDevServerProgress) : _linearTemplate.call(_WebpackDevServerProgress);\n    this.shadowRoot.innerHTML = innerHTML;\n    this.initialProgress = (_Number = Number(this.getAttribute(\"progress\"))) !== null && _Number !== void 0 ? _Number : 0;\n    _assertClassBrand(_WebpackDevServerProgress_brand, this, _update).call(this, this.initialProgress);\n  }\n  function _circularTemplate() {\n    return \"\\n        <style>\\n        :host {\\n            width: 200px;\\n            height: 200px;\\n            position: fixed;\\n            right: 5%;\\n            top: 5%;\\n            transition: opacity .25s ease-in-out;\\n            z-index: 2147483645;\\n        }\\n\\n        circle {\\n            fill: #282d35;\\n        }\\n\\n        path {\\n            fill: rgba(0, 0, 0, 0);\\n            stroke: rgb(186, 223, 172);\\n            stroke-dasharray: 219.99078369140625;\\n            stroke-dashoffset: -219.99078369140625;\\n            stroke-width: 10;\\n            transform: rotate(90deg) translate(0px, -80px);\\n        }\\n\\n        text {\\n            font-family: 'Open Sans', sans-serif;\\n            font-size: 18px;\\n            fill: #ffffff;\\n            dominant-baseline: middle;\\n            text-anchor: middle;\\n        }\\n\\n        tspan#percent-super {\\n            fill: #bdc3c7;\\n            font-size: 0.45em;\\n            baseline-shift: 10%;\\n        }\\n\\n        @keyframes fade {\\n            0% { opacity: 1; transform: scale(1); }\\n            100% { opacity: 0; transform: scale(0); }\\n        }\\n\\n        .disappear {\\n            animation: fade 0.3s;\\n            animation-fill-mode: forwards;\\n            animation-delay: 0.5s;\\n        }\\n\\n        .hidden {\\n            display: none;\\n        }\\n        </style>\\n        <svg id=\\\"progress\\\" class=\\\"hidden noselect\\\" viewBox=\\\"0 0 80 80\\\">\\n        <circle cx=\\\"50%\\\" cy=\\\"50%\\\" r=\\\"35\\\"></circle>\\n        <path d=\\\"M5,40a35,35 0 1,0 70,0a35,35 0 1,0 -70,0\\\"></path>\\n        <text x=\\\"50%\\\" y=\\\"51%\\\">\\n            <tspan id=\\\"percent-value\\\">0</tspan>\\n            <tspan id=\\\"percent-super\\\">%</tspan>\\n        </text>\\n        </svg>\\n      \";\n  }\n  function _linearTemplate() {\n    return \"\\n        <style>\\n        :host {\\n            position: fixed;\\n            top: 0;\\n            left: 0;\\n            height: 4px;\\n            width: 100vw;\\n            z-index: 2147483645;\\n        }\\n\\n        #bar {\\n            width: 0%;\\n            height: 4px;\\n            background-color: rgb(186, 223, 172);\\n        }\\n\\n        @keyframes fade {\\n            0% { opacity: 1; }\\n            100% { opacity: 0; }\\n        }\\n\\n        .disappear {\\n            animation: fade 0.3s;\\n            animation-fill-mode: forwards;\\n            animation-delay: 0.5s;\\n        }\\n\\n        .hidden {\\n            display: none;\\n        }\\n        </style>\\n        <div id=\\\"progress\\\"></div>\\n        \";\n  }\n  function _update(percent) {\n    var element = this.shadowRoot.querySelector(\"#progress\");\n    if (this.type === \"circular\") {\n      var path = this.shadowRoot.querySelector(\"path\");\n      var value = this.shadowRoot.querySelector(\"#percent-value\");\n      var offset = (100 - percent) / 100 * this.maxDashOffset;\n      path.style.strokeDashoffset = offset;\n      value.textContent = percent;\n    } else {\n      element.style.width = \"\".concat(percent, \"%\");\n    }\n    if (percent >= 100) {\n      _assertClassBrand(_WebpackDevServerProgress_brand, this, _hide).call(this);\n    } else if (percent > 0) {\n      _assertClassBrand(_WebpackDevServerProgress_brand, this, _show).call(this);\n    }\n  }\n  function _show() {\n    var element = this.shadowRoot.querySelector(\"#progress\");\n    element.classList.remove(\"hidden\");\n  }\n  function _hide() {\n    var _this2 = this;\n    var element = this.shadowRoot.querySelector(\"#progress\");\n    if (this.type === \"circular\") {\n      element.classList.add(\"disappear\");\n      element.addEventListener(\"animationend\", function () {\n        element.classList.add(\"hidden\");\n        _assertClassBrand(_WebpackDevServerProgress_brand, _this2, _update).call(_this2, 0);\n      }, {\n        once: true\n      });\n    } else if (this.type === \"linear\") {\n      element.classList.add(\"disappear\");\n      this.animationTimer = setTimeout(function () {\n        element.classList.remove(\"disappear\");\n        element.classList.add(\"hidden\");\n        element.style.width = \"0%\";\n        _this2.animationTimer = null;\n      }, 800);\n    }\n  }\n  customElements.define(\"wds-progress\", WebpackDevServerProgress);\n}\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/progress.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/socket.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/socket.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   client: () => (/* binding */ client),\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _clients_WebSocketClient_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./clients/WebSocketClient.js */ \"./node_modules/webpack-dev-server/client/clients/WebSocketClient.js\");\n/* harmony import */ var _utils_log_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./utils/log.js */ \"./node_modules/webpack-dev-server/client/utils/log.js\");\n/* provided dependency */ var __webpack_dev_server_client__ = __webpack_require__(/*! ./node_modules/webpack-dev-server/client/clients/WebSocketClient.js */ \"./node_modules/webpack-dev-server/client/clients/WebSocketClient.js\");\n/* global __webpack_dev_server_client__ */\n\n\n\n\n// this WebsocketClient is here as a default fallback, in case the client is not injected\n/* eslint-disable camelcase */\nvar Client =\n// eslint-disable-next-line no-nested-ternary\ntypeof __webpack_dev_server_client__ !== \"undefined\" ? typeof __webpack_dev_server_client__.default !== \"undefined\" ? __webpack_dev_server_client__.default : __webpack_dev_server_client__ : _clients_WebSocketClient_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\n/* eslint-enable camelcase */\n\nvar retries = 0;\nvar maxRetries = 10;\n\n// Initialized client is exported so external consumers can utilize the same instance\n// It is mutable to enforce singleton\n// eslint-disable-next-line import/no-mutable-exports\nvar client = null;\n\n/**\n * @param {string} url\n * @param {{ [handler: string]: (data?: any, params?: any) => any }} handlers\n * @param {number} [reconnect]\n */\nvar socket = function initSocket(url, handlers, reconnect) {\n  client = new Client(url);\n  client.onOpen(function () {\n    retries = 0;\n    if (typeof reconnect !== \"undefined\") {\n      maxRetries = reconnect;\n    }\n  });\n  client.onClose(function () {\n    if (retries === 0) {\n      handlers.close();\n    }\n\n    // Try to reconnect.\n    client = null;\n\n    // After 10 retries stop trying, to prevent logspam.\n    if (retries < maxRetries) {\n      // Exponentially increase timeout to reconnect.\n      // Respectfully copied from the package `got`.\n      // eslint-disable-next-line no-restricted-properties\n      var retryInMs = 1000 * Math.pow(2, retries) + Math.random() * 100;\n      retries += 1;\n      _utils_log_js__WEBPACK_IMPORTED_MODULE_1__.log.info(\"Trying to reconnect...\");\n      setTimeout(function () {\n        socket(url, handlers, reconnect);\n      }, retryInMs);\n    }\n  });\n  client.onMessage(\n  /**\n   * @param {any} data\n   */\n  function (data) {\n    var message = JSON.parse(data);\n    if (handlers[message.type]) {\n      handlers[message.type](message.data, message.params);\n    }\n  });\n};\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (socket);\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/socket.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/utils/log.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/utils/log.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   log: () => (/* binding */ log),\n/* harmony export */   setLogLevel: () => (/* binding */ setLogLevel)\n/* harmony export */ });\n/* harmony import */ var _modules_logger_index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../modules/logger/index.js */ \"./node_modules/webpack-dev-server/client/modules/logger/index.js\");\n/* harmony import */ var _modules_logger_index_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_modules_logger_index_js__WEBPACK_IMPORTED_MODULE_0__);\n\nvar name = \"webpack-dev-server\";\n// default level is set on the client side, so it does not need\n// to be set by the CLI or API\nvar defaultLevel = \"info\";\n\n// options new options, merge with old options\n/**\n * @param {false | true | \"none\" | \"error\" | \"warn\" | \"info\" | \"log\" | \"verbose\"} level\n * @returns {void}\n */\nfunction setLogLevel(level) {\n  _modules_logger_index_js__WEBPACK_IMPORTED_MODULE_0___default().configureDefaultLogger({\n    level: level\n  });\n}\nsetLogLevel(defaultLevel);\nvar log = _modules_logger_index_js__WEBPACK_IMPORTED_MODULE_0___default().getLogger(name);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/utils/log.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack-dev-server/client/utils/sendMessage.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/webpack-dev-server/client/utils/sendMessage.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* global __resourceQuery WorkerGlobalScope */\n\n// Send messages to the outside, so plugins can consume it.\n/**\n * @param {string} type\n * @param {any} [data]\n */\nfunction sendMsg(type, data) {\n  if (typeof self !== \"undefined\" && (typeof WorkerGlobalScope === \"undefined\" || !(self instanceof WorkerGlobalScope))) {\n    self.postMessage({\n      type: \"webpack\".concat(type),\n      data: data\n    }, \"*\");\n  }\n}\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (sendMsg);\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack-dev-server/client/utils/sendMessage.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack/hot/dev-server.js":
+/*!************************************************!*\
+  !*** ./node_modules/webpack/hot/dev-server.js ***!
+  \************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n/* globals __webpack_hash__ */\nif (true) {\n\t/** @type {undefined|string} */\n\tvar lastHash;\n\tvar upToDate = function upToDate() {\n\t\treturn /** @type {string} */ (lastHash).indexOf(__webpack_require__.h()) >= 0;\n\t};\n\tvar log = __webpack_require__(/*! ./log */ \"./node_modules/webpack/hot/log.js\");\n\tvar check = function check() {\n\t\tmodule.hot\n\t\t\t.check(true)\n\t\t\t.then(function (updatedModules) {\n\t\t\t\tif (!updatedModules) {\n\t\t\t\t\tlog(\n\t\t\t\t\t\t\"warning\",\n\t\t\t\t\t\t\"[HMR] Cannot find update. \" +\n\t\t\t\t\t\t\t(typeof window !== \"undefined\"\n\t\t\t\t\t\t\t\t? \"Need to do a full reload!\"\n\t\t\t\t\t\t\t\t: \"Please reload manually!\")\n\t\t\t\t\t);\n\t\t\t\t\tlog(\n\t\t\t\t\t\t\"warning\",\n\t\t\t\t\t\t\"[HMR] (Probably because of restarting the webpack-dev-server)\"\n\t\t\t\t\t);\n\t\t\t\t\tif (typeof window !== \"undefined\") {\n\t\t\t\t\t\twindow.location.reload();\n\t\t\t\t\t}\n\t\t\t\t\treturn;\n\t\t\t\t}\n\n\t\t\t\tif (!upToDate()) {\n\t\t\t\t\tcheck();\n\t\t\t\t}\n\n\t\t\t\t__webpack_require__(/*! ./log-apply-result */ \"./node_modules/webpack/hot/log-apply-result.js\")(updatedModules, updatedModules);\n\n\t\t\t\tif (upToDate()) {\n\t\t\t\t\tlog(\"info\", \"[HMR] App is up to date.\");\n\t\t\t\t}\n\t\t\t})\n\t\t\t.catch(function (err) {\n\t\t\t\tvar status = module.hot.status();\n\t\t\t\tif ([\"abort\", \"fail\"].indexOf(status) >= 0) {\n\t\t\t\t\tlog(\n\t\t\t\t\t\t\"warning\",\n\t\t\t\t\t\t\"[HMR] Cannot apply update. \" +\n\t\t\t\t\t\t\t(typeof window !== \"undefined\"\n\t\t\t\t\t\t\t\t? \"Need to do a full reload!\"\n\t\t\t\t\t\t\t\t: \"Please reload manually!\")\n\t\t\t\t\t);\n\t\t\t\t\tlog(\"warning\", \"[HMR] \" + log.formatError(err));\n\t\t\t\t\tif (typeof window !== \"undefined\") {\n\t\t\t\t\t\twindow.location.reload();\n\t\t\t\t\t}\n\t\t\t\t} else {\n\t\t\t\t\tlog(\"warning\", \"[HMR] Update failed: \" + log.formatError(err));\n\t\t\t\t}\n\t\t\t});\n\t};\n\tvar hotEmitter = __webpack_require__(/*! ./emitter */ \"./node_modules/webpack/hot/emitter.js\");\n\thotEmitter.on(\"webpackHotUpdate\", function (currentHash) {\n\t\tlastHash = currentHash;\n\t\tif (!upToDate() && module.hot.status() === \"idle\") {\n\t\t\tlog(\"info\", \"[HMR] Checking for updates on the server...\");\n\t\t\tcheck();\n\t\t}\n\t});\n\tlog(\"info\", \"[HMR] Waiting for update signal from WDS...\");\n} else {}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack/hot/dev-server.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack/hot/emitter.js":
+/*!*********************************************!*\
+  !*** ./node_modules/webpack/hot/emitter.js ***!
+  \*********************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("var EventEmitter = __webpack_require__(/*! events */ \"./node_modules/events/events.js\");\nmodule.exports = new EventEmitter();\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack/hot/emitter.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack/hot/log-apply-result.js":
+/*!******************************************************!*\
+  !*** ./node_modules/webpack/hot/log-apply-result.js ***!
+  \******************************************************/
+/***/ ((module, __unused_webpack_exports, __webpack_require__) => {
+
+eval("/*\n\tMIT License http://www.opensource.org/licenses/mit-license.php\n\tAuthor Tobias Koppers @sokra\n*/\n\n/**\n * @param {(string | number)[]} updatedModules updated modules\n * @param {(string | number)[] | null} renewedModules renewed modules\n */\nmodule.exports = function (updatedModules, renewedModules) {\n\tvar unacceptedModules = updatedModules.filter(function (moduleId) {\n\t\treturn renewedModules && renewedModules.indexOf(moduleId) < 0;\n\t});\n\tvar log = __webpack_require__(/*! ./log */ \"./node_modules/webpack/hot/log.js\");\n\n\tif (unacceptedModules.length > 0) {\n\t\tlog(\n\t\t\t\"warning\",\n\t\t\t\"[HMR] The following modules couldn't be hot updated: (They would need a full reload!)\"\n\t\t);\n\t\tunacceptedModules.forEach(function (moduleId) {\n\t\t\tlog(\"warning\", \"[HMR]  - \" + moduleId);\n\t\t});\n\t}\n\n\tif (!renewedModules || renewedModules.length === 0) {\n\t\tlog(\"info\", \"[HMR] Nothing hot updated.\");\n\t} else {\n\t\tlog(\"info\", \"[HMR] Updated modules:\");\n\t\trenewedModules.forEach(function (moduleId) {\n\t\t\tif (typeof moduleId === \"string\" && moduleId.indexOf(\"!\") !== -1) {\n\t\t\t\tvar parts = moduleId.split(\"!\");\n\t\t\t\tlog.groupCollapsed(\"info\", \"[HMR]  - \" + parts.pop());\n\t\t\t\tlog(\"info\", \"[HMR]  - \" + moduleId);\n\t\t\t\tlog.groupEnd(\"info\");\n\t\t\t} else {\n\t\t\t\tlog(\"info\", \"[HMR]  - \" + moduleId);\n\t\t\t}\n\t\t});\n\t\tvar numberIds = renewedModules.every(function (moduleId) {\n\t\t\treturn typeof moduleId === \"number\";\n\t\t});\n\t\tif (numberIds)\n\t\t\tlog(\n\t\t\t\t\"info\",\n\t\t\t\t'[HMR] Consider using the optimization.moduleIds: \"named\" for module names.'\n\t\t\t);\n\t}\n};\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack/hot/log-apply-result.js?");
+
+/***/ }),
+
+/***/ "./node_modules/webpack/hot/log.js":
+/*!*****************************************!*\
+  !*** ./node_modules/webpack/hot/log.js ***!
+  \*****************************************/
+/***/ ((module) => {
+
+eval("/** @typedef {\"info\" | \"warning\" | \"error\"} LogLevel */\n\n/** @type {LogLevel} */\nvar logLevel = \"info\";\n\nfunction dummy() {}\n\n/**\n * @param {LogLevel} level log level\n * @returns {boolean} true, if should log\n */\nfunction shouldLog(level) {\n\tvar shouldLog =\n\t\t(logLevel === \"info\" && level === \"info\") ||\n\t\t([\"info\", \"warning\"].indexOf(logLevel) >= 0 && level === \"warning\") ||\n\t\t([\"info\", \"warning\", \"error\"].indexOf(logLevel) >= 0 && level === \"error\");\n\treturn shouldLog;\n}\n\n/**\n * @param {(msg?: string) => void} logFn log function\n * @returns {(level: LogLevel, msg?: string) => void} function that logs when log level is sufficient\n */\nfunction logGroup(logFn) {\n\treturn function (level, msg) {\n\t\tif (shouldLog(level)) {\n\t\t\tlogFn(msg);\n\t\t}\n\t};\n}\n\n/**\n * @param {LogLevel} level log level\n * @param {string|Error} msg message\n */\nmodule.exports = function (level, msg) {\n\tif (shouldLog(level)) {\n\t\tif (level === \"info\") {\n\t\t\tconsole.log(msg);\n\t\t} else if (level === \"warning\") {\n\t\t\tconsole.warn(msg);\n\t\t} else if (level === \"error\") {\n\t\t\tconsole.error(msg);\n\t\t}\n\t}\n};\n\nvar group = console.group || dummy;\nvar groupCollapsed = console.groupCollapsed || dummy;\nvar groupEnd = console.groupEnd || dummy;\n\nmodule.exports.group = logGroup(group);\n\nmodule.exports.groupCollapsed = logGroup(groupCollapsed);\n\nmodule.exports.groupEnd = logGroup(groupEnd);\n\n/**\n * @param {LogLevel} level log level\n */\nmodule.exports.setLogLevel = function (level) {\n\tlogLevel = level;\n};\n\n/**\n * @param {Error} err error\n * @returns {string} formatted error\n */\nmodule.exports.formatError = function (err) {\n\tvar message = err.message;\n\tvar stack = err.stack;\n\tif (!stack) {\n\t\treturn message;\n\t} else if (stack.indexOf(message) < 0) {\n\t\treturn message + \"\\n\" + stack;\n\t}\n\treturn stack;\n};\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/webpack/hot/log.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_baseCreate.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/_baseCreate.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ baseCreate)\n/* harmony export */ });\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n\n// Create a naked function reference for surrogate-prototype-swapping.\nfunction ctor() {\n  return function(){};\n}\n\n// An internal function for creating a new object that inherits from another.\nfunction baseCreate(prototype) {\n  if (!(0,_isObject_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(prototype)) return {};\n  if (_setup_js__WEBPACK_IMPORTED_MODULE_1__.nativeCreate) return (0,_setup_js__WEBPACK_IMPORTED_MODULE_1__.nativeCreate)(prototype);\n  var Ctor = ctor();\n  Ctor.prototype = prototype;\n  var result = new Ctor;\n  Ctor.prototype = null;\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_baseCreate.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_baseIteratee.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_baseIteratee.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ baseIteratee)\n/* harmony export */ });\n/* harmony import */ var _identity_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./identity.js */ \"./node_modules/underscore/modules/identity.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n/* harmony import */ var _matcher_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./matcher.js */ \"./node_modules/underscore/modules/matcher.js\");\n/* harmony import */ var _property_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./property.js */ \"./node_modules/underscore/modules/property.js\");\n/* harmony import */ var _optimizeCb_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./_optimizeCb.js */ \"./node_modules/underscore/modules/_optimizeCb.js\");\n\n\n\n\n\n\n\n\n// An internal function to generate callbacks that can be applied to each\n// element in a collection, returning the desired result — either `_.identity`,\n// an arbitrary callback, a property matcher, or a property accessor.\nfunction baseIteratee(value, context, argCount) {\n  if (value == null) return _identity_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\n  if ((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(value)) return (0,_optimizeCb_js__WEBPACK_IMPORTED_MODULE_6__[\"default\"])(value, context, argCount);\n  if ((0,_isObject_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(value) && !(0,_isArray_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(value)) return (0,_matcher_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(value);\n  return (0,_property_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(value);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_baseIteratee.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_cb.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/_cb.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ cb)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _baseIteratee_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_baseIteratee.js */ \"./node_modules/underscore/modules/_baseIteratee.js\");\n/* harmony import */ var _iteratee_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./iteratee.js */ \"./node_modules/underscore/modules/iteratee.js\");\n\n\n\n\n// The function we call internally to generate a callback. It invokes\n// `_.iteratee` if overridden, otherwise `baseIteratee`.\nfunction cb(value, context, argCount) {\n  if (_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].iteratee !== _iteratee_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"]) return _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].iteratee(value, context);\n  return (0,_baseIteratee_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(value, context, argCount);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_cb.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_chainResult.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/underscore/modules/_chainResult.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ chainResult)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n\n\n// Helper function to continue chaining intermediate results.\nfunction chainResult(instance, obj) {\n  return instance._chain ? (0,_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj).chain() : obj;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_chainResult.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_collectNonEnumProps.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/underscore/modules/_collectNonEnumProps.js ***!
+  \*****************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ collectNonEnumProps)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n\n\n\n\n// Internal helper to create a simple lookup structure.\n// `collectNonEnumProps` used to depend on `_.contains`, but this led to\n// circular imports. `emulatedSet` is a one-off solution that only works for\n// arrays of strings.\nfunction emulatedSet(keys) {\n  var hash = {};\n  for (var l = keys.length, i = 0; i < l; ++i) hash[keys[i]] = true;\n  return {\n    contains: function(key) { return hash[key] === true; },\n    push: function(key) {\n      hash[key] = true;\n      return keys.push(key);\n    }\n  };\n}\n\n// Internal helper. Checks `keys` for the presence of keys in IE < 9 that won't\n// be iterated by `for key in ...` and thus missed. Extends `keys` in place if\n// needed.\nfunction collectNonEnumProps(obj, keys) {\n  keys = emulatedSet(keys);\n  var nonEnumIdx = _setup_js__WEBPACK_IMPORTED_MODULE_0__.nonEnumerableProps.length;\n  var constructor = obj.constructor;\n  var proto = ((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(constructor) && constructor.prototype) || _setup_js__WEBPACK_IMPORTED_MODULE_0__.ObjProto;\n\n  // Constructor is a special case.\n  var prop = 'constructor';\n  if ((0,_has_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj, prop) && !keys.contains(prop)) keys.push(prop);\n\n  while (nonEnumIdx--) {\n    prop = _setup_js__WEBPACK_IMPORTED_MODULE_0__.nonEnumerableProps[nonEnumIdx];\n    if (prop in obj && obj[prop] !== proto[prop] && !keys.contains(prop)) {\n      keys.push(prop);\n    }\n  }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_collectNonEnumProps.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_createAssigner.js":
+/*!************************************************************!*\
+  !*** ./node_modules/underscore/modules/_createAssigner.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ createAssigner)\n/* harmony export */ });\n// An internal function for creating assigner functions.\nfunction createAssigner(keysFunc, defaults) {\n  return function(obj) {\n    var length = arguments.length;\n    if (defaults) obj = Object(obj);\n    if (length < 2 || obj == null) return obj;\n    for (var index = 1; index < length; index++) {\n      var source = arguments[index],\n          keys = keysFunc(source),\n          l = keys.length;\n      for (var i = 0; i < l; i++) {\n        var key = keys[i];\n        if (!defaults || obj[key] === void 0) obj[key] = source[key];\n      }\n    }\n    return obj;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_createAssigner.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_createEscaper.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/underscore/modules/_createEscaper.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ createEscaper)\n/* harmony export */ });\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n// Internal helper to generate functions for escaping and unescaping strings\n// to/from HTML interpolation.\nfunction createEscaper(map) {\n  var escaper = function(match) {\n    return map[match];\n  };\n  // Regexes for identifying a key that needs to be escaped.\n  var source = '(?:' + (0,_keys_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(map).join('|') + ')';\n  var testRegexp = RegExp(source);\n  var replaceRegexp = RegExp(source, 'g');\n  return function(string) {\n    string = string == null ? '' : '' + string;\n    return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_createEscaper.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_createIndexFinder.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/underscore/modules/_createIndexFinder.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ createIndexFinder)\n/* harmony export */ });\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _isNaN_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isNaN.js */ \"./node_modules/underscore/modules/isNaN.js\");\n\n\n\n\n// Internal function to generate the `_.indexOf` and `_.lastIndexOf` functions.\nfunction createIndexFinder(dir, predicateFind, sortedIndex) {\n  return function(array, item, idx) {\n    var i = 0, length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array);\n    if (typeof idx == 'number') {\n      if (dir > 0) {\n        i = idx >= 0 ? idx : Math.max(idx + length, i);\n      } else {\n        length = idx >= 0 ? Math.min(idx + 1, length) : idx + length + 1;\n      }\n    } else if (sortedIndex && idx && length) {\n      idx = sortedIndex(array, item);\n      return array[idx] === item ? idx : -1;\n    }\n    if (item !== item) {\n      idx = predicateFind(_setup_js__WEBPACK_IMPORTED_MODULE_1__.slice.call(array, i, length), _isNaN_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"]);\n      return idx >= 0 ? idx + i : -1;\n    }\n    for (idx = dir > 0 ? i : length - 1; idx >= 0 && idx < length; idx += dir) {\n      if (array[idx] === item) return idx;\n    }\n    return -1;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_createIndexFinder.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_createPredicateIndexFinder.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/underscore/modules/_createPredicateIndexFinder.js ***!
+  \************************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ createPredicateIndexFinder)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n\n\n\n// Internal function to generate `_.findIndex` and `_.findLastIndex`.\nfunction createPredicateIndexFinder(dir) {\n  return function(array, predicate, context) {\n    predicate = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(predicate, context);\n    var length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(array);\n    var index = dir > 0 ? 0 : length - 1;\n    for (; index >= 0 && index < length; index += dir) {\n      if (predicate(array[index], index, array)) return index;\n    }\n    return -1;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_createPredicateIndexFinder.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_createReduce.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_createReduce.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ createReduce)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n/* harmony import */ var _optimizeCb_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_optimizeCb.js */ \"./node_modules/underscore/modules/_optimizeCb.js\");\n\n\n\n\n// Internal helper to create a reducing function, iterating left or right.\nfunction createReduce(dir) {\n  // Wrap code that reassigns argument variables in a separate function than\n  // the one that accesses `arguments.length` to avoid a perf hit. (#1991)\n  var reducer = function(obj, iteratee, memo, initial) {\n    var _keys = !(0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj) && (0,_keys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj),\n        length = (_keys || obj).length,\n        index = dir > 0 ? 0 : length - 1;\n    if (!initial) {\n      memo = obj[_keys ? _keys[index] : index];\n      index += dir;\n    }\n    for (; index >= 0 && index < length; index += dir) {\n      var currentKey = _keys ? _keys[index] : index;\n      memo = iteratee(memo, obj[currentKey], currentKey, obj);\n    }\n    return memo;\n  };\n\n  return function(obj, iteratee, memo, context) {\n    var initial = arguments.length >= 3;\n    return reducer(obj, (0,_optimizeCb_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(iteratee, context, 4), memo, initial);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_createReduce.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_createSizePropertyCheck.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/underscore/modules/_createSizePropertyCheck.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ createSizePropertyCheck)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Common internal logic for `isArrayLike` and `isBufferLike`.\nfunction createSizePropertyCheck(getSizeProperty) {\n  return function(collection) {\n    var sizeProperty = getSizeProperty(collection);\n    return typeof sizeProperty == 'number' && sizeProperty >= 0 && sizeProperty <= _setup_js__WEBPACK_IMPORTED_MODULE_0__.MAX_ARRAY_INDEX;\n  }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_createSizePropertyCheck.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_deepGet.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/_deepGet.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ deepGet)\n/* harmony export */ });\n// Internal function to obtain a nested property in `obj` along `path`.\nfunction deepGet(obj, path) {\n  var length = path.length;\n  for (var i = 0; i < length; i++) {\n    if (obj == null) return void 0;\n    obj = obj[path[i]];\n  }\n  return length ? obj : void 0;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_deepGet.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_escapeMap.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/_escapeMap.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n// Internal list of HTML entities for escaping.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({\n  '&': '&amp;',\n  '<': '&lt;',\n  '>': '&gt;',\n  '\"': '&quot;',\n  \"'\": '&#x27;',\n  '`': '&#x60;'\n});\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_escapeMap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_executeBound.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_executeBound.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ executeBound)\n/* harmony export */ });\n/* harmony import */ var _baseCreate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_baseCreate.js */ \"./node_modules/underscore/modules/_baseCreate.js\");\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n\n\n\n// Internal function to execute `sourceFunc` bound to `context` with optional\n// `args`. Determines whether to execute a function as a constructor or as a\n// normal function.\nfunction executeBound(sourceFunc, boundFunc, context, callingContext, args) {\n  if (!(callingContext instanceof boundFunc)) return sourceFunc.apply(context, args);\n  var self = (0,_baseCreate_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(sourceFunc.prototype);\n  var result = sourceFunc.apply(self, args);\n  if ((0,_isObject_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(result)) return result;\n  return self;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_executeBound.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_flatten.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/_flatten.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ flatten)\n/* harmony export */ });\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n/* harmony import */ var _isArguments_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isArguments.js */ \"./node_modules/underscore/modules/isArguments.js\");\n\n\n\n\n\n// Internal implementation of a recursive `flatten` function.\nfunction flatten(input, depth, strict, output) {\n  output = output || [];\n  if (!depth && depth !== 0) {\n    depth = Infinity;\n  } else if (depth <= 0) {\n    return output.concat(input);\n  }\n  var idx = output.length;\n  for (var i = 0, length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(input); i < length; i++) {\n    var value = input[i];\n    if ((0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(value) && ((0,_isArray_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(value) || (0,_isArguments_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(value))) {\n      // Flatten current level of array or arguments object.\n      if (depth > 1) {\n        flatten(value, depth - 1, strict, output);\n        idx = output.length;\n      } else {\n        var j = 0, len = value.length;\n        while (j < len) output[idx++] = value[j++];\n      }\n    } else if (!strict) {\n      output[idx++] = value;\n    }\n  }\n  return output;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_flatten.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_getByteLength.js":
+/*!***********************************************************!*\
+  !*** ./node_modules/underscore/modules/_getByteLength.js ***!
+  \***********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _shallowProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_shallowProperty.js */ \"./node_modules/underscore/modules/_shallowProperty.js\");\n\n\n// Internal helper to obtain the `byteLength` property of an object.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_shallowProperty_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('byteLength'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_getByteLength.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_getLength.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/_getLength.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _shallowProperty_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_shallowProperty.js */ \"./node_modules/underscore/modules/_shallowProperty.js\");\n\n\n// Internal helper to obtain the `length` property of an object.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_shallowProperty_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('length'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_getLength.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_group.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/_group.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ group)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n\n\n\n// An internal function used for aggregate \"group by\" operations.\nfunction group(behavior, partition) {\n  return function(obj, iteratee, context) {\n    var result = partition ? [[], []] : {};\n    iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context);\n    (0,_each_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj, function(value, index) {\n      var key = iteratee(value, index, obj);\n      behavior(result, value, key);\n    });\n    return result;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_group.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_has.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/_has.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ has)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Internal function to check whether `key` is an own property name of `obj`.\nfunction has(obj, key) {\n  return obj != null && _setup_js__WEBPACK_IMPORTED_MODULE_0__.hasOwnProperty.call(obj, key);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_has.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_hasObjectTag.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_hasObjectTag.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Object'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_hasObjectTag.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_isArrayLike.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/underscore/modules/_isArrayLike.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createSizePropertyCheck_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createSizePropertyCheck.js */ \"./node_modules/underscore/modules/_createSizePropertyCheck.js\");\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n\n\n\n// Internal helper for collection methods to determine whether a collection\n// should be iterated as an array or as an object.\n// Related: https://people.mozilla.org/~jorendorff/es6-draft.html#sec-tolength\n// Avoids a very nasty iOS 8 JIT bug on ARM-64. #2094\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createSizePropertyCheck_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_getLength_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_isArrayLike.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_isBufferLike.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_isBufferLike.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createSizePropertyCheck_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createSizePropertyCheck.js */ \"./node_modules/underscore/modules/_createSizePropertyCheck.js\");\n/* harmony import */ var _getByteLength_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_getByteLength.js */ \"./node_modules/underscore/modules/_getByteLength.js\");\n\n\n\n// Internal helper to determine whether we should spend extensive checks against\n// `ArrayBuffer` et al.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createSizePropertyCheck_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_getByteLength_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_isBufferLike.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_keyInObj.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/_keyInObj.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ keyInObj)\n/* harmony export */ });\n// Internal `_.pick` helper function to determine whether `key` is an enumerable\n// property name of `obj`.\nfunction keyInObj(value, key, obj) {\n  return key in obj;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_keyInObj.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_methodFingerprint.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/underscore/modules/_methodFingerprint.js ***!
+  \***************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   ie11fingerprint: () => (/* binding */ ie11fingerprint),\n/* harmony export */   mapMethods: () => (/* binding */ mapMethods),\n/* harmony export */   setMethods: () => (/* binding */ setMethods),\n/* harmony export */   weakMapMethods: () => (/* binding */ weakMapMethods)\n/* harmony export */ });\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _allKeys_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./allKeys.js */ \"./node_modules/underscore/modules/allKeys.js\");\n\n\n\n\n// Since the regular `Object.prototype.toString` type tests don't work for\n// some types in IE 11, we use a fingerprinting heuristic instead, based\n// on the methods. It's not great, but it's the best we got.\n// The fingerprint method lists are defined below.\nfunction ie11fingerprint(methods) {\n  var length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(methods);\n  return function(obj) {\n    if (obj == null) return false;\n    // `Map`, `WeakMap` and `Set` have no enumerable keys.\n    var keys = (0,_allKeys_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj);\n    if ((0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(keys)) return false;\n    for (var i = 0; i < length; i++) {\n      if (!(0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj[methods[i]])) return false;\n    }\n    // If we are testing against `WeakMap`, we need to ensure that\n    // `obj` doesn't have a `forEach` method in order to distinguish\n    // it from a regular `Map`.\n    return methods !== weakMapMethods || !(0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj[forEachName]);\n  };\n}\n\n// In the interest of compact minification, we write\n// each string in the fingerprints only once.\nvar forEachName = 'forEach',\n    hasName = 'has',\n    commonInit = ['clear', 'delete'],\n    mapTail = ['get', hasName, 'set'];\n\n// `Map`, `WeakMap` and `Set` each have slightly different\n// combinations of the above sublists.\nvar mapMethods = commonInit.concat(forEachName, mapTail),\n    weakMapMethods = commonInit.concat(mapTail),\n    setMethods = ['add'].concat(commonInit, forEachName, hasName);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_methodFingerprint.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_optimizeCb.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/_optimizeCb.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ optimizeCb)\n/* harmony export */ });\n// Internal function that returns an efficient (for current engines) version\n// of the passed-in callback, to be repeatedly applied in other Underscore\n// functions.\nfunction optimizeCb(func, context, argCount) {\n  if (context === void 0) return func;\n  switch (argCount == null ? 3 : argCount) {\n    case 1: return function(value) {\n      return func.call(context, value);\n    };\n    // The 2-argument case is omitted because we’re not using it.\n    case 3: return function(value, index, collection) {\n      return func.call(context, value, index, collection);\n    };\n    case 4: return function(accumulator, value, index, collection) {\n      return func.call(context, accumulator, value, index, collection);\n    };\n  }\n  return function() {\n    return func.apply(context, arguments);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_optimizeCb.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_setup.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/_setup.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   ArrayProto: () => (/* binding */ ArrayProto),\n/* harmony export */   MAX_ARRAY_INDEX: () => (/* binding */ MAX_ARRAY_INDEX),\n/* harmony export */   ObjProto: () => (/* binding */ ObjProto),\n/* harmony export */   SymbolProto: () => (/* binding */ SymbolProto),\n/* harmony export */   VERSION: () => (/* binding */ VERSION),\n/* harmony export */   _isFinite: () => (/* binding */ _isFinite),\n/* harmony export */   _isNaN: () => (/* binding */ _isNaN),\n/* harmony export */   hasEnumBug: () => (/* binding */ hasEnumBug),\n/* harmony export */   hasOwnProperty: () => (/* binding */ hasOwnProperty),\n/* harmony export */   nativeCreate: () => (/* binding */ nativeCreate),\n/* harmony export */   nativeIsArray: () => (/* binding */ nativeIsArray),\n/* harmony export */   nativeIsView: () => (/* binding */ nativeIsView),\n/* harmony export */   nativeKeys: () => (/* binding */ nativeKeys),\n/* harmony export */   nonEnumerableProps: () => (/* binding */ nonEnumerableProps),\n/* harmony export */   push: () => (/* binding */ push),\n/* harmony export */   root: () => (/* binding */ root),\n/* harmony export */   slice: () => (/* binding */ slice),\n/* harmony export */   supportsArrayBuffer: () => (/* binding */ supportsArrayBuffer),\n/* harmony export */   supportsDataView: () => (/* binding */ supportsDataView),\n/* harmony export */   toString: () => (/* binding */ toString)\n/* harmony export */ });\n// Current version.\nvar VERSION = '1.13.7';\n\n// Establish the root object, `window` (`self`) in the browser, `global`\n// on the server, or `this` in some virtual machines. We use `self`\n// instead of `window` for `WebWorker` support.\nvar root = (typeof self == 'object' && self.self === self && self) ||\n          (typeof global == 'object' && global.global === global && global) ||\n          Function('return this')() ||\n          {};\n\n// Save bytes in the minified (but not gzipped) version:\nvar ArrayProto = Array.prototype, ObjProto = Object.prototype;\nvar SymbolProto = typeof Symbol !== 'undefined' ? Symbol.prototype : null;\n\n// Create quick reference variables for speed access to core prototypes.\nvar push = ArrayProto.push,\n    slice = ArrayProto.slice,\n    toString = ObjProto.toString,\n    hasOwnProperty = ObjProto.hasOwnProperty;\n\n// Modern feature detection.\nvar supportsArrayBuffer = typeof ArrayBuffer !== 'undefined',\n    supportsDataView = typeof DataView !== 'undefined';\n\n// All **ECMAScript 5+** native function implementations that we hope to use\n// are declared here.\nvar nativeIsArray = Array.isArray,\n    nativeKeys = Object.keys,\n    nativeCreate = Object.create,\n    nativeIsView = supportsArrayBuffer && ArrayBuffer.isView;\n\n// Create references to these builtin functions because we override them.\nvar _isNaN = isNaN,\n    _isFinite = isFinite;\n\n// Keys in IE < 9 that won't be iterated by `for key in ...` and thus missed.\nvar hasEnumBug = !{toString: null}.propertyIsEnumerable('toString');\nvar nonEnumerableProps = ['valueOf', 'isPrototypeOf', 'toString',\n  'propertyIsEnumerable', 'hasOwnProperty', 'toLocaleString'];\n\n// The largest integer that can be represented exactly.\nvar MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_setup.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_shallowProperty.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/underscore/modules/_shallowProperty.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ shallowProperty)\n/* harmony export */ });\n// Internal helper to generate a function to obtain property `key` from `obj`.\nfunction shallowProperty(key) {\n  return function(obj) {\n    return obj == null ? void 0 : obj[key];\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_shallowProperty.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_stringTagBug.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_stringTagBug.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   hasDataViewBug: () => (/* binding */ hasDataViewBug),\n/* harmony export */   isIE11: () => (/* binding */ isIE11)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _hasObjectTag_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_hasObjectTag.js */ \"./node_modules/underscore/modules/_hasObjectTag.js\");\n\n\n\n// In IE 10 - Edge 13, `DataView` has string tag `'[object Object]'`.\n// In IE 11, the most common among them, this problem also applies to\n// `Map`, `WeakMap` and `Set`.\n// Also, there are cases where an application can override the native\n// `DataView` object, in cases like that we can't use the constructor\n// safely and should just rely on alternate `DataView` checks\nvar hasDataViewBug = (\n      _setup_js__WEBPACK_IMPORTED_MODULE_0__.supportsDataView && (!/\\[native code\\]/.test(String(DataView)) || (0,_hasObjectTag_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(new DataView(new ArrayBuffer(8))))\n    ),\n    isIE11 = (typeof Map !== 'undefined' && (0,_hasObjectTag_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(new Map));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_stringTagBug.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_tagTester.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/_tagTester.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ tagTester)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Internal function for creating a `toString`-based type tester.\nfunction tagTester(name) {\n  var tag = '[object ' + name + ']';\n  return function(obj) {\n    return _setup_js__WEBPACK_IMPORTED_MODULE_0__.toString.call(obj) === tag;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_tagTester.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_toBufferView.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/_toBufferView.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ toBufferView)\n/* harmony export */ });\n/* harmony import */ var _getByteLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getByteLength.js */ \"./node_modules/underscore/modules/_getByteLength.js\");\n\n\n// Internal function to wrap or shallow-copy an ArrayBuffer,\n// typed array or DataView to a new view, reusing the buffer.\nfunction toBufferView(bufferSource) {\n  return new Uint8Array(\n    bufferSource.buffer || bufferSource,\n    bufferSource.byteOffset || 0,\n    (0,_getByteLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(bufferSource)\n  );\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_toBufferView.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_toPath.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/_toPath.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ toPath)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./toPath.js */ \"./node_modules/underscore/modules/toPath.js\");\n\n\n\n// Internal wrapper for `_.toPath` to enable minification.\n// Similar to `cb` for `_.iteratee`.\nfunction toPath(path) {\n  return _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].toPath(path);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_toPath.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/_unescapeMap.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/underscore/modules/_unescapeMap.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _invert_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./invert.js */ \"./node_modules/underscore/modules/invert.js\");\n/* harmony import */ var _escapeMap_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_escapeMap.js */ \"./node_modules/underscore/modules/_escapeMap.js\");\n\n\n\n// Internal list of HTML entities for unescaping.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_invert_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_escapeMap_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/_unescapeMap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/after.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/after.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ after)\n/* harmony export */ });\n// Returns a function that will only be executed on and after the Nth call.\nfunction after(times, func) {\n  return function() {\n    if (--times < 1) {\n      return func.apply(this, arguments);\n    }\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/after.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/allKeys.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/allKeys.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ allKeys)\n/* harmony export */ });\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _collectNonEnumProps_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_collectNonEnumProps.js */ \"./node_modules/underscore/modules/_collectNonEnumProps.js\");\n\n\n\n\n// Retrieve all the enumerable property names of an object.\nfunction allKeys(obj) {\n  if (!(0,_isObject_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj)) return [];\n  var keys = [];\n  for (var key in obj) keys.push(key);\n  // Ahem, IE < 9.\n  if (_setup_js__WEBPACK_IMPORTED_MODULE_1__.hasEnumBug) (0,_collectNonEnumProps_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj, keys);\n  return keys;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/allKeys.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/before.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/before.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ before)\n/* harmony export */ });\n// Returns a function that will only be executed up to (but not including) the\n// Nth call.\nfunction before(times, func) {\n  var memo;\n  return function() {\n    if (--times > 0) {\n      memo = func.apply(this, arguments);\n    }\n    if (times <= 1) func = null;\n    return memo;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/before.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/bind.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/bind.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _executeBound_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_executeBound.js */ \"./node_modules/underscore/modules/_executeBound.js\");\n\n\n\n\n// Create a function bound to a given object (assigning `this`, and arguments,\n// optionally).\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(func, context, args) {\n  if (!(0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(func)) throw new TypeError('Bind must be called on a function');\n  var bound = (0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(callArgs) {\n    return (0,_executeBound_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(func, bound, context, this, args.concat(callArgs));\n  });\n  return bound;\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/bind.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/bindAll.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/bindAll.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_flatten.js */ \"./node_modules/underscore/modules/_flatten.js\");\n/* harmony import */ var _bind_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./bind.js */ \"./node_modules/underscore/modules/bind.js\");\n\n\n\n\n// Bind a number of an object's methods to that object. Remaining arguments\n// are the method names to be bound. Useful for ensuring that all callbacks\n// defined on an object belong to it.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(obj, keys) {\n  keys = (0,_flatten_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(keys, false, false);\n  var index = keys.length;\n  if (index < 1) throw new Error('bindAll must be passed function names');\n  while (index--) {\n    var key = keys[index];\n    obj[key] = (0,_bind_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj[key], obj);\n  }\n  return obj;\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/bindAll.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/chain.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/chain.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ chain)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n\n\n// Start chaining a wrapped Underscore object.\nfunction chain(obj) {\n  var instance = (0,_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj);\n  instance._chain = true;\n  return instance;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/chain.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/chunk.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/chunk.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ chunk)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Chunk a single array into multiple arrays, each containing `count` or fewer\n// items.\nfunction chunk(array, count) {\n  if (count == null || count < 1) return [];\n  var result = [];\n  var i = 0, length = array.length;\n  while (i < length) {\n    result.push(_setup_js__WEBPACK_IMPORTED_MODULE_0__.slice.call(array, i, i += count));\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/chunk.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/clone.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/clone.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ clone)\n/* harmony export */ });\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n/* harmony import */ var _extend_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./extend.js */ \"./node_modules/underscore/modules/extend.js\");\n\n\n\n\n// Create a (shallow-cloned) duplicate of an object.\nfunction clone(obj) {\n  if (!(0,_isObject_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj)) return obj;\n  return (0,_isArray_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) ? obj.slice() : (0,_extend_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])({}, obj);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/clone.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/compact.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/compact.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ compact)\n/* harmony export */ });\n/* harmony import */ var _filter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter.js */ \"./node_modules/underscore/modules/filter.js\");\n\n\n// Trim out all falsy values from an array.\nfunction compact(array) {\n  return (0,_filter_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array, Boolean);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/compact.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/compose.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/compose.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ compose)\n/* harmony export */ });\n// Returns a function that is the composition of a list of functions, each\n// consuming the return value of the function that follows.\nfunction compose() {\n  var args = arguments;\n  var start = args.length - 1;\n  return function() {\n    var i = start;\n    var result = args[start].apply(this, arguments);\n    while (i--) result = args[i].call(this, result);\n    return result;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/compose.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/constant.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/constant.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ constant)\n/* harmony export */ });\n// Predicate-generating function. Often useful outside of Underscore.\nfunction constant(value) {\n  return function() {\n    return value;\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/constant.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/contains.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/contains.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ contains)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _values_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./values.js */ \"./node_modules/underscore/modules/values.js\");\n/* harmony import */ var _indexOf_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./indexOf.js */ \"./node_modules/underscore/modules/indexOf.js\");\n\n\n\n\n// Determine if the array or object contains a given item (using `===`).\nfunction contains(obj, item, fromIndex, guard) {\n  if (!(0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj)) obj = (0,_values_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj);\n  if (typeof fromIndex != 'number' || guard) fromIndex = 0;\n  return (0,_indexOf_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj, item, fromIndex) >= 0;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/contains.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/countBy.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/countBy.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _group_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_group.js */ \"./node_modules/underscore/modules/_group.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n\n\n\n// Counts instances of an object that group by a certain criterion. Pass\n// either a string attribute to count by, or a function that returns the\n// criterion.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_group_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(result, value, key) {\n  if ((0,_has_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(result, key)) result[key]++; else result[key] = 1;\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/countBy.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/create.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/create.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ create)\n/* harmony export */ });\n/* harmony import */ var _baseCreate_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_baseCreate.js */ \"./node_modules/underscore/modules/_baseCreate.js\");\n/* harmony import */ var _extendOwn_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./extendOwn.js */ \"./node_modules/underscore/modules/extendOwn.js\");\n\n\n\n// Creates an object that inherits from the given prototype object.\n// If additional properties are provided then they will be added to the\n// created object.\nfunction create(prototype, props) {\n  var result = (0,_baseCreate_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(prototype);\n  if (props) (0,_extendOwn_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(result, props);\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/create.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/debounce.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/debounce.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ debounce)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _now_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./now.js */ \"./node_modules/underscore/modules/now.js\");\n\n\n\n// When a sequence of calls of the returned function ends, the argument\n// function is triggered. The end of a sequence is defined by the `wait`\n// parameter. If `immediate` is passed, the argument function will be\n// triggered at the beginning of the sequence instead of at the end.\nfunction debounce(func, wait, immediate) {\n  var timeout, previous, args, result, context;\n\n  var later = function() {\n    var passed = (0,_now_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])() - previous;\n    if (wait > passed) {\n      timeout = setTimeout(later, wait - passed);\n    } else {\n      timeout = null;\n      if (!immediate) result = func.apply(context, args);\n      // This check is needed because `func` can recursively invoke `debounced`.\n      if (!timeout) args = context = null;\n    }\n  };\n\n  var debounced = (0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(_args) {\n    context = this;\n    args = _args;\n    previous = (0,_now_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])();\n    if (!timeout) {\n      timeout = setTimeout(later, wait);\n      if (immediate) result = func.apply(context, args);\n    }\n    return result;\n  });\n\n  debounced.cancel = function() {\n    clearTimeout(timeout);\n    timeout = args = context = null;\n  };\n\n  return debounced;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/debounce.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/defaults.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/defaults.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createAssigner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createAssigner.js */ \"./node_modules/underscore/modules/_createAssigner.js\");\n/* harmony import */ var _allKeys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./allKeys.js */ \"./node_modules/underscore/modules/allKeys.js\");\n\n\n\n// Fill in a given object with default properties.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createAssigner_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_allKeys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"], true));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/defaults.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/defer.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/defer.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _partial_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./partial.js */ \"./node_modules/underscore/modules/partial.js\");\n/* harmony import */ var _delay_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./delay.js */ \"./node_modules/underscore/modules/delay.js\");\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n\n\n\n\n// Defers a function, scheduling it to run after the current call stack has\n// cleared.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_partial_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_delay_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"], _underscore_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"], 1));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/defer.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/delay.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/delay.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n\n\n// Delays a function for the given number of milliseconds, and then calls\n// it with the arguments supplied.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(func, wait, args) {\n  return setTimeout(function() {\n    return func.apply(null, args);\n  }, wait);\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/delay.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/difference.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/difference.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_flatten.js */ \"./node_modules/underscore/modules/_flatten.js\");\n/* harmony import */ var _filter_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./filter.js */ \"./node_modules/underscore/modules/filter.js\");\n/* harmony import */ var _contains_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./contains.js */ \"./node_modules/underscore/modules/contains.js\");\n\n\n\n\n\n// Take the difference between one array and a number of other arrays.\n// Only the elements present in just the first array will remain.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(array, rest) {\n  rest = (0,_flatten_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(rest, true, true);\n  return (0,_filter_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(array, function(value){\n    return !(0,_contains_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(rest, value);\n  });\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/difference.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/each.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/each.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ each)\n/* harmony export */ });\n/* harmony import */ var _optimizeCb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_optimizeCb.js */ \"./node_modules/underscore/modules/_optimizeCb.js\");\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n\n// The cornerstone for collection functions, an `each`\n// implementation, aka `forEach`.\n// Handles raw objects in addition to array-likes. Treats all\n// sparse array-likes as if they were dense.\nfunction each(obj, iteratee, context) {\n  iteratee = (0,_optimizeCb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context);\n  var i, length;\n  if ((0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj)) {\n    for (i = 0, length = obj.length; i < length; i++) {\n      iteratee(obj[i], i, obj);\n    }\n  } else {\n    var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj);\n    for (i = 0, length = _keys.length; i < length; i++) {\n      iteratee(obj[_keys[i]], _keys[i], obj);\n    }\n  }\n  return obj;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/each.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/escape.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/escape.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createEscaper_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createEscaper.js */ \"./node_modules/underscore/modules/_createEscaper.js\");\n/* harmony import */ var _escapeMap_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_escapeMap.js */ \"./node_modules/underscore/modules/_escapeMap.js\");\n\n\n\n// Function for escaping strings to HTML interpolation.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createEscaper_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_escapeMap_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/escape.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/every.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/every.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ every)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n\n// Determine whether all of the elements pass a truth test.\nfunction every(obj, predicate, context) {\n  predicate = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(predicate, context);\n  var _keys = !(0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) && (0,_keys_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj),\n      length = (_keys || obj).length;\n  for (var index = 0; index < length; index++) {\n    var currentKey = _keys ? _keys[index] : index;\n    if (!predicate(obj[currentKey], currentKey, obj)) return false;\n  }\n  return true;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/every.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/extend.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/extend.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createAssigner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createAssigner.js */ \"./node_modules/underscore/modules/_createAssigner.js\");\n/* harmony import */ var _allKeys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./allKeys.js */ \"./node_modules/underscore/modules/allKeys.js\");\n\n\n\n// Extend a given object with all the properties in passed-in object(s).\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createAssigner_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_allKeys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/extend.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/extendOwn.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/extendOwn.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createAssigner_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createAssigner.js */ \"./node_modules/underscore/modules/_createAssigner.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n// Assigns a given object with all the own properties in the passed-in\n// object(s).\n// (https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object/assign)\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createAssigner_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_keys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/extendOwn.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/filter.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/filter.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ filter)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n\n\n\n// Return all the elements that pass a truth test.\nfunction filter(obj, predicate, context) {\n  var results = [];\n  predicate = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(predicate, context);\n  (0,_each_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj, function(value, index, list) {\n    if (predicate(value, index, list)) results.push(value);\n  });\n  return results;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/filter.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/find.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/find.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ find)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _findIndex_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./findIndex.js */ \"./node_modules/underscore/modules/findIndex.js\");\n/* harmony import */ var _findKey_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./findKey.js */ \"./node_modules/underscore/modules/findKey.js\");\n\n\n\n\n// Return the first value which passes a truth test.\nfunction find(obj, predicate, context) {\n  var keyFinder = (0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj) ? _findIndex_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"] : _findKey_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"];\n  var key = keyFinder(obj, predicate, context);\n  if (key !== void 0 && key !== -1) return obj[key];\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/find.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/findIndex.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/findIndex.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createPredicateIndexFinder_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createPredicateIndexFinder.js */ \"./node_modules/underscore/modules/_createPredicateIndexFinder.js\");\n\n\n// Returns the first index on an array-like that passes a truth test.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createPredicateIndexFinder_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(1));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/findIndex.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/findKey.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/findKey.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ findKey)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n// Returns the first key on an object that passes a truth test.\nfunction findKey(obj, predicate, context) {\n  predicate = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(predicate, context);\n  var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj), key;\n  for (var i = 0, length = _keys.length; i < length; i++) {\n    key = _keys[i];\n    if (predicate(obj[key], key, obj)) return key;\n  }\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/findKey.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/findLastIndex.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/findLastIndex.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createPredicateIndexFinder_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createPredicateIndexFinder.js */ \"./node_modules/underscore/modules/_createPredicateIndexFinder.js\");\n\n\n// Returns the last index on an array-like that passes a truth test.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createPredicateIndexFinder_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(-1));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/findLastIndex.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/findWhere.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/findWhere.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ findWhere)\n/* harmony export */ });\n/* harmony import */ var _find_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./find.js */ \"./node_modules/underscore/modules/find.js\");\n/* harmony import */ var _matcher_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./matcher.js */ \"./node_modules/underscore/modules/matcher.js\");\n\n\n\n// Convenience version of a common use case of `_.find`: getting the first\n// object containing specific `key:value` pairs.\nfunction findWhere(obj, attrs) {\n  return (0,_find_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, (0,_matcher_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(attrs));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/findWhere.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/first.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/first.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ first)\n/* harmony export */ });\n/* harmony import */ var _initial_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./initial.js */ \"./node_modules/underscore/modules/initial.js\");\n\n\n// Get the first element of an array. Passing **n** will return the first N\n// values in the array. The **guard** check allows it to work with `_.map`.\nfunction first(array, n, guard) {\n  if (array == null || array.length < 1) return n == null || guard ? void 0 : [];\n  if (n == null || guard) return array[0];\n  return (0,_initial_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array, array.length - n);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/first.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/flatten.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/flatten.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ flatten)\n/* harmony export */ });\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_flatten.js */ \"./node_modules/underscore/modules/_flatten.js\");\n\n\n// Flatten out an array, either recursively (by default), or up to `depth`.\n// Passing `true` or `false` as `depth` means `1` or `Infinity`, respectively.\nfunction flatten(array, depth) {\n  return (0,_flatten_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array, depth, false);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/flatten.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/functions.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/functions.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ functions)\n/* harmony export */ });\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n\n\n// Return a sorted list of the function names available on the object.\nfunction functions(obj) {\n  var names = [];\n  for (var key in obj) {\n    if ((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj[key])) names.push(key);\n  }\n  return names.sort();\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/functions.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/get.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/get.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ get)\n/* harmony export */ });\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_toPath.js */ \"./node_modules/underscore/modules/_toPath.js\");\n/* harmony import */ var _deepGet_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_deepGet.js */ \"./node_modules/underscore/modules/_deepGet.js\");\n/* harmony import */ var _isUndefined_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isUndefined.js */ \"./node_modules/underscore/modules/isUndefined.js\");\n\n\n\n\n// Get the value of the (deep) property on `path` from `object`.\n// If any property in `path` does not exist or if the value is\n// `undefined`, return `defaultValue` instead.\n// The `path` is normalized through `_.toPath`.\nfunction get(object, path, defaultValue) {\n  var value = (0,_deepGet_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(object, (0,_toPath_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(path));\n  return (0,_isUndefined_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(value) ? defaultValue : value;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/get.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/groupBy.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/groupBy.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _group_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_group.js */ \"./node_modules/underscore/modules/_group.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n\n\n\n// Groups the object's values by a criterion. Pass either a string attribute\n// to group by, or a function that returns the criterion.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_group_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(result, value, key) {\n  if ((0,_has_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(result, key)) result[key].push(value); else result[key] = [value];\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/groupBy.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/has.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/has.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ has)\n/* harmony export */ });\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_toPath.js */ \"./node_modules/underscore/modules/_toPath.js\");\n\n\n\n// Shortcut function for checking if an object has a given property directly on\n// itself (in other words, not on a prototype). Unlike the internal `has`\n// function, this public version can also traverse nested properties.\nfunction has(obj, path) {\n  path = (0,_toPath_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(path);\n  var length = path.length;\n  for (var i = 0; i < length; i++) {\n    var key = path[i];\n    if (!(0,_has_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, key)) return false;\n    obj = obj[key];\n  }\n  return !!length;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/has.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/identity.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/identity.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ identity)\n/* harmony export */ });\n// Keep the identity function around for default iteratees.\nfunction identity(value) {\n  return value;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/identity.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/index-all.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/index-all.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   VERSION: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.VERSION),\n/* harmony export */   after: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.after),\n/* harmony export */   all: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.all),\n/* harmony export */   allKeys: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.allKeys),\n/* harmony export */   any: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.any),\n/* harmony export */   assign: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.assign),\n/* harmony export */   before: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.before),\n/* harmony export */   bind: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.bind),\n/* harmony export */   bindAll: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.bindAll),\n/* harmony export */   chain: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.chain),\n/* harmony export */   chunk: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.chunk),\n/* harmony export */   clone: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.clone),\n/* harmony export */   collect: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.collect),\n/* harmony export */   compact: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.compact),\n/* harmony export */   compose: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.compose),\n/* harmony export */   constant: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.constant),\n/* harmony export */   contains: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.contains),\n/* harmony export */   countBy: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.countBy),\n/* harmony export */   create: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.create),\n/* harmony export */   debounce: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.debounce),\n/* harmony export */   \"default\": () => (/* reexport safe */ _index_default_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]),\n/* harmony export */   defaults: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.defaults),\n/* harmony export */   defer: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.defer),\n/* harmony export */   delay: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.delay),\n/* harmony export */   detect: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.detect),\n/* harmony export */   difference: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.difference),\n/* harmony export */   drop: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.drop),\n/* harmony export */   each: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.each),\n/* harmony export */   escape: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.escape),\n/* harmony export */   every: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.every),\n/* harmony export */   extend: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.extend),\n/* harmony export */   extendOwn: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.extendOwn),\n/* harmony export */   filter: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.filter),\n/* harmony export */   find: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.find),\n/* harmony export */   findIndex: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.findIndex),\n/* harmony export */   findKey: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.findKey),\n/* harmony export */   findLastIndex: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.findLastIndex),\n/* harmony export */   findWhere: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.findWhere),\n/* harmony export */   first: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.first),\n/* harmony export */   flatten: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.flatten),\n/* harmony export */   foldl: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.foldl),\n/* harmony export */   foldr: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.foldr),\n/* harmony export */   forEach: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.forEach),\n/* harmony export */   functions: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.functions),\n/* harmony export */   get: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.get),\n/* harmony export */   groupBy: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.groupBy),\n/* harmony export */   has: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.has),\n/* harmony export */   head: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.head),\n/* harmony export */   identity: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.identity),\n/* harmony export */   include: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.include),\n/* harmony export */   includes: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.includes),\n/* harmony export */   indexBy: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.indexBy),\n/* harmony export */   indexOf: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.indexOf),\n/* harmony export */   initial: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.initial),\n/* harmony export */   inject: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.inject),\n/* harmony export */   intersection: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.intersection),\n/* harmony export */   invert: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.invert),\n/* harmony export */   invoke: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.invoke),\n/* harmony export */   isArguments: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isArguments),\n/* harmony export */   isArray: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isArray),\n/* harmony export */   isArrayBuffer: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isArrayBuffer),\n/* harmony export */   isBoolean: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isBoolean),\n/* harmony export */   isDataView: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isDataView),\n/* harmony export */   isDate: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isDate),\n/* harmony export */   isElement: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isElement),\n/* harmony export */   isEmpty: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isEmpty),\n/* harmony export */   isEqual: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isEqual),\n/* harmony export */   isError: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isError),\n/* harmony export */   isFinite: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isFinite),\n/* harmony export */   isFunction: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isFunction),\n/* harmony export */   isMap: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isMap),\n/* harmony export */   isMatch: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isMatch),\n/* harmony export */   isNaN: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isNaN),\n/* harmony export */   isNull: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isNull),\n/* harmony export */   isNumber: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isNumber),\n/* harmony export */   isObject: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isObject),\n/* harmony export */   isRegExp: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isRegExp),\n/* harmony export */   isSet: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isSet),\n/* harmony export */   isString: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isString),\n/* harmony export */   isSymbol: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isSymbol),\n/* harmony export */   isTypedArray: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isTypedArray),\n/* harmony export */   isUndefined: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isUndefined),\n/* harmony export */   isWeakMap: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isWeakMap),\n/* harmony export */   isWeakSet: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.isWeakSet),\n/* harmony export */   iteratee: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.iteratee),\n/* harmony export */   keys: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.keys),\n/* harmony export */   last: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.last),\n/* harmony export */   lastIndexOf: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.lastIndexOf),\n/* harmony export */   map: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.map),\n/* harmony export */   mapObject: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.mapObject),\n/* harmony export */   matcher: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.matcher),\n/* harmony export */   matches: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.matches),\n/* harmony export */   max: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.max),\n/* harmony export */   memoize: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.memoize),\n/* harmony export */   methods: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.methods),\n/* harmony export */   min: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.min),\n/* harmony export */   mixin: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.mixin),\n/* harmony export */   negate: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.negate),\n/* harmony export */   noop: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.noop),\n/* harmony export */   now: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.now),\n/* harmony export */   object: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.object),\n/* harmony export */   omit: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.omit),\n/* harmony export */   once: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.once),\n/* harmony export */   pairs: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.pairs),\n/* harmony export */   partial: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.partial),\n/* harmony export */   partition: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.partition),\n/* harmony export */   pick: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.pick),\n/* harmony export */   pluck: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.pluck),\n/* harmony export */   property: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.property),\n/* harmony export */   propertyOf: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.propertyOf),\n/* harmony export */   random: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.random),\n/* harmony export */   range: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.range),\n/* harmony export */   reduce: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.reduce),\n/* harmony export */   reduceRight: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.reduceRight),\n/* harmony export */   reject: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.reject),\n/* harmony export */   rest: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.rest),\n/* harmony export */   restArguments: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.restArguments),\n/* harmony export */   result: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.result),\n/* harmony export */   sample: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.sample),\n/* harmony export */   select: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.select),\n/* harmony export */   shuffle: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.shuffle),\n/* harmony export */   size: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.size),\n/* harmony export */   some: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.some),\n/* harmony export */   sortBy: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.sortBy),\n/* harmony export */   sortedIndex: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.sortedIndex),\n/* harmony export */   tail: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.tail),\n/* harmony export */   take: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.take),\n/* harmony export */   tap: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.tap),\n/* harmony export */   template: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.template),\n/* harmony export */   templateSettings: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.templateSettings),\n/* harmony export */   throttle: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.throttle),\n/* harmony export */   times: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.times),\n/* harmony export */   toArray: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.toArray),\n/* harmony export */   toPath: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.toPath),\n/* harmony export */   transpose: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.transpose),\n/* harmony export */   unescape: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.unescape),\n/* harmony export */   union: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.union),\n/* harmony export */   uniq: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.uniq),\n/* harmony export */   unique: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.unique),\n/* harmony export */   uniqueId: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.uniqueId),\n/* harmony export */   unzip: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.unzip),\n/* harmony export */   values: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.values),\n/* harmony export */   where: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.where),\n/* harmony export */   without: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.without),\n/* harmony export */   wrap: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.wrap),\n/* harmony export */   zip: () => (/* reexport safe */ _index_js__WEBPACK_IMPORTED_MODULE_1__.zip)\n/* harmony export */ });\n/* harmony import */ var _index_default_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index-default.js */ \"./node_modules/underscore/modules/index-default.js\");\n/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.js */ \"./node_modules/underscore/modules/index.js\");\n// ESM Exports\n// ===========\n// This module is the package entry point for ES module users. In other words,\n// it is the module they are interfacing with when they import from the whole\n// package instead of from a submodule, like this:\n//\n// ```js\n// import { map } from 'underscore';\n// ```\n//\n// The difference with `./index-default`, which is the package entry point for\n// CommonJS, AMD and UMD users, is purely technical. In ES modules, named and\n// default exports are considered to be siblings, so when you have a default\n// export, its properties are not automatically available as named exports. For\n// this reason, we re-export the named exports in addition to providing the same\n// default export as in `./index-default`.\n\n\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/index-all.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/index-default.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/index-default.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _index_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./index.js */ \"./node_modules/underscore/modules/index.js\");\n// Default Export\n// ==============\n// In this module, we mix our bundled exports into the `_` object and export\n// the result. This is analogous to setting `module.exports = _` in CommonJS.\n// Hence, this module is also the entry point of our UMD bundle and the package\n// entry point for CommonJS and AMD users. In other words, this is (the source\n// of) the module you are interfacing with when you do any of the following:\n//\n// ```js\n// // CommonJS\n// var _ = require('underscore');\n//\n// // AMD\n// define(['underscore'], function(_) {...});\n//\n// // UMD in the browser\n// // _ is available as a global variable\n// ```\n\n\n\n// Add all of the Underscore functions to the wrapper object.\nvar _ = (0,_index_js__WEBPACK_IMPORTED_MODULE_0__.mixin)(_index_js__WEBPACK_IMPORTED_MODULE_0__);\n// Legacy Node.js API.\n_._ = _;\n// Export the Underscore API.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/index-default.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/index.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/index.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   VERSION: () => (/* reexport safe */ _setup_js__WEBPACK_IMPORTED_MODULE_0__.VERSION),\n/* harmony export */   after: () => (/* reexport safe */ _after_js__WEBPACK_IMPORTED_MODULE_72__[\"default\"]),\n/* harmony export */   all: () => (/* reexport safe */ _every_js__WEBPACK_IMPORTED_MODULE_89__[\"default\"]),\n/* harmony export */   allKeys: () => (/* reexport safe */ _allKeys_js__WEBPACK_IMPORTED_MODULE_29__[\"default\"]),\n/* harmony export */   any: () => (/* reexport safe */ _some_js__WEBPACK_IMPORTED_MODULE_90__[\"default\"]),\n/* harmony export */   assign: () => (/* reexport safe */ _extendOwn_js__WEBPACK_IMPORTED_MODULE_35__[\"default\"]),\n/* harmony export */   before: () => (/* reexport safe */ _before_js__WEBPACK_IMPORTED_MODULE_73__[\"default\"]),\n/* harmony export */   bind: () => (/* reexport safe */ _bind_js__WEBPACK_IMPORTED_MODULE_62__[\"default\"]),\n/* harmony export */   bindAll: () => (/* reexport safe */ _bindAll_js__WEBPACK_IMPORTED_MODULE_63__[\"default\"]),\n/* harmony export */   chain: () => (/* reexport safe */ _chain_js__WEBPACK_IMPORTED_MODULE_59__[\"default\"]),\n/* harmony export */   chunk: () => (/* reexport safe */ _chunk_js__WEBPACK_IMPORTED_MODULE_123__[\"default\"]),\n/* harmony export */   clone: () => (/* reexport safe */ _clone_js__WEBPACK_IMPORTED_MODULE_38__[\"default\"]),\n/* harmony export */   collect: () => (/* reexport safe */ _map_js__WEBPACK_IMPORTED_MODULE_84__[\"default\"]),\n/* harmony export */   compact: () => (/* reexport safe */ _compact_js__WEBPACK_IMPORTED_MODULE_112__[\"default\"]),\n/* harmony export */   compose: () => (/* reexport safe */ _compose_js__WEBPACK_IMPORTED_MODULE_71__[\"default\"]),\n/* harmony export */   constant: () => (/* reexport safe */ _constant_js__WEBPACK_IMPORTED_MODULE_44__[\"default\"]),\n/* harmony export */   contains: () => (/* reexport safe */ _contains_js__WEBPACK_IMPORTED_MODULE_91__[\"default\"]),\n/* harmony export */   countBy: () => (/* reexport safe */ _countBy_js__WEBPACK_IMPORTED_MODULE_102__[\"default\"]),\n/* harmony export */   create: () => (/* reexport safe */ _create_js__WEBPACK_IMPORTED_MODULE_37__[\"default\"]),\n/* harmony export */   debounce: () => (/* reexport safe */ _debounce_js__WEBPACK_IMPORTED_MODULE_68__[\"default\"]),\n/* harmony export */   \"default\": () => (/* reexport safe */ _underscore_array_methods_js__WEBPACK_IMPORTED_MODULE_125__[\"default\"]),\n/* harmony export */   defaults: () => (/* reexport safe */ _defaults_js__WEBPACK_IMPORTED_MODULE_36__[\"default\"]),\n/* harmony export */   defer: () => (/* reexport safe */ _defer_js__WEBPACK_IMPORTED_MODULE_66__[\"default\"]),\n/* harmony export */   delay: () => (/* reexport safe */ _delay_js__WEBPACK_IMPORTED_MODULE_65__[\"default\"]),\n/* harmony export */   detect: () => (/* reexport safe */ _find_js__WEBPACK_IMPORTED_MODULE_81__[\"default\"]),\n/* harmony export */   difference: () => (/* reexport safe */ _difference_js__WEBPACK_IMPORTED_MODULE_118__[\"default\"]),\n/* harmony export */   drop: () => (/* reexport safe */ _rest_js__WEBPACK_IMPORTED_MODULE_111__[\"default\"]),\n/* harmony export */   each: () => (/* reexport safe */ _each_js__WEBPACK_IMPORTED_MODULE_83__[\"default\"]),\n/* harmony export */   escape: () => (/* reexport safe */ _escape_js__WEBPACK_IMPORTED_MODULE_53__[\"default\"]),\n/* harmony export */   every: () => (/* reexport safe */ _every_js__WEBPACK_IMPORTED_MODULE_89__[\"default\"]),\n/* harmony export */   extend: () => (/* reexport safe */ _extend_js__WEBPACK_IMPORTED_MODULE_34__[\"default\"]),\n/* harmony export */   extendOwn: () => (/* reexport safe */ _extendOwn_js__WEBPACK_IMPORTED_MODULE_35__[\"default\"]),\n/* harmony export */   filter: () => (/* reexport safe */ _filter_js__WEBPACK_IMPORTED_MODULE_87__[\"default\"]),\n/* harmony export */   find: () => (/* reexport safe */ _find_js__WEBPACK_IMPORTED_MODULE_81__[\"default\"]),\n/* harmony export */   findIndex: () => (/* reexport safe */ _findIndex_js__WEBPACK_IMPORTED_MODULE_76__[\"default\"]),\n/* harmony export */   findKey: () => (/* reexport safe */ _findKey_js__WEBPACK_IMPORTED_MODULE_75__[\"default\"]),\n/* harmony export */   findLastIndex: () => (/* reexport safe */ _findLastIndex_js__WEBPACK_IMPORTED_MODULE_77__[\"default\"]),\n/* harmony export */   findWhere: () => (/* reexport safe */ _findWhere_js__WEBPACK_IMPORTED_MODULE_82__[\"default\"]),\n/* harmony export */   first: () => (/* reexport safe */ _first_js__WEBPACK_IMPORTED_MODULE_108__[\"default\"]),\n/* harmony export */   flatten: () => (/* reexport safe */ _flatten_js__WEBPACK_IMPORTED_MODULE_113__[\"default\"]),\n/* harmony export */   foldl: () => (/* reexport safe */ _reduce_js__WEBPACK_IMPORTED_MODULE_85__[\"default\"]),\n/* harmony export */   foldr: () => (/* reexport safe */ _reduceRight_js__WEBPACK_IMPORTED_MODULE_86__[\"default\"]),\n/* harmony export */   forEach: () => (/* reexport safe */ _each_js__WEBPACK_IMPORTED_MODULE_83__[\"default\"]),\n/* harmony export */   functions: () => (/* reexport safe */ _functions_js__WEBPACK_IMPORTED_MODULE_33__[\"default\"]),\n/* harmony export */   get: () => (/* reexport safe */ _get_js__WEBPACK_IMPORTED_MODULE_40__[\"default\"]),\n/* harmony export */   groupBy: () => (/* reexport safe */ _groupBy_js__WEBPACK_IMPORTED_MODULE_100__[\"default\"]),\n/* harmony export */   has: () => (/* reexport safe */ _has_js__WEBPACK_IMPORTED_MODULE_41__[\"default\"]),\n/* harmony export */   head: () => (/* reexport safe */ _first_js__WEBPACK_IMPORTED_MODULE_108__[\"default\"]),\n/* harmony export */   identity: () => (/* reexport safe */ _identity_js__WEBPACK_IMPORTED_MODULE_43__[\"default\"]),\n/* harmony export */   include: () => (/* reexport safe */ _contains_js__WEBPACK_IMPORTED_MODULE_91__[\"default\"]),\n/* harmony export */   includes: () => (/* reexport safe */ _contains_js__WEBPACK_IMPORTED_MODULE_91__[\"default\"]),\n/* harmony export */   indexBy: () => (/* reexport safe */ _indexBy_js__WEBPACK_IMPORTED_MODULE_101__[\"default\"]),\n/* harmony export */   indexOf: () => (/* reexport safe */ _indexOf_js__WEBPACK_IMPORTED_MODULE_79__[\"default\"]),\n/* harmony export */   initial: () => (/* reexport safe */ _initial_js__WEBPACK_IMPORTED_MODULE_109__[\"default\"]),\n/* harmony export */   inject: () => (/* reexport safe */ _reduce_js__WEBPACK_IMPORTED_MODULE_85__[\"default\"]),\n/* harmony export */   intersection: () => (/* reexport safe */ _intersection_js__WEBPACK_IMPORTED_MODULE_117__[\"default\"]),\n/* harmony export */   invert: () => (/* reexport safe */ _invert_js__WEBPACK_IMPORTED_MODULE_32__[\"default\"]),\n/* harmony export */   invoke: () => (/* reexport safe */ _invoke_js__WEBPACK_IMPORTED_MODULE_92__[\"default\"]),\n/* harmony export */   isArguments: () => (/* reexport safe */ _isArguments_js__WEBPACK_IMPORTED_MODULE_17__[\"default\"]),\n/* harmony export */   isArray: () => (/* reexport safe */ _isArray_js__WEBPACK_IMPORTED_MODULE_15__[\"default\"]),\n/* harmony export */   isArrayBuffer: () => (/* reexport safe */ _isArrayBuffer_js__WEBPACK_IMPORTED_MODULE_13__[\"default\"]),\n/* harmony export */   isBoolean: () => (/* reexport safe */ _isBoolean_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"]),\n/* harmony export */   isDataView: () => (/* reexport safe */ _isDataView_js__WEBPACK_IMPORTED_MODULE_14__[\"default\"]),\n/* harmony export */   isDate: () => (/* reexport safe */ _isDate_js__WEBPACK_IMPORTED_MODULE_9__[\"default\"]),\n/* harmony export */   isElement: () => (/* reexport safe */ _isElement_js__WEBPACK_IMPORTED_MODULE_6__[\"default\"]),\n/* harmony export */   isEmpty: () => (/* reexport safe */ _isEmpty_js__WEBPACK_IMPORTED_MODULE_21__[\"default\"]),\n/* harmony export */   isEqual: () => (/* reexport safe */ _isEqual_js__WEBPACK_IMPORTED_MODULE_23__[\"default\"]),\n/* harmony export */   isError: () => (/* reexport safe */ _isError_js__WEBPACK_IMPORTED_MODULE_11__[\"default\"]),\n/* harmony export */   isFinite: () => (/* reexport safe */ _isFinite_js__WEBPACK_IMPORTED_MODULE_18__[\"default\"]),\n/* harmony export */   isFunction: () => (/* reexport safe */ _isFunction_js__WEBPACK_IMPORTED_MODULE_16__[\"default\"]),\n/* harmony export */   isMap: () => (/* reexport safe */ _isMap_js__WEBPACK_IMPORTED_MODULE_24__[\"default\"]),\n/* harmony export */   isMatch: () => (/* reexport safe */ _isMatch_js__WEBPACK_IMPORTED_MODULE_22__[\"default\"]),\n/* harmony export */   isNaN: () => (/* reexport safe */ _isNaN_js__WEBPACK_IMPORTED_MODULE_19__[\"default\"]),\n/* harmony export */   isNull: () => (/* reexport safe */ _isNull_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"]),\n/* harmony export */   isNumber: () => (/* reexport safe */ _isNumber_js__WEBPACK_IMPORTED_MODULE_8__[\"default\"]),\n/* harmony export */   isObject: () => (/* reexport safe */ _isObject_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"]),\n/* harmony export */   isRegExp: () => (/* reexport safe */ _isRegExp_js__WEBPACK_IMPORTED_MODULE_10__[\"default\"]),\n/* harmony export */   isSet: () => (/* reexport safe */ _isSet_js__WEBPACK_IMPORTED_MODULE_26__[\"default\"]),\n/* harmony export */   isString: () => (/* reexport safe */ _isString_js__WEBPACK_IMPORTED_MODULE_7__[\"default\"]),\n/* harmony export */   isSymbol: () => (/* reexport safe */ _isSymbol_js__WEBPACK_IMPORTED_MODULE_12__[\"default\"]),\n/* harmony export */   isTypedArray: () => (/* reexport safe */ _isTypedArray_js__WEBPACK_IMPORTED_MODULE_20__[\"default\"]),\n/* harmony export */   isUndefined: () => (/* reexport safe */ _isUndefined_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"]),\n/* harmony export */   isWeakMap: () => (/* reexport safe */ _isWeakMap_js__WEBPACK_IMPORTED_MODULE_25__[\"default\"]),\n/* harmony export */   isWeakSet: () => (/* reexport safe */ _isWeakSet_js__WEBPACK_IMPORTED_MODULE_27__[\"default\"]),\n/* harmony export */   iteratee: () => (/* reexport safe */ _iteratee_js__WEBPACK_IMPORTED_MODULE_60__[\"default\"]),\n/* harmony export */   keys: () => (/* reexport safe */ _keys_js__WEBPACK_IMPORTED_MODULE_28__[\"default\"]),\n/* harmony export */   last: () => (/* reexport safe */ _last_js__WEBPACK_IMPORTED_MODULE_110__[\"default\"]),\n/* harmony export */   lastIndexOf: () => (/* reexport safe */ _lastIndexOf_js__WEBPACK_IMPORTED_MODULE_80__[\"default\"]),\n/* harmony export */   map: () => (/* reexport safe */ _map_js__WEBPACK_IMPORTED_MODULE_84__[\"default\"]),\n/* harmony export */   mapObject: () => (/* reexport safe */ _mapObject_js__WEBPACK_IMPORTED_MODULE_42__[\"default\"]),\n/* harmony export */   matcher: () => (/* reexport safe */ _matcher_js__WEBPACK_IMPORTED_MODULE_49__[\"default\"]),\n/* harmony export */   matches: () => (/* reexport safe */ _matcher_js__WEBPACK_IMPORTED_MODULE_49__[\"default\"]),\n/* harmony export */   max: () => (/* reexport safe */ _max_js__WEBPACK_IMPORTED_MODULE_95__[\"default\"]),\n/* harmony export */   memoize: () => (/* reexport safe */ _memoize_js__WEBPACK_IMPORTED_MODULE_64__[\"default\"]),\n/* harmony export */   methods: () => (/* reexport safe */ _functions_js__WEBPACK_IMPORTED_MODULE_33__[\"default\"]),\n/* harmony export */   min: () => (/* reexport safe */ _min_js__WEBPACK_IMPORTED_MODULE_96__[\"default\"]),\n/* harmony export */   mixin: () => (/* reexport safe */ _mixin_js__WEBPACK_IMPORTED_MODULE_124__[\"default\"]),\n/* harmony export */   negate: () => (/* reexport safe */ _negate_js__WEBPACK_IMPORTED_MODULE_70__[\"default\"]),\n/* harmony export */   noop: () => (/* reexport safe */ _noop_js__WEBPACK_IMPORTED_MODULE_45__[\"default\"]),\n/* harmony export */   now: () => (/* reexport safe */ _now_js__WEBPACK_IMPORTED_MODULE_52__[\"default\"]),\n/* harmony export */   object: () => (/* reexport safe */ _object_js__WEBPACK_IMPORTED_MODULE_121__[\"default\"]),\n/* harmony export */   omit: () => (/* reexport safe */ _omit_js__WEBPACK_IMPORTED_MODULE_107__[\"default\"]),\n/* harmony export */   once: () => (/* reexport safe */ _once_js__WEBPACK_IMPORTED_MODULE_74__[\"default\"]),\n/* harmony export */   pairs: () => (/* reexport safe */ _pairs_js__WEBPACK_IMPORTED_MODULE_31__[\"default\"]),\n/* harmony export */   partial: () => (/* reexport safe */ _partial_js__WEBPACK_IMPORTED_MODULE_61__[\"default\"]),\n/* harmony export */   partition: () => (/* reexport safe */ _partition_js__WEBPACK_IMPORTED_MODULE_103__[\"default\"]),\n/* harmony export */   pick: () => (/* reexport safe */ _pick_js__WEBPACK_IMPORTED_MODULE_106__[\"default\"]),\n/* harmony export */   pluck: () => (/* reexport safe */ _pluck_js__WEBPACK_IMPORTED_MODULE_93__[\"default\"]),\n/* harmony export */   property: () => (/* reexport safe */ _property_js__WEBPACK_IMPORTED_MODULE_47__[\"default\"]),\n/* harmony export */   propertyOf: () => (/* reexport safe */ _propertyOf_js__WEBPACK_IMPORTED_MODULE_48__[\"default\"]),\n/* harmony export */   random: () => (/* reexport safe */ _random_js__WEBPACK_IMPORTED_MODULE_51__[\"default\"]),\n/* harmony export */   range: () => (/* reexport safe */ _range_js__WEBPACK_IMPORTED_MODULE_122__[\"default\"]),\n/* harmony export */   reduce: () => (/* reexport safe */ _reduce_js__WEBPACK_IMPORTED_MODULE_85__[\"default\"]),\n/* harmony export */   reduceRight: () => (/* reexport safe */ _reduceRight_js__WEBPACK_IMPORTED_MODULE_86__[\"default\"]),\n/* harmony export */   reject: () => (/* reexport safe */ _reject_js__WEBPACK_IMPORTED_MODULE_88__[\"default\"]),\n/* harmony export */   rest: () => (/* reexport safe */ _rest_js__WEBPACK_IMPORTED_MODULE_111__[\"default\"]),\n/* harmony export */   restArguments: () => (/* reexport safe */ _restArguments_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]),\n/* harmony export */   result: () => (/* reexport safe */ _result_js__WEBPACK_IMPORTED_MODULE_57__[\"default\"]),\n/* harmony export */   sample: () => (/* reexport safe */ _sample_js__WEBPACK_IMPORTED_MODULE_98__[\"default\"]),\n/* harmony export */   select: () => (/* reexport safe */ _filter_js__WEBPACK_IMPORTED_MODULE_87__[\"default\"]),\n/* harmony export */   shuffle: () => (/* reexport safe */ _shuffle_js__WEBPACK_IMPORTED_MODULE_97__[\"default\"]),\n/* harmony export */   size: () => (/* reexport safe */ _size_js__WEBPACK_IMPORTED_MODULE_105__[\"default\"]),\n/* harmony export */   some: () => (/* reexport safe */ _some_js__WEBPACK_IMPORTED_MODULE_90__[\"default\"]),\n/* harmony export */   sortBy: () => (/* reexport safe */ _sortBy_js__WEBPACK_IMPORTED_MODULE_99__[\"default\"]),\n/* harmony export */   sortedIndex: () => (/* reexport safe */ _sortedIndex_js__WEBPACK_IMPORTED_MODULE_78__[\"default\"]),\n/* harmony export */   tail: () => (/* reexport safe */ _rest_js__WEBPACK_IMPORTED_MODULE_111__[\"default\"]),\n/* harmony export */   take: () => (/* reexport safe */ _first_js__WEBPACK_IMPORTED_MODULE_108__[\"default\"]),\n/* harmony export */   tap: () => (/* reexport safe */ _tap_js__WEBPACK_IMPORTED_MODULE_39__[\"default\"]),\n/* harmony export */   template: () => (/* reexport safe */ _template_js__WEBPACK_IMPORTED_MODULE_56__[\"default\"]),\n/* harmony export */   templateSettings: () => (/* reexport safe */ _templateSettings_js__WEBPACK_IMPORTED_MODULE_55__[\"default\"]),\n/* harmony export */   throttle: () => (/* reexport safe */ _throttle_js__WEBPACK_IMPORTED_MODULE_67__[\"default\"]),\n/* harmony export */   times: () => (/* reexport safe */ _times_js__WEBPACK_IMPORTED_MODULE_50__[\"default\"]),\n/* harmony export */   toArray: () => (/* reexport safe */ _toArray_js__WEBPACK_IMPORTED_MODULE_104__[\"default\"]),\n/* harmony export */   toPath: () => (/* reexport safe */ _toPath_js__WEBPACK_IMPORTED_MODULE_46__[\"default\"]),\n/* harmony export */   transpose: () => (/* reexport safe */ _unzip_js__WEBPACK_IMPORTED_MODULE_119__[\"default\"]),\n/* harmony export */   unescape: () => (/* reexport safe */ _unescape_js__WEBPACK_IMPORTED_MODULE_54__[\"default\"]),\n/* harmony export */   union: () => (/* reexport safe */ _union_js__WEBPACK_IMPORTED_MODULE_116__[\"default\"]),\n/* harmony export */   uniq: () => (/* reexport safe */ _uniq_js__WEBPACK_IMPORTED_MODULE_115__[\"default\"]),\n/* harmony export */   unique: () => (/* reexport safe */ _uniq_js__WEBPACK_IMPORTED_MODULE_115__[\"default\"]),\n/* harmony export */   uniqueId: () => (/* reexport safe */ _uniqueId_js__WEBPACK_IMPORTED_MODULE_58__[\"default\"]),\n/* harmony export */   unzip: () => (/* reexport safe */ _unzip_js__WEBPACK_IMPORTED_MODULE_119__[\"default\"]),\n/* harmony export */   values: () => (/* reexport safe */ _values_js__WEBPACK_IMPORTED_MODULE_30__[\"default\"]),\n/* harmony export */   where: () => (/* reexport safe */ _where_js__WEBPACK_IMPORTED_MODULE_94__[\"default\"]),\n/* harmony export */   without: () => (/* reexport safe */ _without_js__WEBPACK_IMPORTED_MODULE_114__[\"default\"]),\n/* harmony export */   wrap: () => (/* reexport safe */ _wrap_js__WEBPACK_IMPORTED_MODULE_69__[\"default\"]),\n/* harmony export */   zip: () => (/* reexport safe */ _zip_js__WEBPACK_IMPORTED_MODULE_120__[\"default\"])\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n/* harmony import */ var _isNull_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isNull.js */ \"./node_modules/underscore/modules/isNull.js\");\n/* harmony import */ var _isUndefined_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./isUndefined.js */ \"./node_modules/underscore/modules/isUndefined.js\");\n/* harmony import */ var _isBoolean_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./isBoolean.js */ \"./node_modules/underscore/modules/isBoolean.js\");\n/* harmony import */ var _isElement_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./isElement.js */ \"./node_modules/underscore/modules/isElement.js\");\n/* harmony import */ var _isString_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./isString.js */ \"./node_modules/underscore/modules/isString.js\");\n/* harmony import */ var _isNumber_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./isNumber.js */ \"./node_modules/underscore/modules/isNumber.js\");\n/* harmony import */ var _isDate_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./isDate.js */ \"./node_modules/underscore/modules/isDate.js\");\n/* harmony import */ var _isRegExp_js__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./isRegExp.js */ \"./node_modules/underscore/modules/isRegExp.js\");\n/* harmony import */ var _isError_js__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./isError.js */ \"./node_modules/underscore/modules/isError.js\");\n/* harmony import */ var _isSymbol_js__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./isSymbol.js */ \"./node_modules/underscore/modules/isSymbol.js\");\n/* harmony import */ var _isArrayBuffer_js__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./isArrayBuffer.js */ \"./node_modules/underscore/modules/isArrayBuffer.js\");\n/* harmony import */ var _isDataView_js__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! ./isDataView.js */ \"./node_modules/underscore/modules/isDataView.js\");\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _isArguments_js__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! ./isArguments.js */ \"./node_modules/underscore/modules/isArguments.js\");\n/* harmony import */ var _isFinite_js__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! ./isFinite.js */ \"./node_modules/underscore/modules/isFinite.js\");\n/* harmony import */ var _isNaN_js__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! ./isNaN.js */ \"./node_modules/underscore/modules/isNaN.js\");\n/* harmony import */ var _isTypedArray_js__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! ./isTypedArray.js */ \"./node_modules/underscore/modules/isTypedArray.js\");\n/* harmony import */ var _isEmpty_js__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! ./isEmpty.js */ \"./node_modules/underscore/modules/isEmpty.js\");\n/* harmony import */ var _isMatch_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ./isMatch.js */ \"./node_modules/underscore/modules/isMatch.js\");\n/* harmony import */ var _isEqual_js__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! ./isEqual.js */ \"./node_modules/underscore/modules/isEqual.js\");\n/* harmony import */ var _isMap_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ./isMap.js */ \"./node_modules/underscore/modules/isMap.js\");\n/* harmony import */ var _isWeakMap_js__WEBPACK_IMPORTED_MODULE_25__ = __webpack_require__(/*! ./isWeakMap.js */ \"./node_modules/underscore/modules/isWeakMap.js\");\n/* harmony import */ var _isSet_js__WEBPACK_IMPORTED_MODULE_26__ = __webpack_require__(/*! ./isSet.js */ \"./node_modules/underscore/modules/isSet.js\");\n/* harmony import */ var _isWeakSet_js__WEBPACK_IMPORTED_MODULE_27__ = __webpack_require__(/*! ./isWeakSet.js */ \"./node_modules/underscore/modules/isWeakSet.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_28__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n/* harmony import */ var _allKeys_js__WEBPACK_IMPORTED_MODULE_29__ = __webpack_require__(/*! ./allKeys.js */ \"./node_modules/underscore/modules/allKeys.js\");\n/* harmony import */ var _values_js__WEBPACK_IMPORTED_MODULE_30__ = __webpack_require__(/*! ./values.js */ \"./node_modules/underscore/modules/values.js\");\n/* harmony import */ var _pairs_js__WEBPACK_IMPORTED_MODULE_31__ = __webpack_require__(/*! ./pairs.js */ \"./node_modules/underscore/modules/pairs.js\");\n/* harmony import */ var _invert_js__WEBPACK_IMPORTED_MODULE_32__ = __webpack_require__(/*! ./invert.js */ \"./node_modules/underscore/modules/invert.js\");\n/* harmony import */ var _functions_js__WEBPACK_IMPORTED_MODULE_33__ = __webpack_require__(/*! ./functions.js */ \"./node_modules/underscore/modules/functions.js\");\n/* harmony import */ var _extend_js__WEBPACK_IMPORTED_MODULE_34__ = __webpack_require__(/*! ./extend.js */ \"./node_modules/underscore/modules/extend.js\");\n/* harmony import */ var _extendOwn_js__WEBPACK_IMPORTED_MODULE_35__ = __webpack_require__(/*! ./extendOwn.js */ \"./node_modules/underscore/modules/extendOwn.js\");\n/* harmony import */ var _defaults_js__WEBPACK_IMPORTED_MODULE_36__ = __webpack_require__(/*! ./defaults.js */ \"./node_modules/underscore/modules/defaults.js\");\n/* harmony import */ var _create_js__WEBPACK_IMPORTED_MODULE_37__ = __webpack_require__(/*! ./create.js */ \"./node_modules/underscore/modules/create.js\");\n/* harmony import */ var _clone_js__WEBPACK_IMPORTED_MODULE_38__ = __webpack_require__(/*! ./clone.js */ \"./node_modules/underscore/modules/clone.js\");\n/* harmony import */ var _tap_js__WEBPACK_IMPORTED_MODULE_39__ = __webpack_require__(/*! ./tap.js */ \"./node_modules/underscore/modules/tap.js\");\n/* harmony import */ var _get_js__WEBPACK_IMPORTED_MODULE_40__ = __webpack_require__(/*! ./get.js */ \"./node_modules/underscore/modules/get.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_41__ = __webpack_require__(/*! ./has.js */ \"./node_modules/underscore/modules/has.js\");\n/* harmony import */ var _mapObject_js__WEBPACK_IMPORTED_MODULE_42__ = __webpack_require__(/*! ./mapObject.js */ \"./node_modules/underscore/modules/mapObject.js\");\n/* harmony import */ var _identity_js__WEBPACK_IMPORTED_MODULE_43__ = __webpack_require__(/*! ./identity.js */ \"./node_modules/underscore/modules/identity.js\");\n/* harmony import */ var _constant_js__WEBPACK_IMPORTED_MODULE_44__ = __webpack_require__(/*! ./constant.js */ \"./node_modules/underscore/modules/constant.js\");\n/* harmony import */ var _noop_js__WEBPACK_IMPORTED_MODULE_45__ = __webpack_require__(/*! ./noop.js */ \"./node_modules/underscore/modules/noop.js\");\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_46__ = __webpack_require__(/*! ./toPath.js */ \"./node_modules/underscore/modules/toPath.js\");\n/* harmony import */ var _property_js__WEBPACK_IMPORTED_MODULE_47__ = __webpack_require__(/*! ./property.js */ \"./node_modules/underscore/modules/property.js\");\n/* harmony import */ var _propertyOf_js__WEBPACK_IMPORTED_MODULE_48__ = __webpack_require__(/*! ./propertyOf.js */ \"./node_modules/underscore/modules/propertyOf.js\");\n/* harmony import */ var _matcher_js__WEBPACK_IMPORTED_MODULE_49__ = __webpack_require__(/*! ./matcher.js */ \"./node_modules/underscore/modules/matcher.js\");\n/* harmony import */ var _times_js__WEBPACK_IMPORTED_MODULE_50__ = __webpack_require__(/*! ./times.js */ \"./node_modules/underscore/modules/times.js\");\n/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_51__ = __webpack_require__(/*! ./random.js */ \"./node_modules/underscore/modules/random.js\");\n/* harmony import */ var _now_js__WEBPACK_IMPORTED_MODULE_52__ = __webpack_require__(/*! ./now.js */ \"./node_modules/underscore/modules/now.js\");\n/* harmony import */ var _escape_js__WEBPACK_IMPORTED_MODULE_53__ = __webpack_require__(/*! ./escape.js */ \"./node_modules/underscore/modules/escape.js\");\n/* harmony import */ var _unescape_js__WEBPACK_IMPORTED_MODULE_54__ = __webpack_require__(/*! ./unescape.js */ \"./node_modules/underscore/modules/unescape.js\");\n/* harmony import */ var _templateSettings_js__WEBPACK_IMPORTED_MODULE_55__ = __webpack_require__(/*! ./templateSettings.js */ \"./node_modules/underscore/modules/templateSettings.js\");\n/* harmony import */ var _template_js__WEBPACK_IMPORTED_MODULE_56__ = __webpack_require__(/*! ./template.js */ \"./node_modules/underscore/modules/template.js\");\n/* harmony import */ var _result_js__WEBPACK_IMPORTED_MODULE_57__ = __webpack_require__(/*! ./result.js */ \"./node_modules/underscore/modules/result.js\");\n/* harmony import */ var _uniqueId_js__WEBPACK_IMPORTED_MODULE_58__ = __webpack_require__(/*! ./uniqueId.js */ \"./node_modules/underscore/modules/uniqueId.js\");\n/* harmony import */ var _chain_js__WEBPACK_IMPORTED_MODULE_59__ = __webpack_require__(/*! ./chain.js */ \"./node_modules/underscore/modules/chain.js\");\n/* harmony import */ var _iteratee_js__WEBPACK_IMPORTED_MODULE_60__ = __webpack_require__(/*! ./iteratee.js */ \"./node_modules/underscore/modules/iteratee.js\");\n/* harmony import */ var _partial_js__WEBPACK_IMPORTED_MODULE_61__ = __webpack_require__(/*! ./partial.js */ \"./node_modules/underscore/modules/partial.js\");\n/* harmony import */ var _bind_js__WEBPACK_IMPORTED_MODULE_62__ = __webpack_require__(/*! ./bind.js */ \"./node_modules/underscore/modules/bind.js\");\n/* harmony import */ var _bindAll_js__WEBPACK_IMPORTED_MODULE_63__ = __webpack_require__(/*! ./bindAll.js */ \"./node_modules/underscore/modules/bindAll.js\");\n/* harmony import */ var _memoize_js__WEBPACK_IMPORTED_MODULE_64__ = __webpack_require__(/*! ./memoize.js */ \"./node_modules/underscore/modules/memoize.js\");\n/* harmony import */ var _delay_js__WEBPACK_IMPORTED_MODULE_65__ = __webpack_require__(/*! ./delay.js */ \"./node_modules/underscore/modules/delay.js\");\n/* harmony import */ var _defer_js__WEBPACK_IMPORTED_MODULE_66__ = __webpack_require__(/*! ./defer.js */ \"./node_modules/underscore/modules/defer.js\");\n/* harmony import */ var _throttle_js__WEBPACK_IMPORTED_MODULE_67__ = __webpack_require__(/*! ./throttle.js */ \"./node_modules/underscore/modules/throttle.js\");\n/* harmony import */ var _debounce_js__WEBPACK_IMPORTED_MODULE_68__ = __webpack_require__(/*! ./debounce.js */ \"./node_modules/underscore/modules/debounce.js\");\n/* harmony import */ var _wrap_js__WEBPACK_IMPORTED_MODULE_69__ = __webpack_require__(/*! ./wrap.js */ \"./node_modules/underscore/modules/wrap.js\");\n/* harmony import */ var _negate_js__WEBPACK_IMPORTED_MODULE_70__ = __webpack_require__(/*! ./negate.js */ \"./node_modules/underscore/modules/negate.js\");\n/* harmony import */ var _compose_js__WEBPACK_IMPORTED_MODULE_71__ = __webpack_require__(/*! ./compose.js */ \"./node_modules/underscore/modules/compose.js\");\n/* harmony import */ var _after_js__WEBPACK_IMPORTED_MODULE_72__ = __webpack_require__(/*! ./after.js */ \"./node_modules/underscore/modules/after.js\");\n/* harmony import */ var _before_js__WEBPACK_IMPORTED_MODULE_73__ = __webpack_require__(/*! ./before.js */ \"./node_modules/underscore/modules/before.js\");\n/* harmony import */ var _once_js__WEBPACK_IMPORTED_MODULE_74__ = __webpack_require__(/*! ./once.js */ \"./node_modules/underscore/modules/once.js\");\n/* harmony import */ var _findKey_js__WEBPACK_IMPORTED_MODULE_75__ = __webpack_require__(/*! ./findKey.js */ \"./node_modules/underscore/modules/findKey.js\");\n/* harmony import */ var _findIndex_js__WEBPACK_IMPORTED_MODULE_76__ = __webpack_require__(/*! ./findIndex.js */ \"./node_modules/underscore/modules/findIndex.js\");\n/* harmony import */ var _findLastIndex_js__WEBPACK_IMPORTED_MODULE_77__ = __webpack_require__(/*! ./findLastIndex.js */ \"./node_modules/underscore/modules/findLastIndex.js\");\n/* harmony import */ var _sortedIndex_js__WEBPACK_IMPORTED_MODULE_78__ = __webpack_require__(/*! ./sortedIndex.js */ \"./node_modules/underscore/modules/sortedIndex.js\");\n/* harmony import */ var _indexOf_js__WEBPACK_IMPORTED_MODULE_79__ = __webpack_require__(/*! ./indexOf.js */ \"./node_modules/underscore/modules/indexOf.js\");\n/* harmony import */ var _lastIndexOf_js__WEBPACK_IMPORTED_MODULE_80__ = __webpack_require__(/*! ./lastIndexOf.js */ \"./node_modules/underscore/modules/lastIndexOf.js\");\n/* harmony import */ var _find_js__WEBPACK_IMPORTED_MODULE_81__ = __webpack_require__(/*! ./find.js */ \"./node_modules/underscore/modules/find.js\");\n/* harmony import */ var _findWhere_js__WEBPACK_IMPORTED_MODULE_82__ = __webpack_require__(/*! ./findWhere.js */ \"./node_modules/underscore/modules/findWhere.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_83__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_84__ = __webpack_require__(/*! ./map.js */ \"./node_modules/underscore/modules/map.js\");\n/* harmony import */ var _reduce_js__WEBPACK_IMPORTED_MODULE_85__ = __webpack_require__(/*! ./reduce.js */ \"./node_modules/underscore/modules/reduce.js\");\n/* harmony import */ var _reduceRight_js__WEBPACK_IMPORTED_MODULE_86__ = __webpack_require__(/*! ./reduceRight.js */ \"./node_modules/underscore/modules/reduceRight.js\");\n/* harmony import */ var _filter_js__WEBPACK_IMPORTED_MODULE_87__ = __webpack_require__(/*! ./filter.js */ \"./node_modules/underscore/modules/filter.js\");\n/* harmony import */ var _reject_js__WEBPACK_IMPORTED_MODULE_88__ = __webpack_require__(/*! ./reject.js */ \"./node_modules/underscore/modules/reject.js\");\n/* harmony import */ var _every_js__WEBPACK_IMPORTED_MODULE_89__ = __webpack_require__(/*! ./every.js */ \"./node_modules/underscore/modules/every.js\");\n/* harmony import */ var _some_js__WEBPACK_IMPORTED_MODULE_90__ = __webpack_require__(/*! ./some.js */ \"./node_modules/underscore/modules/some.js\");\n/* harmony import */ var _contains_js__WEBPACK_IMPORTED_MODULE_91__ = __webpack_require__(/*! ./contains.js */ \"./node_modules/underscore/modules/contains.js\");\n/* harmony import */ var _invoke_js__WEBPACK_IMPORTED_MODULE_92__ = __webpack_require__(/*! ./invoke.js */ \"./node_modules/underscore/modules/invoke.js\");\n/* harmony import */ var _pluck_js__WEBPACK_IMPORTED_MODULE_93__ = __webpack_require__(/*! ./pluck.js */ \"./node_modules/underscore/modules/pluck.js\");\n/* harmony import */ var _where_js__WEBPACK_IMPORTED_MODULE_94__ = __webpack_require__(/*! ./where.js */ \"./node_modules/underscore/modules/where.js\");\n/* harmony import */ var _max_js__WEBPACK_IMPORTED_MODULE_95__ = __webpack_require__(/*! ./max.js */ \"./node_modules/underscore/modules/max.js\");\n/* harmony import */ var _min_js__WEBPACK_IMPORTED_MODULE_96__ = __webpack_require__(/*! ./min.js */ \"./node_modules/underscore/modules/min.js\");\n/* harmony import */ var _shuffle_js__WEBPACK_IMPORTED_MODULE_97__ = __webpack_require__(/*! ./shuffle.js */ \"./node_modules/underscore/modules/shuffle.js\");\n/* harmony import */ var _sample_js__WEBPACK_IMPORTED_MODULE_98__ = __webpack_require__(/*! ./sample.js */ \"./node_modules/underscore/modules/sample.js\");\n/* harmony import */ var _sortBy_js__WEBPACK_IMPORTED_MODULE_99__ = __webpack_require__(/*! ./sortBy.js */ \"./node_modules/underscore/modules/sortBy.js\");\n/* harmony import */ var _groupBy_js__WEBPACK_IMPORTED_MODULE_100__ = __webpack_require__(/*! ./groupBy.js */ \"./node_modules/underscore/modules/groupBy.js\");\n/* harmony import */ var _indexBy_js__WEBPACK_IMPORTED_MODULE_101__ = __webpack_require__(/*! ./indexBy.js */ \"./node_modules/underscore/modules/indexBy.js\");\n/* harmony import */ var _countBy_js__WEBPACK_IMPORTED_MODULE_102__ = __webpack_require__(/*! ./countBy.js */ \"./node_modules/underscore/modules/countBy.js\");\n/* harmony import */ var _partition_js__WEBPACK_IMPORTED_MODULE_103__ = __webpack_require__(/*! ./partition.js */ \"./node_modules/underscore/modules/partition.js\");\n/* harmony import */ var _toArray_js__WEBPACK_IMPORTED_MODULE_104__ = __webpack_require__(/*! ./toArray.js */ \"./node_modules/underscore/modules/toArray.js\");\n/* harmony import */ var _size_js__WEBPACK_IMPORTED_MODULE_105__ = __webpack_require__(/*! ./size.js */ \"./node_modules/underscore/modules/size.js\");\n/* harmony import */ var _pick_js__WEBPACK_IMPORTED_MODULE_106__ = __webpack_require__(/*! ./pick.js */ \"./node_modules/underscore/modules/pick.js\");\n/* harmony import */ var _omit_js__WEBPACK_IMPORTED_MODULE_107__ = __webpack_require__(/*! ./omit.js */ \"./node_modules/underscore/modules/omit.js\");\n/* harmony import */ var _first_js__WEBPACK_IMPORTED_MODULE_108__ = __webpack_require__(/*! ./first.js */ \"./node_modules/underscore/modules/first.js\");\n/* harmony import */ var _initial_js__WEBPACK_IMPORTED_MODULE_109__ = __webpack_require__(/*! ./initial.js */ \"./node_modules/underscore/modules/initial.js\");\n/* harmony import */ var _last_js__WEBPACK_IMPORTED_MODULE_110__ = __webpack_require__(/*! ./last.js */ \"./node_modules/underscore/modules/last.js\");\n/* harmony import */ var _rest_js__WEBPACK_IMPORTED_MODULE_111__ = __webpack_require__(/*! ./rest.js */ \"./node_modules/underscore/modules/rest.js\");\n/* harmony import */ var _compact_js__WEBPACK_IMPORTED_MODULE_112__ = __webpack_require__(/*! ./compact.js */ \"./node_modules/underscore/modules/compact.js\");\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_113__ = __webpack_require__(/*! ./flatten.js */ \"./node_modules/underscore/modules/flatten.js\");\n/* harmony import */ var _without_js__WEBPACK_IMPORTED_MODULE_114__ = __webpack_require__(/*! ./without.js */ \"./node_modules/underscore/modules/without.js\");\n/* harmony import */ var _uniq_js__WEBPACK_IMPORTED_MODULE_115__ = __webpack_require__(/*! ./uniq.js */ \"./node_modules/underscore/modules/uniq.js\");\n/* harmony import */ var _union_js__WEBPACK_IMPORTED_MODULE_116__ = __webpack_require__(/*! ./union.js */ \"./node_modules/underscore/modules/union.js\");\n/* harmony import */ var _intersection_js__WEBPACK_IMPORTED_MODULE_117__ = __webpack_require__(/*! ./intersection.js */ \"./node_modules/underscore/modules/intersection.js\");\n/* harmony import */ var _difference_js__WEBPACK_IMPORTED_MODULE_118__ = __webpack_require__(/*! ./difference.js */ \"./node_modules/underscore/modules/difference.js\");\n/* harmony import */ var _unzip_js__WEBPACK_IMPORTED_MODULE_119__ = __webpack_require__(/*! ./unzip.js */ \"./node_modules/underscore/modules/unzip.js\");\n/* harmony import */ var _zip_js__WEBPACK_IMPORTED_MODULE_120__ = __webpack_require__(/*! ./zip.js */ \"./node_modules/underscore/modules/zip.js\");\n/* harmony import */ var _object_js__WEBPACK_IMPORTED_MODULE_121__ = __webpack_require__(/*! ./object.js */ \"./node_modules/underscore/modules/object.js\");\n/* harmony import */ var _range_js__WEBPACK_IMPORTED_MODULE_122__ = __webpack_require__(/*! ./range.js */ \"./node_modules/underscore/modules/range.js\");\n/* harmony import */ var _chunk_js__WEBPACK_IMPORTED_MODULE_123__ = __webpack_require__(/*! ./chunk.js */ \"./node_modules/underscore/modules/chunk.js\");\n/* harmony import */ var _mixin_js__WEBPACK_IMPORTED_MODULE_124__ = __webpack_require__(/*! ./mixin.js */ \"./node_modules/underscore/modules/mixin.js\");\n/* harmony import */ var _underscore_array_methods_js__WEBPACK_IMPORTED_MODULE_125__ = __webpack_require__(/*! ./underscore-array-methods.js */ \"./node_modules/underscore/modules/underscore-array-methods.js\");\n// Named Exports\n// =============\n\n//     Underscore.js 1.13.7\n//     https://underscorejs.org\n//     (c) 2009-2024 Jeremy Ashkenas, Julian Gonggrijp, and DocumentCloud and Investigative Reporters & Editors\n//     Underscore may be freely distributed under the MIT license.\n\n// Baseline setup.\n\n\n\n// Object Functions\n// ----------------\n// Our most fundamental functions operate on any JavaScript object.\n// Most functions in Underscore depend on at least one function in this section.\n\n// A group of functions that check the types of core JavaScript values.\n// These are often informally referred to as the \"isType\" functions.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// Functions that treat an object as a dictionary of key-value pairs.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// Utility Functions\n// -----------------\n// A bit of a grab bag: Predicate-generating functions for use with filters and\n// loops, string escaping and templating, create random numbers and unique ids,\n// and functions that facilitate Underscore's chaining and iteration conventions.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// Function (ahem) Functions\n// -------------------------\n// These functions take a function as an argument and return a new function\n// as the result. Also known as higher-order functions.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// Finders\n// -------\n// Functions that extract (the position of) a single element from an object\n// or array based on some criterion.\n\n\n\n\n\n\n\n\n\n// Collection Functions\n// --------------------\n// Functions that work on any collection of elements: either an array, or\n// an object of key-value pairs.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// `_.pick` and `_.omit` are actually object functions, but we put\n// them here in order to create a more natural reading order in the\n// monolithic build as they depend on `_.contains`.\n\n\n\n// Array Functions\n// ---------------\n// Functions that operate on arrays (and array-likes) only, because they’re\n// expressed in terms of operations on an ordered list of values.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n// OOP\n// ---\n// These modules support the \"object-oriented\" calling style. See also\n// `underscore.js` and `index-default.js`.\n\n\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/index.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/indexBy.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/indexBy.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _group_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_group.js */ \"./node_modules/underscore/modules/_group.js\");\n\n\n// Indexes the object's values by a criterion, similar to `_.groupBy`, but for\n// when you know that your index values will be unique.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_group_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(result, value, key) {\n  result[key] = value;\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/indexBy.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/indexOf.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/indexOf.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _sortedIndex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sortedIndex.js */ \"./node_modules/underscore/modules/sortedIndex.js\");\n/* harmony import */ var _findIndex_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./findIndex.js */ \"./node_modules/underscore/modules/findIndex.js\");\n/* harmony import */ var _createIndexFinder_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_createIndexFinder.js */ \"./node_modules/underscore/modules/_createIndexFinder.js\");\n\n\n\n\n// Return the position of the first occurrence of an item in an array,\n// or -1 if the item is not included in the array.\n// If the array is large and already in sort order, pass `true`\n// for **isSorted** to use binary search.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createIndexFinder_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(1, _findIndex_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"], _sortedIndex_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/indexOf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/initial.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/initial.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ initial)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Returns everything but the last entry of the array. Especially useful on\n// the arguments object. Passing **n** will return all the values in\n// the array, excluding the last N.\nfunction initial(array, n, guard) {\n  return _setup_js__WEBPACK_IMPORTED_MODULE_0__.slice.call(array, 0, Math.max(0, array.length - (n == null || guard ? 1 : n)));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/initial.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/intersection.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/underscore/modules/intersection.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ intersection)\n/* harmony export */ });\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _contains_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./contains.js */ \"./node_modules/underscore/modules/contains.js\");\n\n\n\n// Produce an array that contains every item shared between all the\n// passed-in arrays.\nfunction intersection(array) {\n  var result = [];\n  var argsLength = arguments.length;\n  for (var i = 0, length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array); i < length; i++) {\n    var item = array[i];\n    if ((0,_contains_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(result, item)) continue;\n    var j;\n    for (j = 1; j < argsLength; j++) {\n      if (!(0,_contains_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(arguments[j], item)) break;\n    }\n    if (j === argsLength) result.push(item);\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/intersection.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/invert.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/invert.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ invert)\n/* harmony export */ });\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n// Invert the keys and values of an object. The values must be serializable.\nfunction invert(obj) {\n  var result = {};\n  var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj);\n  for (var i = 0, length = _keys.length; i < length; i++) {\n    result[obj[_keys[i]]] = _keys[i];\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/invert.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/invoke.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/invoke.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./map.js */ \"./node_modules/underscore/modules/map.js\");\n/* harmony import */ var _deepGet_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_deepGet.js */ \"./node_modules/underscore/modules/_deepGet.js\");\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./_toPath.js */ \"./node_modules/underscore/modules/_toPath.js\");\n\n\n\n\n\n\n// Invoke a method (with arguments) on every item in a collection.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(obj, path, args) {\n  var contextPath, func;\n  if ((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(path)) {\n    func = path;\n  } else {\n    path = (0,_toPath_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(path);\n    contextPath = path.slice(0, -1);\n    path = path[path.length - 1];\n  }\n  return (0,_map_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj, function(context) {\n    var method = func;\n    if (!method) {\n      if (contextPath && contextPath.length) {\n        context = (0,_deepGet_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(context, contextPath);\n      }\n      if (context == null) return void 0;\n      method = context[path];\n    }\n    return method == null ? method : method.apply(context, args);\n  });\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/invoke.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isArguments.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/isArguments.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n\n\n\nvar isArguments = (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Arguments');\n\n// Define a fallback version of the method in browsers (ahem, IE < 9), where\n// there isn't any inspectable \"Arguments\" type.\n(function() {\n  if (!isArguments(arguments)) {\n    isArguments = function(obj) {\n      return (0,_has_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj, 'callee');\n    };\n  }\n}());\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (isArguments);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isArguments.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isArray.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/isArray.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n\n// Is a given value an array?\n// Delegates to ECMA5's native `Array.isArray`.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_setup_js__WEBPACK_IMPORTED_MODULE_0__.nativeIsArray || (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])('Array'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isArray.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isArrayBuffer.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/isArrayBuffer.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('ArrayBuffer'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isArrayBuffer.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isBoolean.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/isBoolean.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isBoolean)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Is a given value a boolean?\nfunction isBoolean(obj) {\n  return obj === true || obj === false || _setup_js__WEBPACK_IMPORTED_MODULE_0__.toString.call(obj) === '[object Boolean]';\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isBoolean.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isDataView.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/isDataView.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _isArrayBuffer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isArrayBuffer.js */ \"./node_modules/underscore/modules/isArrayBuffer.js\");\n/* harmony import */ var _stringTagBug_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_stringTagBug.js */ \"./node_modules/underscore/modules/_stringTagBug.js\");\n\n\n\n\n\nvar isDataView = (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('DataView');\n\n// In IE 10 - Edge 13, we need a different heuristic\n// to determine whether an object is a `DataView`.\n// Also, in cases where the native `DataView` is\n// overridden we can't rely on the tag itself.\nfunction alternateIsDataView(obj) {\n  return obj != null && (0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj.getInt8) && (0,_isArrayBuffer_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj.buffer);\n}\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_stringTagBug_js__WEBPACK_IMPORTED_MODULE_3__.hasDataViewBug ? alternateIsDataView : isDataView);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isDataView.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isDate.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/isDate.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Date'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isDate.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isElement.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/isElement.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isElement)\n/* harmony export */ });\n// Is a given value a DOM element?\nfunction isElement(obj) {\n  return !!(obj && obj.nodeType === 1);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isElement.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isEmpty.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/isEmpty.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isEmpty)\n/* harmony export */ });\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n/* harmony import */ var _isString_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isString.js */ \"./node_modules/underscore/modules/isString.js\");\n/* harmony import */ var _isArguments_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isArguments.js */ \"./node_modules/underscore/modules/isArguments.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n\n\n\n// Is a given array, string, or object empty?\n// An \"empty\" object has no enumerable own-properties.\nfunction isEmpty(obj) {\n  if (obj == null) return true;\n  // Skip the more expensive `toString`-based type checks if `obj` has no\n  // `.length`.\n  var length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj);\n  if (typeof length == 'number' && (\n    (0,_isArray_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) || (0,_isString_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj) || (0,_isArguments_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj)\n  )) return length === 0;\n  return (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])((0,_keys_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(obj)) === 0;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isEmpty.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isEqual.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/isEqual.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isEqual)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _getByteLength_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_getByteLength.js */ \"./node_modules/underscore/modules/_getByteLength.js\");\n/* harmony import */ var _isTypedArray_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./isTypedArray.js */ \"./node_modules/underscore/modules/isTypedArray.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _stringTagBug_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./_stringTagBug.js */ \"./node_modules/underscore/modules/_stringTagBug.js\");\n/* harmony import */ var _isDataView_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./isDataView.js */ \"./node_modules/underscore/modules/isDataView.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n/* harmony import */ var _toBufferView_js__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./_toBufferView.js */ \"./node_modules/underscore/modules/_toBufferView.js\");\n\n\n\n\n\n\n\n\n\n\n\n// We use this string twice, so give it a name for minification.\nvar tagDataView = '[object DataView]';\n\n// Internal recursive comparison function for `_.isEqual`.\nfunction eq(a, b, aStack, bStack) {\n  // Identical objects are equal. `0 === -0`, but they aren't identical.\n  // See the [Harmony `egal` proposal](https://wiki.ecmascript.org/doku.php?id=harmony:egal).\n  if (a === b) return a !== 0 || 1 / a === 1 / b;\n  // `null` or `undefined` only equal to itself (strict comparison).\n  if (a == null || b == null) return false;\n  // `NaN`s are equivalent, but non-reflexive.\n  if (a !== a) return b !== b;\n  // Exhaust primitive checks\n  var type = typeof a;\n  if (type !== 'function' && type !== 'object' && typeof b != 'object') return false;\n  return deepEq(a, b, aStack, bStack);\n}\n\n// Internal recursive comparison function for `_.isEqual`.\nfunction deepEq(a, b, aStack, bStack) {\n  // Unwrap any wrapped objects.\n  if (a instanceof _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]) a = a._wrapped;\n  if (b instanceof _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]) b = b._wrapped;\n  // Compare `[[Class]]` names.\n  var className = _setup_js__WEBPACK_IMPORTED_MODULE_1__.toString.call(a);\n  if (className !== _setup_js__WEBPACK_IMPORTED_MODULE_1__.toString.call(b)) return false;\n  // Work around a bug in IE 10 - Edge 13.\n  if (_stringTagBug_js__WEBPACK_IMPORTED_MODULE_5__.hasDataViewBug && className == '[object Object]' && (0,_isDataView_js__WEBPACK_IMPORTED_MODULE_6__[\"default\"])(a)) {\n    if (!(0,_isDataView_js__WEBPACK_IMPORTED_MODULE_6__[\"default\"])(b)) return false;\n    className = tagDataView;\n  }\n  switch (className) {\n    // These types are compared by value.\n    case '[object RegExp]':\n      // RegExps are coerced to strings for comparison (Note: '' + /a/i === '/a/i')\n    case '[object String]':\n      // Primitives and their corresponding object wrappers are equivalent; thus, `\"5\"` is\n      // equivalent to `new String(\"5\")`.\n      return '' + a === '' + b;\n    case '[object Number]':\n      // `NaN`s are equivalent, but non-reflexive.\n      // Object(NaN) is equivalent to NaN.\n      if (+a !== +a) return +b !== +b;\n      // An `egal` comparison is performed for other numeric values.\n      return +a === 0 ? 1 / +a === 1 / b : +a === +b;\n    case '[object Date]':\n    case '[object Boolean]':\n      // Coerce dates and booleans to numeric primitive values. Dates are compared by their\n      // millisecond representations. Note that invalid dates with millisecond representations\n      // of `NaN` are not equivalent.\n      return +a === +b;\n    case '[object Symbol]':\n      return _setup_js__WEBPACK_IMPORTED_MODULE_1__.SymbolProto.valueOf.call(a) === _setup_js__WEBPACK_IMPORTED_MODULE_1__.SymbolProto.valueOf.call(b);\n    case '[object ArrayBuffer]':\n    case tagDataView:\n      // Coerce to typed array so we can fall through.\n      return deepEq((0,_toBufferView_js__WEBPACK_IMPORTED_MODULE_9__[\"default\"])(a), (0,_toBufferView_js__WEBPACK_IMPORTED_MODULE_9__[\"default\"])(b), aStack, bStack);\n  }\n\n  var areArrays = className === '[object Array]';\n  if (!areArrays && (0,_isTypedArray_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(a)) {\n      var byteLength = (0,_getByteLength_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(a);\n      if (byteLength !== (0,_getByteLength_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(b)) return false;\n      if (a.buffer === b.buffer && a.byteOffset === b.byteOffset) return true;\n      areArrays = true;\n  }\n  if (!areArrays) {\n    if (typeof a != 'object' || typeof b != 'object') return false;\n\n    // Objects with different constructors are not equivalent, but `Object`s or `Array`s\n    // from different frames are.\n    var aCtor = a.constructor, bCtor = b.constructor;\n    if (aCtor !== bCtor && !((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(aCtor) && aCtor instanceof aCtor &&\n                             (0,_isFunction_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(bCtor) && bCtor instanceof bCtor)\n                        && ('constructor' in a && 'constructor' in b)) {\n      return false;\n    }\n  }\n  // Assume equality for cyclic structures. The algorithm for detecting cyclic\n  // structures is adapted from ES 5.1 section 15.12.3, abstract operation `JO`.\n\n  // Initializing stack of traversed objects.\n  // It's done here since we only need them for objects and arrays comparison.\n  aStack = aStack || [];\n  bStack = bStack || [];\n  var length = aStack.length;\n  while (length--) {\n    // Linear search. Performance is inversely proportional to the number of\n    // unique nested structures.\n    if (aStack[length] === a) return bStack[length] === b;\n  }\n\n  // Add the first object to the stack of traversed objects.\n  aStack.push(a);\n  bStack.push(b);\n\n  // Recursively compare objects and arrays.\n  if (areArrays) {\n    // Compare array lengths to determine if a deep comparison is necessary.\n    length = a.length;\n    if (length !== b.length) return false;\n    // Deep compare the contents, ignoring non-numeric properties.\n    while (length--) {\n      if (!eq(a[length], b[length], aStack, bStack)) return false;\n    }\n  } else {\n    // Deep compare objects.\n    var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_7__[\"default\"])(a), key;\n    length = _keys.length;\n    // Ensure that both objects contain the same number of properties before comparing deep equality.\n    if ((0,_keys_js__WEBPACK_IMPORTED_MODULE_7__[\"default\"])(b).length !== length) return false;\n    while (length--) {\n      // Deep compare each member\n      key = _keys[length];\n      if (!((0,_has_js__WEBPACK_IMPORTED_MODULE_8__[\"default\"])(b, key) && eq(a[key], b[key], aStack, bStack))) return false;\n    }\n  }\n  // Remove the first object from the stack of traversed objects.\n  aStack.pop();\n  bStack.pop();\n  return true;\n}\n\n// Perform a deep comparison to check if two objects are equal.\nfunction isEqual(a, b) {\n  return eq(a, b);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isEqual.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isError.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/isError.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Error'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isError.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isFinite.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/isFinite.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isFinite)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _isSymbol_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isSymbol.js */ \"./node_modules/underscore/modules/isSymbol.js\");\n\n\n\n// Is a given object a finite number?\nfunction isFinite(obj) {\n  return !(0,_isSymbol_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) && (0,_setup_js__WEBPACK_IMPORTED_MODULE_0__._isFinite)(obj) && !isNaN(parseFloat(obj));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isFinite.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isFunction.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/isFunction.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n\nvar isFunction = (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Function');\n\n// Optimize `isFunction` if appropriate. Work around some `typeof` bugs in old\n// v8, IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).\nvar nodelist = _setup_js__WEBPACK_IMPORTED_MODULE_1__.root.document && _setup_js__WEBPACK_IMPORTED_MODULE_1__.root.document.childNodes;\nif ( true && typeof Int8Array != 'object' && typeof nodelist != 'function') {\n  isFunction = function(obj) {\n    return typeof obj == 'function' || false;\n  };\n}\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (isFunction);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isFunction.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isMap.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/isMap.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n/* harmony import */ var _stringTagBug_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_stringTagBug.js */ \"./node_modules/underscore/modules/_stringTagBug.js\");\n/* harmony import */ var _methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_methodFingerprint.js */ \"./node_modules/underscore/modules/_methodFingerprint.js\");\n\n\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_stringTagBug_js__WEBPACK_IMPORTED_MODULE_1__.isIE11 ? (0,_methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__.ie11fingerprint)(_methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__.mapMethods) : (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Map'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isMap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isMatch.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/isMatch.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isMatch)\n/* harmony export */ });\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n// Returns whether an object has a given set of `key:value` pairs.\nfunction isMatch(object, attrs) {\n  var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(attrs), length = _keys.length;\n  if (object == null) return !length;\n  var obj = Object(object);\n  for (var i = 0; i < length; i++) {\n    var key = _keys[i];\n    if (attrs[key] !== obj[key] || !(key in obj)) return false;\n  }\n  return true;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isMatch.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isNaN.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/isNaN.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isNaN)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _isNumber_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isNumber.js */ \"./node_modules/underscore/modules/isNumber.js\");\n\n\n\n// Is the given value `NaN`?\nfunction isNaN(obj) {\n  return (0,_isNumber_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) && (0,_setup_js__WEBPACK_IMPORTED_MODULE_0__._isNaN)(obj);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isNaN.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isNull.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/isNull.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isNull)\n/* harmony export */ });\n// Is a given value equal to null?\nfunction isNull(obj) {\n  return obj === null;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isNull.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isNumber.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/isNumber.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Number'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isNumber.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isObject.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/isObject.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isObject)\n/* harmony export */ });\n// Is a given variable an object?\nfunction isObject(obj) {\n  var type = typeof obj;\n  return type === 'function' || (type === 'object' && !!obj);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isObject.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isRegExp.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/isRegExp.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('RegExp'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isRegExp.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isSet.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/isSet.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n/* harmony import */ var _stringTagBug_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_stringTagBug.js */ \"./node_modules/underscore/modules/_stringTagBug.js\");\n/* harmony import */ var _methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_methodFingerprint.js */ \"./node_modules/underscore/modules/_methodFingerprint.js\");\n\n\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_stringTagBug_js__WEBPACK_IMPORTED_MODULE_1__.isIE11 ? (0,_methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__.ie11fingerprint)(_methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__.setMethods) : (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Set'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isSet.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isString.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/isString.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('String'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isString.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isSymbol.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/isSymbol.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('Symbol'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isSymbol.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isTypedArray.js":
+/*!*********************************************************!*\
+  !*** ./node_modules/underscore/modules/isTypedArray.js ***!
+  \*********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _isDataView_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isDataView.js */ \"./node_modules/underscore/modules/isDataView.js\");\n/* harmony import */ var _constant_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./constant.js */ \"./node_modules/underscore/modules/constant.js\");\n/* harmony import */ var _isBufferLike_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_isBufferLike.js */ \"./node_modules/underscore/modules/_isBufferLike.js\");\n\n\n\n\n\n// Is a given value a typed array?\nvar typedArrayPattern = /\\[object ((I|Ui)nt(8|16|32)|Float(32|64)|Uint8Clamped|Big(I|Ui)nt64)Array\\]/;\nfunction isTypedArray(obj) {\n  // `ArrayBuffer.isView` is the most future-proof, so use it when available.\n  // Otherwise, fall back on the above regular expression.\n  return _setup_js__WEBPACK_IMPORTED_MODULE_0__.nativeIsView ? ((0,_setup_js__WEBPACK_IMPORTED_MODULE_0__.nativeIsView)(obj) && !(0,_isDataView_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj)) :\n                (0,_isBufferLike_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj) && typedArrayPattern.test(_setup_js__WEBPACK_IMPORTED_MODULE_0__.toString.call(obj));\n}\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_setup_js__WEBPACK_IMPORTED_MODULE_0__.supportsArrayBuffer ? isTypedArray : (0,_constant_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(false));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isTypedArray.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isUndefined.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/isUndefined.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ isUndefined)\n/* harmony export */ });\n// Is a given variable undefined?\nfunction isUndefined(obj) {\n  return obj === void 0;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isUndefined.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isWeakMap.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/isWeakMap.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n/* harmony import */ var _stringTagBug_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_stringTagBug.js */ \"./node_modules/underscore/modules/_stringTagBug.js\");\n/* harmony import */ var _methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_methodFingerprint.js */ \"./node_modules/underscore/modules/_methodFingerprint.js\");\n\n\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_stringTagBug_js__WEBPACK_IMPORTED_MODULE_1__.isIE11 ? (0,_methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__.ie11fingerprint)(_methodFingerprint_js__WEBPACK_IMPORTED_MODULE_2__.weakMapMethods) : (0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('WeakMap'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isWeakMap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/isWeakSet.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/isWeakSet.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _tagTester_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_tagTester.js */ \"./node_modules/underscore/modules/_tagTester.js\");\n\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_tagTester_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])('WeakSet'));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/isWeakSet.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/iteratee.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/iteratee.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ iteratee)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _baseIteratee_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_baseIteratee.js */ \"./node_modules/underscore/modules/_baseIteratee.js\");\n\n\n\n// External wrapper for our callback generator. Users may customize\n// `_.iteratee` if they want additional predicate/iteratee shorthand styles.\n// This abstraction hides the internal-only `argCount` argument.\nfunction iteratee(value, context) {\n  return (0,_baseIteratee_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(value, context, Infinity);\n}\n_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].iteratee = iteratee;\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/iteratee.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/keys.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/keys.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ keys)\n/* harmony export */ });\n/* harmony import */ var _isObject_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isObject.js */ \"./node_modules/underscore/modules/isObject.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n/* harmony import */ var _collectNonEnumProps_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_collectNonEnumProps.js */ \"./node_modules/underscore/modules/_collectNonEnumProps.js\");\n\n\n\n\n\n// Retrieve the names of an object's own properties.\n// Delegates to **ECMAScript 5**'s native `Object.keys`.\nfunction keys(obj) {\n  if (!(0,_isObject_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj)) return [];\n  if (_setup_js__WEBPACK_IMPORTED_MODULE_1__.nativeKeys) return (0,_setup_js__WEBPACK_IMPORTED_MODULE_1__.nativeKeys)(obj);\n  var keys = [];\n  for (var key in obj) if ((0,_has_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj, key)) keys.push(key);\n  // Ahem, IE < 9.\n  if (_setup_js__WEBPACK_IMPORTED_MODULE_1__.hasEnumBug) (0,_collectNonEnumProps_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj, keys);\n  return keys;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/keys.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/last.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/last.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ last)\n/* harmony export */ });\n/* harmony import */ var _rest_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rest.js */ \"./node_modules/underscore/modules/rest.js\");\n\n\n// Get the last element of an array. Passing **n** will return the last N\n// values in the array.\nfunction last(array, n, guard) {\n  if (array == null || array.length < 1) return n == null || guard ? void 0 : [];\n  if (n == null || guard) return array[array.length - 1];\n  return (0,_rest_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array, Math.max(0, array.length - n));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/last.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/lastIndexOf.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/lastIndexOf.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _findLastIndex_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./findLastIndex.js */ \"./node_modules/underscore/modules/findLastIndex.js\");\n/* harmony import */ var _createIndexFinder_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_createIndexFinder.js */ \"./node_modules/underscore/modules/_createIndexFinder.js\");\n\n\n\n// Return the position of the last occurrence of an item in an array,\n// or -1 if the item is not included in the array.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createIndexFinder_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(-1, _findLastIndex_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/lastIndexOf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/map.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/map.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ map)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n\n// Return the results of applying the iteratee to each element.\nfunction map(obj, iteratee, context) {\n  iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context);\n  var _keys = !(0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) && (0,_keys_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj),\n      length = (_keys || obj).length,\n      results = Array(length);\n  for (var index = 0; index < length; index++) {\n    var currentKey = _keys ? _keys[index] : index;\n    results[index] = iteratee(obj[currentKey], currentKey, obj);\n  }\n  return results;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/map.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/mapObject.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/mapObject.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ mapObject)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n// Returns the results of applying the `iteratee` to each element of `obj`.\n// In contrast to `_.map` it returns an object.\nfunction mapObject(obj, iteratee, context) {\n  iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context);\n  var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj),\n      length = _keys.length,\n      results = {};\n  for (var index = 0; index < length; index++) {\n    var currentKey = _keys[index];\n    results[currentKey] = iteratee(obj[currentKey], currentKey, obj);\n  }\n  return results;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/mapObject.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/matcher.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/matcher.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ matcher)\n/* harmony export */ });\n/* harmony import */ var _extendOwn_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./extendOwn.js */ \"./node_modules/underscore/modules/extendOwn.js\");\n/* harmony import */ var _isMatch_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isMatch.js */ \"./node_modules/underscore/modules/isMatch.js\");\n\n\n\n// Returns a predicate for checking whether an object has a given set of\n// `key:value` pairs.\nfunction matcher(attrs) {\n  attrs = (0,_extendOwn_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])({}, attrs);\n  return function(obj) {\n    return (0,_isMatch_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj, attrs);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/matcher.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/max.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/max.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ max)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _values_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./values.js */ \"./node_modules/underscore/modules/values.js\");\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n\n\n\n\n\n// Return the maximum element (or element-based computation).\nfunction max(obj, iteratee, context) {\n  var result = -Infinity, lastComputed = -Infinity,\n      value, computed;\n  if (iteratee == null || (typeof iteratee == 'number' && typeof obj[0] != 'object' && obj != null)) {\n    obj = (0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj) ? obj : (0,_values_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj);\n    for (var i = 0, length = obj.length; i < length; i++) {\n      value = obj[i];\n      if (value != null && value > result) {\n        result = value;\n      }\n    }\n  } else {\n    iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(iteratee, context);\n    (0,_each_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj, function(v, index, list) {\n      computed = iteratee(v, index, list);\n      if (computed > lastComputed || (computed === -Infinity && result === -Infinity)) {\n        result = v;\n        lastComputed = computed;\n      }\n    });\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/max.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/memoize.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/memoize.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ memoize)\n/* harmony export */ });\n/* harmony import */ var _has_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_has.js */ \"./node_modules/underscore/modules/_has.js\");\n\n\n// Memoize an expensive function by storing its results.\nfunction memoize(func, hasher) {\n  var memoize = function(key) {\n    var cache = memoize.cache;\n    var address = '' + (hasher ? hasher.apply(this, arguments) : key);\n    if (!(0,_has_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(cache, address)) cache[address] = func.apply(this, arguments);\n    return cache[address];\n  };\n  memoize.cache = {};\n  return memoize;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/memoize.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/min.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/min.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ min)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _values_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./values.js */ \"./node_modules/underscore/modules/values.js\");\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n\n\n\n\n\n// Return the minimum element (or element-based computation).\nfunction min(obj, iteratee, context) {\n  var result = Infinity, lastComputed = Infinity,\n      value, computed;\n  if (iteratee == null || (typeof iteratee == 'number' && typeof obj[0] != 'object' && obj != null)) {\n    obj = (0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj) ? obj : (0,_values_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj);\n    for (var i = 0, length = obj.length; i < length; i++) {\n      value = obj[i];\n      if (value != null && value < result) {\n        result = value;\n      }\n    }\n  } else {\n    iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(iteratee, context);\n    (0,_each_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj, function(v, index, list) {\n      computed = iteratee(v, index, list);\n      if (computed < lastComputed || (computed === Infinity && result === Infinity)) {\n        result = v;\n        lastComputed = computed;\n      }\n    });\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/min.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/mixin.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/mixin.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ mixin)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n/* harmony import */ var _functions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./functions.js */ \"./node_modules/underscore/modules/functions.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _chainResult_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./_chainResult.js */ \"./node_modules/underscore/modules/_chainResult.js\");\n\n\n\n\n\n\n// Add your own custom functions to the Underscore object.\nfunction mixin(obj) {\n  (0,_each_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])((0,_functions_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj), function(name) {\n    var func = _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"][name] = obj[name];\n    _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].prototype[name] = function() {\n      var args = [this._wrapped];\n      _setup_js__WEBPACK_IMPORTED_MODULE_3__.push.apply(args, arguments);\n      return (0,_chainResult_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(this, func.apply(_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"], args));\n    };\n  });\n  return _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/mixin.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/negate.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/negate.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ negate)\n/* harmony export */ });\n// Returns a negated version of the passed-in predicate.\nfunction negate(predicate) {\n  return function() {\n    return !predicate.apply(this, arguments);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/negate.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/noop.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/noop.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ noop)\n/* harmony export */ });\n// Predicate-generating function. Often useful outside of Underscore.\nfunction noop(){}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/noop.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/now.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/now.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n// A (possibly faster) way to get the current timestamp as an integer.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Date.now || function() {\n  return new Date().getTime();\n});\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/now.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/object.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/object.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ object)\n/* harmony export */ });\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n\n\n// Converts lists into objects. Pass either a single array of `[key, value]`\n// pairs, or two parallel arrays of the same length -- one of keys, and one of\n// the corresponding values. Passing by pairs is the reverse of `_.pairs`.\nfunction object(list, values) {\n  var result = {};\n  for (var i = 0, length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(list); i < length; i++) {\n    if (values) {\n      result[list[i]] = values[i];\n    } else {\n      result[list[i][0]] = list[i][1];\n    }\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/object.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/omit.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/omit.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _negate_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./negate.js */ \"./node_modules/underscore/modules/negate.js\");\n/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./map.js */ \"./node_modules/underscore/modules/map.js\");\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./_flatten.js */ \"./node_modules/underscore/modules/_flatten.js\");\n/* harmony import */ var _contains_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./contains.js */ \"./node_modules/underscore/modules/contains.js\");\n/* harmony import */ var _pick_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./pick.js */ \"./node_modules/underscore/modules/pick.js\");\n\n\n\n\n\n\n\n\n// Return a copy of the object without the disallowed properties.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(obj, keys) {\n  var iteratee = keys[0], context;\n  if ((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(iteratee)) {\n    iteratee = (0,_negate_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(iteratee);\n    if (keys.length > 1) context = keys[1];\n  } else {\n    keys = (0,_map_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])((0,_flatten_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(keys, false, false), String);\n    iteratee = function(value, key) {\n      return !(0,_contains_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(keys, key);\n    };\n  }\n  return (0,_pick_js__WEBPACK_IMPORTED_MODULE_6__[\"default\"])(obj, iteratee, context);\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/omit.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/once.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/once.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _partial_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./partial.js */ \"./node_modules/underscore/modules/partial.js\");\n/* harmony import */ var _before_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./before.js */ \"./node_modules/underscore/modules/before.js\");\n\n\n\n// Returns a function that will be executed at most one time, no matter how\n// often you call it. Useful for lazy initialization.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_partial_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_before_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"], 2));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/once.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/pairs.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/pairs.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ pairs)\n/* harmony export */ });\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n// Convert an object into a list of `[key, value]` pairs.\n// The opposite of `_.object` with one argument.\nfunction pairs(obj) {\n  var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj);\n  var length = _keys.length;\n  var pairs = Array(length);\n  for (var i = 0; i < length; i++) {\n    pairs[i] = [_keys[i], obj[_keys[i]]];\n  }\n  return pairs;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/pairs.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/partial.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/partial.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _executeBound_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_executeBound.js */ \"./node_modules/underscore/modules/_executeBound.js\");\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n\n\n\n\n// Partially apply a function by creating a version that has had some of its\n// arguments pre-filled, without changing its dynamic `this` context. `_` acts\n// as a placeholder by default, allowing any combination of arguments to be\n// pre-filled. Set `_.partial.placeholder` for a custom placeholder argument.\nvar partial = (0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(func, boundArgs) {\n  var placeholder = partial.placeholder;\n  var bound = function() {\n    var position = 0, length = boundArgs.length;\n    var args = Array(length);\n    for (var i = 0; i < length; i++) {\n      args[i] = boundArgs[i] === placeholder ? arguments[position++] : boundArgs[i];\n    }\n    while (position < arguments.length) args.push(arguments[position++]);\n    return (0,_executeBound_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(func, bound, this, this, args);\n  };\n  return bound;\n});\n\npartial.placeholder = _underscore_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"];\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (partial);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/partial.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/partition.js":
+/*!******************************************************!*\
+  !*** ./node_modules/underscore/modules/partition.js ***!
+  \******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _group_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_group.js */ \"./node_modules/underscore/modules/_group.js\");\n\n\n// Split a collection into two arrays: one whose elements all pass the given\n// truth test, and one whose elements all do not pass the truth test.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_group_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(result, value, pass) {\n  result[pass ? 0 : 1].push(value);\n}, true));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/partition.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/pick.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/pick.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _optimizeCb_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_optimizeCb.js */ \"./node_modules/underscore/modules/_optimizeCb.js\");\n/* harmony import */ var _allKeys_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./allKeys.js */ \"./node_modules/underscore/modules/allKeys.js\");\n/* harmony import */ var _keyInObj_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./_keyInObj.js */ \"./node_modules/underscore/modules/_keyInObj.js\");\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./_flatten.js */ \"./node_modules/underscore/modules/_flatten.js\");\n\n\n\n\n\n\n\n// Return a copy of the object only containing the allowed properties.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(obj, keys) {\n  var result = {}, iteratee = keys[0];\n  if (obj == null) return result;\n  if ((0,_isFunction_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(iteratee)) {\n    if (keys.length > 1) iteratee = (0,_optimizeCb_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(iteratee, keys[1]);\n    keys = (0,_allKeys_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj);\n  } else {\n    iteratee = _keyInObj_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"];\n    keys = (0,_flatten_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"])(keys, false, false);\n    obj = Object(obj);\n  }\n  for (var i = 0, length = keys.length; i < length; i++) {\n    var key = keys[i];\n    var value = obj[key];\n    if (iteratee(value, key, obj)) result[key] = value;\n  }\n  return result;\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/pick.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/pluck.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/pluck.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ pluck)\n/* harmony export */ });\n/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./map.js */ \"./node_modules/underscore/modules/map.js\");\n/* harmony import */ var _property_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./property.js */ \"./node_modules/underscore/modules/property.js\");\n\n\n\n// Convenience version of a common use case of `_.map`: fetching a property.\nfunction pluck(obj, key) {\n  return (0,_map_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, (0,_property_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(key));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/pluck.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/property.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/property.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ property)\n/* harmony export */ });\n/* harmony import */ var _deepGet_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_deepGet.js */ \"./node_modules/underscore/modules/_deepGet.js\");\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_toPath.js */ \"./node_modules/underscore/modules/_toPath.js\");\n\n\n\n// Creates a function that, when passed an object, will traverse that object’s\n// properties down the given `path`, specified as an array of keys or indices.\nfunction property(path) {\n  path = (0,_toPath_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(path);\n  return function(obj) {\n    return (0,_deepGet_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, path);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/property.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/propertyOf.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/propertyOf.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ propertyOf)\n/* harmony export */ });\n/* harmony import */ var _noop_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./noop.js */ \"./node_modules/underscore/modules/noop.js\");\n/* harmony import */ var _get_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./get.js */ \"./node_modules/underscore/modules/get.js\");\n\n\n\n// Generates a function for a given object that returns a given property.\nfunction propertyOf(obj) {\n  if (obj == null) return _noop_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"];\n  return function(path) {\n    return (0,_get_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj, path);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/propertyOf.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/random.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/random.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ random)\n/* harmony export */ });\n// Return a random integer between `min` and `max` (inclusive).\nfunction random(min, max) {\n  if (max == null) {\n    max = min;\n    min = 0;\n  }\n  return min + Math.floor(Math.random() * (max - min + 1));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/random.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/range.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/range.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ range)\n/* harmony export */ });\n// Generate an integer Array containing an arithmetic progression. A port of\n// the native Python `range()` function. See\n// [the Python documentation](https://docs.python.org/library/functions.html#range).\nfunction range(start, stop, step) {\n  if (stop == null) {\n    stop = start || 0;\n    start = 0;\n  }\n  if (!step) {\n    step = stop < start ? -1 : 1;\n  }\n\n  var length = Math.max(Math.ceil((stop - start) / step), 0);\n  var range = Array(length);\n\n  for (var idx = 0; idx < length; idx++, start += step) {\n    range[idx] = start;\n  }\n\n  return range;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/range.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/reduce.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/reduce.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createReduce_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createReduce.js */ \"./node_modules/underscore/modules/_createReduce.js\");\n\n\n// **Reduce** builds up a single result from a list of values, aka `inject`,\n// or `foldl`.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createReduce_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(1));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/reduce.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/reduceRight.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/reduceRight.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createReduce_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createReduce.js */ \"./node_modules/underscore/modules/_createReduce.js\");\n\n\n// The right-associative version of reduce, also known as `foldr`.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createReduce_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(-1));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/reduceRight.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/reject.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/reject.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ reject)\n/* harmony export */ });\n/* harmony import */ var _filter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter.js */ \"./node_modules/underscore/modules/filter.js\");\n/* harmony import */ var _negate_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./negate.js */ \"./node_modules/underscore/modules/negate.js\");\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n\n\n\n\n// Return all the elements for which a truth test fails.\nfunction reject(obj, predicate, context) {\n  return (0,_filter_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, (0,_negate_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])((0,_cb_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(predicate)), context);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/reject.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/rest.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/rest.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ rest)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// Returns everything but the first entry of the `array`. Especially useful on\n// the `arguments` object. Passing an **n** will return the rest N values in the\n// `array`.\nfunction rest(array, n, guard) {\n  return _setup_js__WEBPACK_IMPORTED_MODULE_0__.slice.call(array, n == null || guard ? 1 : n);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/rest.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/restArguments.js":
+/*!**********************************************************!*\
+  !*** ./node_modules/underscore/modules/restArguments.js ***!
+  \**********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ restArguments)\n/* harmony export */ });\n// Some functions take a variable number of arguments, or a few expected\n// arguments at the beginning and then a variable number of values to operate\n// on. This helper accumulates all remaining arguments past the function’s\n// argument length (or an explicit `startIndex`), into an array that becomes\n// the last argument. Similar to ES6’s \"rest parameter\".\nfunction restArguments(func, startIndex) {\n  startIndex = startIndex == null ? func.length - 1 : +startIndex;\n  return function() {\n    var length = Math.max(arguments.length - startIndex, 0),\n        rest = Array(length),\n        index = 0;\n    for (; index < length; index++) {\n      rest[index] = arguments[index + startIndex];\n    }\n    switch (startIndex) {\n      case 0: return func.call(this, rest);\n      case 1: return func.call(this, arguments[0], rest);\n      case 2: return func.call(this, arguments[0], arguments[1], rest);\n    }\n    var args = Array(startIndex + 1);\n    for (index = 0; index < startIndex; index++) {\n      args[index] = arguments[index];\n    }\n    args[startIndex] = rest;\n    return func.apply(this, args);\n  };\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/restArguments.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/result.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/result.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ result)\n/* harmony export */ });\n/* harmony import */ var _isFunction_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isFunction.js */ \"./node_modules/underscore/modules/isFunction.js\");\n/* harmony import */ var _toPath_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_toPath.js */ \"./node_modules/underscore/modules/_toPath.js\");\n\n\n\n// Traverses the children of `obj` along `path`. If a child is a function, it\n// is invoked with its parent as context. Returns the value of the final\n// child, or `fallback` if any child is undefined.\nfunction result(obj, path, fallback) {\n  path = (0,_toPath_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(path);\n  var length = path.length;\n  if (!length) {\n    return (0,_isFunction_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(fallback) ? fallback.call(obj) : fallback;\n  }\n  for (var i = 0; i < length; i++) {\n    var prop = obj == null ? void 0 : obj[path[i]];\n    if (prop === void 0) {\n      prop = fallback;\n      i = length; // Ensure we don't continue iterating.\n    }\n    obj = (0,_isFunction_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(prop) ? prop.call(obj) : prop;\n  }\n  return obj;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/result.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/sample.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/sample.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ sample)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _values_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./values.js */ \"./node_modules/underscore/modules/values.js\");\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _random_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./random.js */ \"./node_modules/underscore/modules/random.js\");\n/* harmony import */ var _toArray_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./toArray.js */ \"./node_modules/underscore/modules/toArray.js\");\n\n\n\n\n\n\n// Sample **n** random values from a collection using the modern version of the\n// [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher–Yates_shuffle).\n// If **n** is not specified, returns a single random element.\n// The internal `guard` argument allows it to work with `_.map`.\nfunction sample(obj, n, guard) {\n  if (n == null || guard) {\n    if (!(0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj)) obj = (0,_values_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj);\n    return obj[(0,_random_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj.length - 1)];\n  }\n  var sample = (0,_toArray_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(obj);\n  var length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(sample);\n  n = Math.max(Math.min(n, length), 0);\n  var last = length - 1;\n  for (var index = 0; index < n; index++) {\n    var rand = (0,_random_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(index, last);\n    var temp = sample[index];\n    sample[index] = sample[rand];\n    sample[rand] = temp;\n  }\n  return sample.slice(0, n);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/sample.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/shuffle.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/shuffle.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ shuffle)\n/* harmony export */ });\n/* harmony import */ var _sample_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./sample.js */ \"./node_modules/underscore/modules/sample.js\");\n\n\n// Shuffle a collection.\nfunction shuffle(obj) {\n  return (0,_sample_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, Infinity);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/shuffle.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/size.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/size.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ size)\n/* harmony export */ });\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n// Return the number of elements in a collection.\nfunction size(obj) {\n  if (obj == null) return 0;\n  return (0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj) ? obj.length : (0,_keys_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj).length;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/size.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/some.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/some.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ some)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n\n\n// Determine if at least one element in the object passes a truth test.\nfunction some(obj, predicate, context) {\n  predicate = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(predicate, context);\n  var _keys = !(0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(obj) && (0,_keys_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj),\n      length = (_keys || obj).length;\n  for (var index = 0; index < length; index++) {\n    var currentKey = _keys ? _keys[index] : index;\n    if (predicate(obj[currentKey], currentKey, obj)) return true;\n  }\n  return false;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/some.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/sortBy.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/sortBy.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ sortBy)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _pluck_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pluck.js */ \"./node_modules/underscore/modules/pluck.js\");\n/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./map.js */ \"./node_modules/underscore/modules/map.js\");\n\n\n\n\n// Sort the object's values by a criterion produced by an iteratee.\nfunction sortBy(obj, iteratee, context) {\n  var index = 0;\n  iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context);\n  return (0,_pluck_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])((0,_map_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj, function(value, key, list) {\n    return {\n      value: value,\n      index: index++,\n      criteria: iteratee(value, key, list)\n    };\n  }).sort(function(left, right) {\n    var a = left.criteria;\n    var b = right.criteria;\n    if (a !== b) {\n      if (a > b || a === void 0) return 1;\n      if (a < b || b === void 0) return -1;\n    }\n    return left.index - right.index;\n  }), 'value');\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/sortBy.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/sortedIndex.js":
+/*!********************************************************!*\
+  !*** ./node_modules/underscore/modules/sortedIndex.js ***!
+  \********************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ sortedIndex)\n/* harmony export */ });\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n\n\n\n// Use a comparator function to figure out the smallest index at which\n// an object should be inserted so as to maintain order. Uses binary search.\nfunction sortedIndex(array, obj, iteratee, context) {\n  iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context, 1);\n  var value = iteratee(obj);\n  var low = 0, high = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(array);\n  while (low < high) {\n    var mid = Math.floor((low + high) / 2);\n    if (iteratee(array[mid]) < value) low = mid + 1; else high = mid;\n  }\n  return low;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/sortedIndex.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/tap.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/tap.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ tap)\n/* harmony export */ });\n// Invokes `interceptor` with the `obj` and then returns `obj`.\n// The primary purpose of this method is to \"tap into\" a method chain, in\n// order to perform operations on intermediate results within the chain.\nfunction tap(obj, interceptor) {\n  interceptor(obj);\n  return obj;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/tap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/template.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/template.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ template)\n/* harmony export */ });\n/* harmony import */ var _defaults_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./defaults.js */ \"./node_modules/underscore/modules/defaults.js\");\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _templateSettings_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./templateSettings.js */ \"./node_modules/underscore/modules/templateSettings.js\");\n\n\n\n\n// When customizing `_.templateSettings`, if you don't want to define an\n// interpolation, evaluation or escaping regex, we need one that is\n// guaranteed not to match.\nvar noMatch = /(.)^/;\n\n// Certain characters need to be escaped so that they can be put into a\n// string literal.\nvar escapes = {\n  \"'\": \"'\",\n  '\\\\': '\\\\',\n  '\\r': 'r',\n  '\\n': 'n',\n  '\\u2028': 'u2028',\n  '\\u2029': 'u2029'\n};\n\nvar escapeRegExp = /\\\\|'|\\r|\\n|\\u2028|\\u2029/g;\n\nfunction escapeChar(match) {\n  return '\\\\' + escapes[match];\n}\n\n// In order to prevent third-party code injection through\n// `_.templateSettings.variable`, we test it against the following regular\n// expression. It is intentionally a bit more liberal than just matching valid\n// identifiers, but still prevents possible loopholes through defaults or\n// destructuring assignment.\nvar bareIdentifier = /^\\s*(\\w|\\$)+\\s*$/;\n\n// JavaScript micro-templating, similar to John Resig's implementation.\n// Underscore templating handles arbitrary delimiters, preserves whitespace,\n// and correctly escapes quotes within interpolated code.\n// NB: `oldSettings` only exists for backwards compatibility.\nfunction template(text, settings, oldSettings) {\n  if (!settings && oldSettings) settings = oldSettings;\n  settings = (0,_defaults_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])({}, settings, _underscore_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"].templateSettings);\n\n  // Combine delimiters into one regular expression via alternation.\n  var matcher = RegExp([\n    (settings.escape || noMatch).source,\n    (settings.interpolate || noMatch).source,\n    (settings.evaluate || noMatch).source\n  ].join('|') + '|$', 'g');\n\n  // Compile the template source, escaping string literals appropriately.\n  var index = 0;\n  var source = \"__p+='\";\n  text.replace(matcher, function(match, escape, interpolate, evaluate, offset) {\n    source += text.slice(index, offset).replace(escapeRegExp, escapeChar);\n    index = offset + match.length;\n\n    if (escape) {\n      source += \"'+\\n((__t=(\" + escape + \"))==null?'':_.escape(__t))+\\n'\";\n    } else if (interpolate) {\n      source += \"'+\\n((__t=(\" + interpolate + \"))==null?'':__t)+\\n'\";\n    } else if (evaluate) {\n      source += \"';\\n\" + evaluate + \"\\n__p+='\";\n    }\n\n    // Adobe VMs need the match returned to produce the correct offset.\n    return match;\n  });\n  source += \"';\\n\";\n\n  var argument = settings.variable;\n  if (argument) {\n    // Insure against third-party code injection. (CVE-2021-23358)\n    if (!bareIdentifier.test(argument)) throw new Error(\n      'variable is not a bare identifier: ' + argument\n    );\n  } else {\n    // If a variable is not specified, place data values in local scope.\n    source = 'with(obj||{}){\\n' + source + '}\\n';\n    argument = 'obj';\n  }\n\n  source = \"var __t,__p='',__j=Array.prototype.join,\" +\n    \"print=function(){__p+=__j.call(arguments,'');};\\n\" +\n    source + 'return __p;\\n';\n\n  var render;\n  try {\n    render = new Function(argument, '_', source);\n  } catch (e) {\n    e.source = source;\n    throw e;\n  }\n\n  var template = function(data) {\n    return render.call(this, data, _underscore_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]);\n  };\n\n  // Provide the compiled source as a convenience for precompilation.\n  template.source = 'function(' + argument + '){\\n' + source + '}';\n\n  return template;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/template.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/templateSettings.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/underscore/modules/templateSettings.js ***!
+  \*************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n\n\n// By default, Underscore uses ERB-style template delimiters. Change the\n// following template settings to use alternative delimiters.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].templateSettings = {\n  evaluate: /<%([\\s\\S]+?)%>/g,\n  interpolate: /<%=([\\s\\S]+?)%>/g,\n  escape: /<%-([\\s\\S]+?)%>/g\n});\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/templateSettings.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/throttle.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/throttle.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ throttle)\n/* harmony export */ });\n/* harmony import */ var _now_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./now.js */ \"./node_modules/underscore/modules/now.js\");\n\n\n// Returns a function, that, when invoked, will only be triggered at most once\n// during a given window of time. Normally, the throttled function will run\n// as much as it can, without ever going more than once per `wait` duration;\n// but if you'd like to disable the execution on the leading edge, pass\n// `{leading: false}`. To disable execution on the trailing edge, ditto.\nfunction throttle(func, wait, options) {\n  var timeout, context, args, result;\n  var previous = 0;\n  if (!options) options = {};\n\n  var later = function() {\n    previous = options.leading === false ? 0 : (0,_now_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])();\n    timeout = null;\n    result = func.apply(context, args);\n    if (!timeout) context = args = null;\n  };\n\n  var throttled = function() {\n    var _now = (0,_now_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])();\n    if (!previous && options.leading === false) previous = _now;\n    var remaining = wait - (_now - previous);\n    context = this;\n    args = arguments;\n    if (remaining <= 0 || remaining > wait) {\n      if (timeout) {\n        clearTimeout(timeout);\n        timeout = null;\n      }\n      previous = _now;\n      result = func.apply(context, args);\n      if (!timeout) context = args = null;\n    } else if (!timeout && options.trailing !== false) {\n      timeout = setTimeout(later, remaining);\n    }\n    return result;\n  };\n\n  throttled.cancel = function() {\n    clearTimeout(timeout);\n    previous = 0;\n    timeout = context = args = null;\n  };\n\n  return throttled;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/throttle.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/times.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/times.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ times)\n/* harmony export */ });\n/* harmony import */ var _optimizeCb_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_optimizeCb.js */ \"./node_modules/underscore/modules/_optimizeCb.js\");\n\n\n// Run a function **n** times.\nfunction times(n, iteratee, context) {\n  var accum = Array(Math.max(0, n));\n  iteratee = (0,_optimizeCb_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(iteratee, context, 1);\n  for (var i = 0; i < n; i++) accum[i] = iteratee(i);\n  return accum;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/times.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/toArray.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/toArray.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ toArray)\n/* harmony export */ });\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _isString_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./isString.js */ \"./node_modules/underscore/modules/isString.js\");\n/* harmony import */ var _isArrayLike_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_isArrayLike.js */ \"./node_modules/underscore/modules/_isArrayLike.js\");\n/* harmony import */ var _map_js__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./map.js */ \"./node_modules/underscore/modules/map.js\");\n/* harmony import */ var _identity_js__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./identity.js */ \"./node_modules/underscore/modules/identity.js\");\n/* harmony import */ var _values_js__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./values.js */ \"./node_modules/underscore/modules/values.js\");\n\n\n\n\n\n\n\n\n// Safely create a real, live array from anything iterable.\nvar reStrSymbol = /[^\\ud800-\\udfff]|[\\ud800-\\udbff][\\udc00-\\udfff]|[\\ud800-\\udfff]/g;\nfunction toArray(obj) {\n  if (!obj) return [];\n  if ((0,_isArray_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj)) return _setup_js__WEBPACK_IMPORTED_MODULE_1__.slice.call(obj);\n  if ((0,_isString_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(obj)) {\n    // Keep surrogate pair characters together.\n    return obj.match(reStrSymbol);\n  }\n  if ((0,_isArrayLike_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(obj)) return (0,_map_js__WEBPACK_IMPORTED_MODULE_4__[\"default\"])(obj, _identity_js__WEBPACK_IMPORTED_MODULE_5__[\"default\"]);\n  return (0,_values_js__WEBPACK_IMPORTED_MODULE_6__[\"default\"])(obj);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/toArray.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/toPath.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/toPath.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ toPath)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _isArray_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./isArray.js */ \"./node_modules/underscore/modules/isArray.js\");\n\n\n\n// Normalize a (deep) property `path` to array.\n// Like `_.iteratee`, this function can be customized.\nfunction toPath(path) {\n  return (0,_isArray_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(path) ? path : [path];\n}\n_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].toPath = toPath;\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/toPath.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/underscore-array-methods.js":
+/*!*********************************************************************!*\
+  !*** ./node_modules/underscore/modules/underscore-array-methods.js ***!
+  \*********************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _underscore_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./underscore.js */ \"./node_modules/underscore/modules/underscore.js\");\n/* harmony import */ var _each_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./each.js */ \"./node_modules/underscore/modules/each.js\");\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n/* harmony import */ var _chainResult_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./_chainResult.js */ \"./node_modules/underscore/modules/_chainResult.js\");\n\n\n\n\n\n// Add all mutator `Array` functions to the wrapper.\n(0,_each_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {\n  var method = _setup_js__WEBPACK_IMPORTED_MODULE_2__.ArrayProto[name];\n  _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].prototype[name] = function() {\n    var obj = this._wrapped;\n    if (obj != null) {\n      method.apply(obj, arguments);\n      if ((name === 'shift' || name === 'splice') && obj.length === 0) {\n        delete obj[0];\n      }\n    }\n    return (0,_chainResult_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(this, obj);\n  };\n});\n\n// Add all accessor `Array` functions to the wrapper.\n(0,_each_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(['concat', 'join', 'slice'], function(name) {\n  var method = _setup_js__WEBPACK_IMPORTED_MODULE_2__.ArrayProto[name];\n  _underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"].prototype[name] = function() {\n    var obj = this._wrapped;\n    if (obj != null) obj = method.apply(obj, arguments);\n    return (0,_chainResult_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(this, obj);\n  };\n});\n\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_underscore_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"]);\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/underscore-array-methods.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/underscore.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/underscore/modules/underscore.js ***!
+  \*******************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ _)\n/* harmony export */ });\n/* harmony import */ var _setup_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_setup.js */ \"./node_modules/underscore/modules/_setup.js\");\n\n\n// If Underscore is called as a function, it returns a wrapped object that can\n// be used OO-style. This wrapper holds altered versions of all functions added\n// through `_.mixin`. Wrapped objects may be chained.\nfunction _(obj) {\n  if (obj instanceof _) return obj;\n  if (!(this instanceof _)) return new _(obj);\n  this._wrapped = obj;\n}\n\n_.VERSION = _setup_js__WEBPACK_IMPORTED_MODULE_0__.VERSION;\n\n// Extracts the result from a wrapped and chained object.\n_.prototype.value = function() {\n  return this._wrapped;\n};\n\n// Provide unwrapping proxies for some methods used in engine operations\n// such as arithmetic and JSON stringification.\n_.prototype.valueOf = _.prototype.toJSON = _.prototype.value;\n\n_.prototype.toString = function() {\n  return String(this._wrapped);\n};\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/underscore.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/unescape.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/unescape.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _createEscaper_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./_createEscaper.js */ \"./node_modules/underscore/modules/_createEscaper.js\");\n/* harmony import */ var _unescapeMap_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_unescapeMap.js */ \"./node_modules/underscore/modules/_unescapeMap.js\");\n\n\n\n// Function for unescaping strings from HTML interpolation.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_createEscaper_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_unescapeMap_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/unescape.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/union.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/union.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _uniq_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./uniq.js */ \"./node_modules/underscore/modules/uniq.js\");\n/* harmony import */ var _flatten_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_flatten.js */ \"./node_modules/underscore/modules/_flatten.js\");\n\n\n\n\n// Produce an array that contains the union: each distinct element from all of\n// the passed-in arrays.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(arrays) {\n  return (0,_uniq_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])((0,_flatten_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(arrays, true, true));\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/union.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/uniq.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/uniq.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ uniq)\n/* harmony export */ });\n/* harmony import */ var _isBoolean_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./isBoolean.js */ \"./node_modules/underscore/modules/isBoolean.js\");\n/* harmony import */ var _cb_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_cb.js */ \"./node_modules/underscore/modules/_cb.js\");\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _contains_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./contains.js */ \"./node_modules/underscore/modules/contains.js\");\n\n\n\n\n\n// Produce a duplicate-free version of the array. If the array has already\n// been sorted, you have the option of using a faster algorithm.\n// The faster algorithm will not work with an iteratee if the iteratee\n// is not a one-to-one function, so providing an iteratee will disable\n// the faster algorithm.\nfunction uniq(array, isSorted, iteratee, context) {\n  if (!(0,_isBoolean_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(isSorted)) {\n    context = iteratee;\n    iteratee = isSorted;\n    isSorted = false;\n  }\n  if (iteratee != null) iteratee = (0,_cb_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(iteratee, context);\n  var result = [];\n  var seen = [];\n  for (var i = 0, length = (0,_getLength_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(array); i < length; i++) {\n    var value = array[i],\n        computed = iteratee ? iteratee(value, i, array) : value;\n    if (isSorted && !iteratee) {\n      if (!i || seen !== computed) result.push(value);\n      seen = computed;\n    } else if (iteratee) {\n      if (!(0,_contains_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(seen, computed)) {\n        seen.push(computed);\n        result.push(value);\n      }\n    } else if (!(0,_contains_js__WEBPACK_IMPORTED_MODULE_3__[\"default\"])(result, value)) {\n      result.push(value);\n    }\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/uniq.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/uniqueId.js":
+/*!*****************************************************!*\
+  !*** ./node_modules/underscore/modules/uniqueId.js ***!
+  \*****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ uniqueId)\n/* harmony export */ });\n// Generate a unique integer id (unique within the entire client session).\n// Useful for temporary DOM ids.\nvar idCounter = 0;\nfunction uniqueId(prefix) {\n  var id = ++idCounter + '';\n  return prefix ? prefix + id : id;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/uniqueId.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/unzip.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/unzip.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ unzip)\n/* harmony export */ });\n/* harmony import */ var _max_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./max.js */ \"./node_modules/underscore/modules/max.js\");\n/* harmony import */ var _getLength_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./_getLength.js */ \"./node_modules/underscore/modules/_getLength.js\");\n/* harmony import */ var _pluck_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./pluck.js */ \"./node_modules/underscore/modules/pluck.js\");\n\n\n\n\n// Complement of zip. Unzip accepts an array of arrays and groups\n// each array's elements on shared indices.\nfunction unzip(array) {\n  var length = (array && (0,_max_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(array, _getLength_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]).length) || 0;\n  var result = Array(length);\n\n  for (var index = 0; index < length; index++) {\n    result[index] = (0,_pluck_js__WEBPACK_IMPORTED_MODULE_2__[\"default\"])(array, index);\n  }\n  return result;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/unzip.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/values.js":
+/*!***************************************************!*\
+  !*** ./node_modules/underscore/modules/values.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ values)\n/* harmony export */ });\n/* harmony import */ var _keys_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./keys.js */ \"./node_modules/underscore/modules/keys.js\");\n\n\n// Retrieve the values of an object's properties.\nfunction values(obj) {\n  var _keys = (0,_keys_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj);\n  var length = _keys.length;\n  var values = Array(length);\n  for (var i = 0; i < length; i++) {\n    values[i] = obj[_keys[i]];\n  }\n  return values;\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/values.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/where.js":
+/*!**************************************************!*\
+  !*** ./node_modules/underscore/modules/where.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ where)\n/* harmony export */ });\n/* harmony import */ var _filter_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./filter.js */ \"./node_modules/underscore/modules/filter.js\");\n/* harmony import */ var _matcher_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./matcher.js */ \"./node_modules/underscore/modules/matcher.js\");\n\n\n\n// Convenience version of a common use case of `_.filter`: selecting only\n// objects containing specific `key:value` pairs.\nfunction where(obj, attrs) {\n  return (0,_filter_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(obj, (0,_matcher_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(attrs));\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/where.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/without.js":
+/*!****************************************************!*\
+  !*** ./node_modules/underscore/modules/without.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _difference_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./difference.js */ \"./node_modules/underscore/modules/difference.js\");\n\n\n\n// Return a version of the array that does not contain the specified value(s).\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(function(array, otherArrays) {\n  return (0,_difference_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"])(array, otherArrays);\n}));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/without.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/wrap.js":
+/*!*************************************************!*\
+  !*** ./node_modules/underscore/modules/wrap.js ***!
+  \*************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (/* binding */ wrap)\n/* harmony export */ });\n/* harmony import */ var _partial_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./partial.js */ \"./node_modules/underscore/modules/partial.js\");\n\n\n// Returns the first function passed as an argument to the second,\n// allowing you to adjust arguments, run code before and after, and\n// conditionally execute the original function.\nfunction wrap(func, wrapper) {\n  return (0,_partial_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(wrapper, func);\n}\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/wrap.js?");
+
+/***/ }),
+
+/***/ "./node_modules/underscore/modules/zip.js":
+/*!************************************************!*\
+  !*** ./node_modules/underscore/modules/zip.js ***!
+  \************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"default\": () => (__WEBPACK_DEFAULT_EXPORT__)\n/* harmony export */ });\n/* harmony import */ var _restArguments_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./restArguments.js */ \"./node_modules/underscore/modules/restArguments.js\");\n/* harmony import */ var _unzip_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./unzip.js */ \"./node_modules/underscore/modules/unzip.js\");\n\n\n\n// Zip together multiple lists into a single array -- elements that share\n// an index go together.\n/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ((0,_restArguments_js__WEBPACK_IMPORTED_MODULE_0__[\"default\"])(_unzip_js__WEBPACK_IMPORTED_MODULE_1__[\"default\"]));\n\n\n//# sourceURL=webpack://LayeredModalSystem/./node_modules/underscore/modules/zip.js?");
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			id: moduleId,
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		var execOptions = { id: moduleId, module: module, factory: __webpack_modules__[moduleId], require: __webpack_require__ };
+/******/ 		__webpack_require__.i.forEach(function(handler) { handler(execOptions); });
+/******/ 		module = execOptions.module;
+/******/ 		execOptions.factory.call(module.exports, module, module.exports, execOptions.require);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = __webpack_modules__;
+/******/ 	
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = __webpack_module_cache__;
+/******/ 	
+/******/ 	// expose the module execution interceptor
+/******/ 	__webpack_require__.i = [];
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get javascript update chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference all chunks
+/******/ 		__webpack_require__.hu = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return "" + chunkId + "." + __webpack_require__.h() + ".hot-update.js";
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get mini-css chunk filename */
+/******/ 	(() => {
+/******/ 		// This function allow to reference async chunks
+/******/ 		__webpack_require__.miniCssF = (chunkId) => {
+/******/ 			// return url for filenames based on template
+/******/ 			return undefined;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/get update manifest filename */
+/******/ 	(() => {
+/******/ 		__webpack_require__.hmrF = () => ("main." + __webpack_require__.h() + ".hot-update.json");
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/getFullHash */
+/******/ 	(() => {
+/******/ 		__webpack_require__.h = () => ("dc46e492c97e370087ff")
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/global */
+/******/ 	(() => {
+/******/ 		__webpack_require__.g = (function() {
+/******/ 			if (typeof globalThis === 'object') return globalThis;
+/******/ 			try {
+/******/ 				return this || new Function('return this')();
+/******/ 			} catch (e) {
+/******/ 				if (typeof window === 'object') return window;
+/******/ 			}
+/******/ 		})();
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/load script */
+/******/ 	(() => {
+/******/ 		var inProgress = {};
+/******/ 		var dataWebpackPrefix = "LayeredModalSystem:";
+/******/ 		// loadScript function to load a script via script tag
+/******/ 		__webpack_require__.l = (url, done, key, chunkId) => {
+/******/ 			if(inProgress[url]) { inProgress[url].push(done); return; }
+/******/ 			var script, needAttach;
+/******/ 			if(key !== undefined) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				for(var i = 0; i < scripts.length; i++) {
+/******/ 					var s = scripts[i];
+/******/ 					if(s.getAttribute("src") == url || s.getAttribute("data-webpack") == dataWebpackPrefix + key) { script = s; break; }
+/******/ 				}
+/******/ 			}
+/******/ 			if(!script) {
+/******/ 				needAttach = true;
+/******/ 				script = document.createElement('script');
+/******/ 		
+/******/ 				script.charset = 'utf-8';
+/******/ 				script.timeout = 120;
+/******/ 				if (__webpack_require__.nc) {
+/******/ 					script.setAttribute("nonce", __webpack_require__.nc);
+/******/ 				}
+/******/ 				script.setAttribute("data-webpack", dataWebpackPrefix + key);
+/******/ 		
+/******/ 				script.src = url;
+/******/ 			}
+/******/ 			inProgress[url] = [done];
+/******/ 			var onScriptComplete = (prev, event) => {
+/******/ 				// avoid mem leaks in IE.
+/******/ 				script.onerror = script.onload = null;
+/******/ 				clearTimeout(timeout);
+/******/ 				var doneFns = inProgress[url];
+/******/ 				delete inProgress[url];
+/******/ 				script.parentNode && script.parentNode.removeChild(script);
+/******/ 				doneFns && doneFns.forEach((fn) => (fn(event)));
+/******/ 				if(prev) return prev(event);
+/******/ 			}
+/******/ 			var timeout = setTimeout(onScriptComplete.bind(null, undefined, { type: 'timeout', target: script }), 120000);
+/******/ 			script.onerror = onScriptComplete.bind(null, script.onerror);
+/******/ 			script.onload = onScriptComplete.bind(null, script.onload);
+/******/ 			needAttach && document.head.appendChild(script);
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hot module replacement */
+/******/ 	(() => {
+/******/ 		var currentModuleData = {};
+/******/ 		var installedModules = __webpack_require__.c;
+/******/ 		
+/******/ 		// module and require creation
+/******/ 		var currentChildModule;
+/******/ 		var currentParents = [];
+/******/ 		
+/******/ 		// status
+/******/ 		var registeredStatusHandlers = [];
+/******/ 		var currentStatus = "idle";
+/******/ 		
+/******/ 		// while downloading
+/******/ 		var blockingPromises = 0;
+/******/ 		var blockingPromisesWaiting = [];
+/******/ 		
+/******/ 		// The update info
+/******/ 		var currentUpdateApplyHandlers;
+/******/ 		var queuedInvalidatedModules;
+/******/ 		
+/******/ 		__webpack_require__.hmrD = currentModuleData;
+/******/ 		
+/******/ 		__webpack_require__.i.push(function (options) {
+/******/ 			var module = options.module;
+/******/ 			var require = createRequire(options.require, options.id);
+/******/ 			module.hot = createModuleHotObject(options.id, module);
+/******/ 			module.parents = currentParents;
+/******/ 			module.children = [];
+/******/ 			currentParents = [];
+/******/ 			options.require = require;
+/******/ 		});
+/******/ 		
+/******/ 		__webpack_require__.hmrC = {};
+/******/ 		__webpack_require__.hmrI = {};
+/******/ 		
+/******/ 		function createRequire(require, moduleId) {
+/******/ 			var me = installedModules[moduleId];
+/******/ 			if (!me) return require;
+/******/ 			var fn = function (request) {
+/******/ 				if (me.hot.active) {
+/******/ 					if (installedModules[request]) {
+/******/ 						var parents = installedModules[request].parents;
+/******/ 						if (parents.indexOf(moduleId) === -1) {
+/******/ 							parents.push(moduleId);
+/******/ 						}
+/******/ 					} else {
+/******/ 						currentParents = [moduleId];
+/******/ 						currentChildModule = request;
+/******/ 					}
+/******/ 					if (me.children.indexOf(request) === -1) {
+/******/ 						me.children.push(request);
+/******/ 					}
+/******/ 				} else {
+/******/ 					console.warn(
+/******/ 						"[HMR] unexpected require(" +
+/******/ 							request +
+/******/ 							") from disposed module " +
+/******/ 							moduleId
+/******/ 					);
+/******/ 					currentParents = [];
+/******/ 				}
+/******/ 				return require(request);
+/******/ 			};
+/******/ 			var createPropertyDescriptor = function (name) {
+/******/ 				return {
+/******/ 					configurable: true,
+/******/ 					enumerable: true,
+/******/ 					get: function () {
+/******/ 						return require[name];
+/******/ 					},
+/******/ 					set: function (value) {
+/******/ 						require[name] = value;
+/******/ 					}
+/******/ 				};
+/******/ 			};
+/******/ 			for (var name in require) {
+/******/ 				if (Object.prototype.hasOwnProperty.call(require, name) && name !== "e") {
+/******/ 					Object.defineProperty(fn, name, createPropertyDescriptor(name));
+/******/ 				}
+/******/ 			}
+/******/ 			fn.e = function (chunkId, fetchPriority) {
+/******/ 				return trackBlockingPromise(require.e(chunkId, fetchPriority));
+/******/ 			};
+/******/ 			return fn;
+/******/ 		}
+/******/ 		
+/******/ 		function createModuleHotObject(moduleId, me) {
+/******/ 			var _main = currentChildModule !== moduleId;
+/******/ 			var hot = {
+/******/ 				// private stuff
+/******/ 				_acceptedDependencies: {},
+/******/ 				_acceptedErrorHandlers: {},
+/******/ 				_declinedDependencies: {},
+/******/ 				_selfAccepted: false,
+/******/ 				_selfDeclined: false,
+/******/ 				_selfInvalidated: false,
+/******/ 				_disposeHandlers: [],
+/******/ 				_main: _main,
+/******/ 				_requireSelf: function () {
+/******/ 					currentParents = me.parents.slice();
+/******/ 					currentChildModule = _main ? undefined : moduleId;
+/******/ 					__webpack_require__(moduleId);
+/******/ 				},
+/******/ 		
+/******/ 				// Module API
+/******/ 				active: true,
+/******/ 				accept: function (dep, callback, errorHandler) {
+/******/ 					if (dep === undefined) hot._selfAccepted = true;
+/******/ 					else if (typeof dep === "function") hot._selfAccepted = dep;
+/******/ 					else if (typeof dep === "object" && dep !== null) {
+/******/ 						for (var i = 0; i < dep.length; i++) {
+/******/ 							hot._acceptedDependencies[dep[i]] = callback || function () {};
+/******/ 							hot._acceptedErrorHandlers[dep[i]] = errorHandler;
+/******/ 						}
+/******/ 					} else {
+/******/ 						hot._acceptedDependencies[dep] = callback || function () {};
+/******/ 						hot._acceptedErrorHandlers[dep] = errorHandler;
+/******/ 					}
+/******/ 				},
+/******/ 				decline: function (dep) {
+/******/ 					if (dep === undefined) hot._selfDeclined = true;
+/******/ 					else if (typeof dep === "object" && dep !== null)
+/******/ 						for (var i = 0; i < dep.length; i++)
+/******/ 							hot._declinedDependencies[dep[i]] = true;
+/******/ 					else hot._declinedDependencies[dep] = true;
+/******/ 				},
+/******/ 				dispose: function (callback) {
+/******/ 					hot._disposeHandlers.push(callback);
+/******/ 				},
+/******/ 				addDisposeHandler: function (callback) {
+/******/ 					hot._disposeHandlers.push(callback);
+/******/ 				},
+/******/ 				removeDisposeHandler: function (callback) {
+/******/ 					var idx = hot._disposeHandlers.indexOf(callback);
+/******/ 					if (idx >= 0) hot._disposeHandlers.splice(idx, 1);
+/******/ 				},
+/******/ 				invalidate: function () {
+/******/ 					this._selfInvalidated = true;
+/******/ 					switch (currentStatus) {
+/******/ 						case "idle":
+/******/ 							currentUpdateApplyHandlers = [];
+/******/ 							Object.keys(__webpack_require__.hmrI).forEach(function (key) {
+/******/ 								__webpack_require__.hmrI[key](
+/******/ 									moduleId,
+/******/ 									currentUpdateApplyHandlers
+/******/ 								);
+/******/ 							});
+/******/ 							setStatus("ready");
+/******/ 							break;
+/******/ 						case "ready":
+/******/ 							Object.keys(__webpack_require__.hmrI).forEach(function (key) {
+/******/ 								__webpack_require__.hmrI[key](
+/******/ 									moduleId,
+/******/ 									currentUpdateApplyHandlers
+/******/ 								);
+/******/ 							});
+/******/ 							break;
+/******/ 						case "prepare":
+/******/ 						case "check":
+/******/ 						case "dispose":
+/******/ 						case "apply":
+/******/ 							(queuedInvalidatedModules = queuedInvalidatedModules || []).push(
+/******/ 								moduleId
+/******/ 							);
+/******/ 							break;
+/******/ 						default:
+/******/ 							// ignore requests in error states
+/******/ 							break;
+/******/ 					}
+/******/ 				},
+/******/ 		
+/******/ 				// Management API
+/******/ 				check: hotCheck,
+/******/ 				apply: hotApply,
+/******/ 				status: function (l) {
+/******/ 					if (!l) return currentStatus;
+/******/ 					registeredStatusHandlers.push(l);
+/******/ 				},
+/******/ 				addStatusHandler: function (l) {
+/******/ 					registeredStatusHandlers.push(l);
+/******/ 				},
+/******/ 				removeStatusHandler: function (l) {
+/******/ 					var idx = registeredStatusHandlers.indexOf(l);
+/******/ 					if (idx >= 0) registeredStatusHandlers.splice(idx, 1);
+/******/ 				},
+/******/ 		
+/******/ 				// inherit from previous dispose call
+/******/ 				data: currentModuleData[moduleId]
+/******/ 			};
+/******/ 			currentChildModule = undefined;
+/******/ 			return hot;
+/******/ 		}
+/******/ 		
+/******/ 		function setStatus(newStatus) {
+/******/ 			currentStatus = newStatus;
+/******/ 			var results = [];
+/******/ 		
+/******/ 			for (var i = 0; i < registeredStatusHandlers.length; i++)
+/******/ 				results[i] = registeredStatusHandlers[i].call(null, newStatus);
+/******/ 		
+/******/ 			return Promise.all(results).then(function () {});
+/******/ 		}
+/******/ 		
+/******/ 		function unblock() {
+/******/ 			if (--blockingPromises === 0) {
+/******/ 				setStatus("ready").then(function () {
+/******/ 					if (blockingPromises === 0) {
+/******/ 						var list = blockingPromisesWaiting;
+/******/ 						blockingPromisesWaiting = [];
+/******/ 						for (var i = 0; i < list.length; i++) {
+/******/ 							list[i]();
+/******/ 						}
+/******/ 					}
+/******/ 				});
+/******/ 			}
+/******/ 		}
+/******/ 		
+/******/ 		function trackBlockingPromise(promise) {
+/******/ 			switch (currentStatus) {
+/******/ 				case "ready":
+/******/ 					setStatus("prepare");
+/******/ 				/* fallthrough */
+/******/ 				case "prepare":
+/******/ 					blockingPromises++;
+/******/ 					promise.then(unblock, unblock);
+/******/ 					return promise;
+/******/ 				default:
+/******/ 					return promise;
+/******/ 			}
+/******/ 		}
+/******/ 		
+/******/ 		function waitForBlockingPromises(fn) {
+/******/ 			if (blockingPromises === 0) return fn();
+/******/ 			return new Promise(function (resolve) {
+/******/ 				blockingPromisesWaiting.push(function () {
+/******/ 					resolve(fn());
+/******/ 				});
+/******/ 			});
+/******/ 		}
+/******/ 		
+/******/ 		function hotCheck(applyOnUpdate) {
+/******/ 			if (currentStatus !== "idle") {
+/******/ 				throw new Error("check() is only allowed in idle status");
+/******/ 			}
+/******/ 			return setStatus("check")
+/******/ 				.then(__webpack_require__.hmrM)
+/******/ 				.then(function (update) {
+/******/ 					if (!update) {
+/******/ 						return setStatus(applyInvalidatedModules() ? "ready" : "idle").then(
+/******/ 							function () {
+/******/ 								return null;
+/******/ 							}
+/******/ 						);
+/******/ 					}
+/******/ 		
+/******/ 					return setStatus("prepare").then(function () {
+/******/ 						var updatedModules = [];
+/******/ 						currentUpdateApplyHandlers = [];
+/******/ 		
+/******/ 						return Promise.all(
+/******/ 							Object.keys(__webpack_require__.hmrC).reduce(function (
+/******/ 								promises,
+/******/ 								key
+/******/ 							) {
+/******/ 								__webpack_require__.hmrC[key](
+/******/ 									update.c,
+/******/ 									update.r,
+/******/ 									update.m,
+/******/ 									promises,
+/******/ 									currentUpdateApplyHandlers,
+/******/ 									updatedModules
+/******/ 								);
+/******/ 								return promises;
+/******/ 							}, [])
+/******/ 						).then(function () {
+/******/ 							return waitForBlockingPromises(function () {
+/******/ 								if (applyOnUpdate) {
+/******/ 									return internalApply(applyOnUpdate);
+/******/ 								}
+/******/ 								return setStatus("ready").then(function () {
+/******/ 									return updatedModules;
+/******/ 								});
+/******/ 							});
+/******/ 						});
+/******/ 					});
+/******/ 				});
+/******/ 		}
+/******/ 		
+/******/ 		function hotApply(options) {
+/******/ 			if (currentStatus !== "ready") {
+/******/ 				return Promise.resolve().then(function () {
+/******/ 					throw new Error(
+/******/ 						"apply() is only allowed in ready status (state: " +
+/******/ 							currentStatus +
+/******/ 							")"
+/******/ 					);
+/******/ 				});
+/******/ 			}
+/******/ 			return internalApply(options);
+/******/ 		}
+/******/ 		
+/******/ 		function internalApply(options) {
+/******/ 			options = options || {};
+/******/ 		
+/******/ 			applyInvalidatedModules();
+/******/ 		
+/******/ 			var results = currentUpdateApplyHandlers.map(function (handler) {
+/******/ 				return handler(options);
+/******/ 			});
+/******/ 			currentUpdateApplyHandlers = undefined;
+/******/ 		
+/******/ 			var errors = results
+/******/ 				.map(function (r) {
+/******/ 					return r.error;
+/******/ 				})
+/******/ 				.filter(Boolean);
+/******/ 		
+/******/ 			if (errors.length > 0) {
+/******/ 				return setStatus("abort").then(function () {
+/******/ 					throw errors[0];
+/******/ 				});
+/******/ 			}
+/******/ 		
+/******/ 			// Now in "dispose" phase
+/******/ 			var disposePromise = setStatus("dispose");
+/******/ 		
+/******/ 			results.forEach(function (result) {
+/******/ 				if (result.dispose) result.dispose();
+/******/ 			});
+/******/ 		
+/******/ 			// Now in "apply" phase
+/******/ 			var applyPromise = setStatus("apply");
+/******/ 		
+/******/ 			var error;
+/******/ 			var reportError = function (err) {
+/******/ 				if (!error) error = err;
+/******/ 			};
+/******/ 		
+/******/ 			var outdatedModules = [];
+/******/ 			results.forEach(function (result) {
+/******/ 				if (result.apply) {
+/******/ 					var modules = result.apply(reportError);
+/******/ 					if (modules) {
+/******/ 						for (var i = 0; i < modules.length; i++) {
+/******/ 							outdatedModules.push(modules[i]);
+/******/ 						}
+/******/ 					}
+/******/ 				}
+/******/ 			});
+/******/ 		
+/******/ 			return Promise.all([disposePromise, applyPromise]).then(function () {
+/******/ 				// handle errors in accept handlers and self accepted module load
+/******/ 				if (error) {
+/******/ 					return setStatus("fail").then(function () {
+/******/ 						throw error;
+/******/ 					});
+/******/ 				}
+/******/ 		
+/******/ 				if (queuedInvalidatedModules) {
+/******/ 					return internalApply(options).then(function (list) {
+/******/ 						outdatedModules.forEach(function (moduleId) {
+/******/ 							if (list.indexOf(moduleId) < 0) list.push(moduleId);
+/******/ 						});
+/******/ 						return list;
+/******/ 					});
+/******/ 				}
+/******/ 		
+/******/ 				return setStatus("idle").then(function () {
+/******/ 					return outdatedModules;
+/******/ 				});
+/******/ 			});
+/******/ 		}
+/******/ 		
+/******/ 		function applyInvalidatedModules() {
+/******/ 			if (queuedInvalidatedModules) {
+/******/ 				if (!currentUpdateApplyHandlers) currentUpdateApplyHandlers = [];
+/******/ 				Object.keys(__webpack_require__.hmrI).forEach(function (key) {
+/******/ 					queuedInvalidatedModules.forEach(function (moduleId) {
+/******/ 						__webpack_require__.hmrI[key](
+/******/ 							moduleId,
+/******/ 							currentUpdateApplyHandlers
+/******/ 						);
+/******/ 					});
+/******/ 				});
+/******/ 				queuedInvalidatedModules = undefined;
+/******/ 				return true;
+/******/ 			}
+/******/ 		}
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/publicPath */
+/******/ 	(() => {
+/******/ 		var scriptUrl;
+/******/ 		if (__webpack_require__.g.importScripts) scriptUrl = __webpack_require__.g.location + "";
+/******/ 		var document = __webpack_require__.g.document;
+/******/ 		if (!scriptUrl && document) {
+/******/ 			if (document.currentScript && document.currentScript.tagName.toUpperCase() === 'SCRIPT')
+/******/ 				scriptUrl = document.currentScript.src;
+/******/ 			if (!scriptUrl) {
+/******/ 				var scripts = document.getElementsByTagName("script");
+/******/ 				if(scripts.length) {
+/******/ 					var i = scripts.length - 1;
+/******/ 					while (i > -1 && (!scriptUrl || !/^http(s?):/.test(scriptUrl))) scriptUrl = scripts[i--].src;
+/******/ 				}
+/******/ 			}
+/******/ 		}
+/******/ 		// When supporting browsers where an automatic publicPath is not supported you must specify an output.publicPath manually via configuration
+/******/ 		// or pass an empty string ("") and set the __webpack_public_path__ variable from your code to use your own logic.
+/******/ 		if (!scriptUrl) throw new Error("Automatic publicPath is not supported in this browser");
+/******/ 		scriptUrl = scriptUrl.replace(/#.*$/, "").replace(/\?.*$/, "").replace(/\/[^\/]+$/, "/");
+/******/ 		__webpack_require__.p = scriptUrl;
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/css loading */
+/******/ 	(() => {
+/******/ 		if (typeof document === "undefined") return;
+/******/ 		var createStylesheet = (chunkId, fullhref, oldTag, resolve, reject) => {
+/******/ 			var linkTag = document.createElement("link");
+/******/ 		
+/******/ 			linkTag.rel = "stylesheet";
+/******/ 			linkTag.type = "text/css";
+/******/ 			if (__webpack_require__.nc) {
+/******/ 				linkTag.nonce = __webpack_require__.nc;
+/******/ 			}
+/******/ 			var onLinkComplete = (event) => {
+/******/ 				// avoid mem leaks.
+/******/ 				linkTag.onerror = linkTag.onload = null;
+/******/ 				if (event.type === 'load') {
+/******/ 					resolve();
+/******/ 				} else {
+/******/ 					var errorType = event && event.type;
+/******/ 					var realHref = event && event.target && event.target.href || fullhref;
+/******/ 					var err = new Error("Loading CSS chunk " + chunkId + " failed.\n(" + errorType + ": " + realHref + ")");
+/******/ 					err.name = "ChunkLoadError";
+/******/ 					err.code = "CSS_CHUNK_LOAD_FAILED";
+/******/ 					err.type = errorType;
+/******/ 					err.request = realHref;
+/******/ 					if (linkTag.parentNode) linkTag.parentNode.removeChild(linkTag)
+/******/ 					reject(err);
+/******/ 				}
+/******/ 			}
+/******/ 			linkTag.onerror = linkTag.onload = onLinkComplete;
+/******/ 			linkTag.href = fullhref;
+/******/ 		
+/******/ 		
+/******/ 			if (oldTag) {
+/******/ 				oldTag.parentNode.insertBefore(linkTag, oldTag.nextSibling);
+/******/ 			} else {
+/******/ 				document.head.appendChild(linkTag);
+/******/ 			}
+/******/ 			return linkTag;
+/******/ 		};
+/******/ 		var findStylesheet = (href, fullhref) => {
+/******/ 			var existingLinkTags = document.getElementsByTagName("link");
+/******/ 			for(var i = 0; i < existingLinkTags.length; i++) {
+/******/ 				var tag = existingLinkTags[i];
+/******/ 				var dataHref = tag.getAttribute("data-href") || tag.getAttribute("href");
+/******/ 				if(tag.rel === "stylesheet" && (dataHref === href || dataHref === fullhref)) return tag;
+/******/ 			}
+/******/ 			var existingStyleTags = document.getElementsByTagName("style");
+/******/ 			for(var i = 0; i < existingStyleTags.length; i++) {
+/******/ 				var tag = existingStyleTags[i];
+/******/ 				var dataHref = tag.getAttribute("data-href");
+/******/ 				if(dataHref === href || dataHref === fullhref) return tag;
+/******/ 			}
+/******/ 		};
+/******/ 		var loadStylesheet = (chunkId) => {
+/******/ 			return new Promise((resolve, reject) => {
+/******/ 				var href = __webpack_require__.miniCssF(chunkId);
+/******/ 				var fullhref = __webpack_require__.p + href;
+/******/ 				if(findStylesheet(href, fullhref)) return resolve();
+/******/ 				createStylesheet(chunkId, fullhref, null, resolve, reject);
+/******/ 			});
+/******/ 		}
+/******/ 		// no chunk loading
+/******/ 		
+/******/ 		var oldTags = [];
+/******/ 		var newTags = [];
+/******/ 		var applyHandler = (options) => {
+/******/ 			return { dispose: () => {
+/******/ 				for(var i = 0; i < oldTags.length; i++) {
+/******/ 					var oldTag = oldTags[i];
+/******/ 					if(oldTag.parentNode) oldTag.parentNode.removeChild(oldTag);
+/******/ 				}
+/******/ 				oldTags.length = 0;
+/******/ 			}, apply: () => {
+/******/ 				for(var i = 0; i < newTags.length; i++) newTags[i].rel = "stylesheet";
+/******/ 				newTags.length = 0;
+/******/ 			} };
+/******/ 		}
+/******/ 		__webpack_require__.hmrC.miniCss = (chunkIds, removedChunks, removedModules, promises, applyHandlers, updatedModulesList) => {
+/******/ 			applyHandlers.push(applyHandler);
+/******/ 			chunkIds.forEach((chunkId) => {
+/******/ 				var href = __webpack_require__.miniCssF(chunkId);
+/******/ 				var fullhref = __webpack_require__.p + href;
+/******/ 				var oldTag = findStylesheet(href, fullhref);
+/******/ 				if(!oldTag) return;
+/******/ 				promises.push(new Promise((resolve, reject) => {
+/******/ 					var tag = createStylesheet(chunkId, fullhref, oldTag, () => {
+/******/ 						tag.as = "style";
+/******/ 						tag.rel = "preload";
+/******/ 						resolve();
+/******/ 					}, reject);
+/******/ 					oldTags.push(oldTag);
+/******/ 					newTags.push(tag);
+/******/ 				}));
+/******/ 			});
+/******/ 		}
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/jsonp chunk loading */
+/******/ 	(() => {
+/******/ 		// no baseURI
+/******/ 		
+/******/ 		// object to store loaded and loading chunks
+/******/ 		// undefined = chunk not loaded, null = chunk preloaded/prefetched
+/******/ 		// [resolve, reject, Promise] = chunk loading, 0 = chunk loaded
+/******/ 		var installedChunks = __webpack_require__.hmrS_jsonp = __webpack_require__.hmrS_jsonp || {
+/******/ 			"main": 0
+/******/ 		};
+/******/ 		
+/******/ 		// no chunk on demand loading
+/******/ 		
+/******/ 		// no prefetching
+/******/ 		
+/******/ 		// no preloaded
+/******/ 		
+/******/ 		var currentUpdatedModulesList;
+/******/ 		var waitingUpdateResolves = {};
+/******/ 		function loadUpdateChunk(chunkId, updatedModulesList) {
+/******/ 			currentUpdatedModulesList = updatedModulesList;
+/******/ 			return new Promise((resolve, reject) => {
+/******/ 				waitingUpdateResolves[chunkId] = resolve;
+/******/ 				// start update chunk loading
+/******/ 				var url = __webpack_require__.p + __webpack_require__.hu(chunkId);
+/******/ 				// create error before stack unwound to get useful stacktrace later
+/******/ 				var error = new Error();
+/******/ 				var loadingEnded = (event) => {
+/******/ 					if(waitingUpdateResolves[chunkId]) {
+/******/ 						waitingUpdateResolves[chunkId] = undefined
+/******/ 						var errorType = event && (event.type === 'load' ? 'missing' : event.type);
+/******/ 						var realSrc = event && event.target && event.target.src;
+/******/ 						error.message = 'Loading hot update chunk ' + chunkId + ' failed.\n(' + errorType + ': ' + realSrc + ')';
+/******/ 						error.name = 'ChunkLoadError';
+/******/ 						error.type = errorType;
+/******/ 						error.request = realSrc;
+/******/ 						reject(error);
+/******/ 					}
+/******/ 				};
+/******/ 				__webpack_require__.l(url, loadingEnded);
+/******/ 			});
+/******/ 		}
+/******/ 		
+/******/ 		Object(typeof self !== 'undefined' ? self : this)["webpackHotUpdateLayeredModalSystem"] = (chunkId, moreModules, runtime) => {
+/******/ 			for(var moduleId in moreModules) {
+/******/ 				if(__webpack_require__.o(moreModules, moduleId)) {
+/******/ 					currentUpdate[moduleId] = moreModules[moduleId];
+/******/ 					if(currentUpdatedModulesList) currentUpdatedModulesList.push(moduleId);
+/******/ 				}
+/******/ 			}
+/******/ 			if(runtime) currentUpdateRuntime.push(runtime);
+/******/ 			if(waitingUpdateResolves[chunkId]) {
+/******/ 				waitingUpdateResolves[chunkId]();
+/******/ 				waitingUpdateResolves[chunkId] = undefined;
+/******/ 			}
+/******/ 		};
+/******/ 		
+/******/ 		var currentUpdateChunks;
+/******/ 		var currentUpdate;
+/******/ 		var currentUpdateRemovedChunks;
+/******/ 		var currentUpdateRuntime;
+/******/ 		function applyHandler(options) {
+/******/ 			if (__webpack_require__.f) delete __webpack_require__.f.jsonpHmr;
+/******/ 			currentUpdateChunks = undefined;
+/******/ 			function getAffectedModuleEffects(updateModuleId) {
+/******/ 				var outdatedModules = [updateModuleId];
+/******/ 				var outdatedDependencies = {};
+/******/ 		
+/******/ 				var queue = outdatedModules.map(function (id) {
+/******/ 					return {
+/******/ 						chain: [id],
+/******/ 						id: id
+/******/ 					};
+/******/ 				});
+/******/ 				while (queue.length > 0) {
+/******/ 					var queueItem = queue.pop();
+/******/ 					var moduleId = queueItem.id;
+/******/ 					var chain = queueItem.chain;
+/******/ 					var module = __webpack_require__.c[moduleId];
+/******/ 					if (
+/******/ 						!module ||
+/******/ 						(module.hot._selfAccepted && !module.hot._selfInvalidated)
+/******/ 					)
+/******/ 						continue;
+/******/ 					if (module.hot._selfDeclined) {
+/******/ 						return {
+/******/ 							type: "self-declined",
+/******/ 							chain: chain,
+/******/ 							moduleId: moduleId
+/******/ 						};
+/******/ 					}
+/******/ 					if (module.hot._main) {
+/******/ 						return {
+/******/ 							type: "unaccepted",
+/******/ 							chain: chain,
+/******/ 							moduleId: moduleId
+/******/ 						};
+/******/ 					}
+/******/ 					for (var i = 0; i < module.parents.length; i++) {
+/******/ 						var parentId = module.parents[i];
+/******/ 						var parent = __webpack_require__.c[parentId];
+/******/ 						if (!parent) continue;
+/******/ 						if (parent.hot._declinedDependencies[moduleId]) {
+/******/ 							return {
+/******/ 								type: "declined",
+/******/ 								chain: chain.concat([parentId]),
+/******/ 								moduleId: moduleId,
+/******/ 								parentId: parentId
+/******/ 							};
+/******/ 						}
+/******/ 						if (outdatedModules.indexOf(parentId) !== -1) continue;
+/******/ 						if (parent.hot._acceptedDependencies[moduleId]) {
+/******/ 							if (!outdatedDependencies[parentId])
+/******/ 								outdatedDependencies[parentId] = [];
+/******/ 							addAllToSet(outdatedDependencies[parentId], [moduleId]);
+/******/ 							continue;
+/******/ 						}
+/******/ 						delete outdatedDependencies[parentId];
+/******/ 						outdatedModules.push(parentId);
+/******/ 						queue.push({
+/******/ 							chain: chain.concat([parentId]),
+/******/ 							id: parentId
+/******/ 						});
+/******/ 					}
+/******/ 				}
+/******/ 		
+/******/ 				return {
+/******/ 					type: "accepted",
+/******/ 					moduleId: updateModuleId,
+/******/ 					outdatedModules: outdatedModules,
+/******/ 					outdatedDependencies: outdatedDependencies
+/******/ 				};
+/******/ 			}
+/******/ 		
+/******/ 			function addAllToSet(a, b) {
+/******/ 				for (var i = 0; i < b.length; i++) {
+/******/ 					var item = b[i];
+/******/ 					if (a.indexOf(item) === -1) a.push(item);
+/******/ 				}
+/******/ 			}
+/******/ 		
+/******/ 			// at begin all updates modules are outdated
+/******/ 			// the "outdated" status can propagate to parents if they don't accept the children
+/******/ 			var outdatedDependencies = {};
+/******/ 			var outdatedModules = [];
+/******/ 			var appliedUpdate = {};
+/******/ 		
+/******/ 			var warnUnexpectedRequire = function warnUnexpectedRequire(module) {
+/******/ 				console.warn(
+/******/ 					"[HMR] unexpected require(" + module.id + ") to disposed module"
+/******/ 				);
+/******/ 			};
+/******/ 		
+/******/ 			for (var moduleId in currentUpdate) {
+/******/ 				if (__webpack_require__.o(currentUpdate, moduleId)) {
+/******/ 					var newModuleFactory = currentUpdate[moduleId];
+/******/ 					/** @type {TODO} */
+/******/ 					var result = newModuleFactory
+/******/ 						? getAffectedModuleEffects(moduleId)
+/******/ 						: {
+/******/ 								type: "disposed",
+/******/ 								moduleId: moduleId
+/******/ 							};
+/******/ 					/** @type {Error|false} */
+/******/ 					var abortError = false;
+/******/ 					var doApply = false;
+/******/ 					var doDispose = false;
+/******/ 					var chainInfo = "";
+/******/ 					if (result.chain) {
+/******/ 						chainInfo = "\nUpdate propagation: " + result.chain.join(" -> ");
+/******/ 					}
+/******/ 					switch (result.type) {
+/******/ 						case "self-declined":
+/******/ 							if (options.onDeclined) options.onDeclined(result);
+/******/ 							if (!options.ignoreDeclined)
+/******/ 								abortError = new Error(
+/******/ 									"Aborted because of self decline: " +
+/******/ 										result.moduleId +
+/******/ 										chainInfo
+/******/ 								);
+/******/ 							break;
+/******/ 						case "declined":
+/******/ 							if (options.onDeclined) options.onDeclined(result);
+/******/ 							if (!options.ignoreDeclined)
+/******/ 								abortError = new Error(
+/******/ 									"Aborted because of declined dependency: " +
+/******/ 										result.moduleId +
+/******/ 										" in " +
+/******/ 										result.parentId +
+/******/ 										chainInfo
+/******/ 								);
+/******/ 							break;
+/******/ 						case "unaccepted":
+/******/ 							if (options.onUnaccepted) options.onUnaccepted(result);
+/******/ 							if (!options.ignoreUnaccepted)
+/******/ 								abortError = new Error(
+/******/ 									"Aborted because " + moduleId + " is not accepted" + chainInfo
+/******/ 								);
+/******/ 							break;
+/******/ 						case "accepted":
+/******/ 							if (options.onAccepted) options.onAccepted(result);
+/******/ 							doApply = true;
+/******/ 							break;
+/******/ 						case "disposed":
+/******/ 							if (options.onDisposed) options.onDisposed(result);
+/******/ 							doDispose = true;
+/******/ 							break;
+/******/ 						default:
+/******/ 							throw new Error("Unexception type " + result.type);
+/******/ 					}
+/******/ 					if (abortError) {
+/******/ 						return {
+/******/ 							error: abortError
+/******/ 						};
+/******/ 					}
+/******/ 					if (doApply) {
+/******/ 						appliedUpdate[moduleId] = newModuleFactory;
+/******/ 						addAllToSet(outdatedModules, result.outdatedModules);
+/******/ 						for (moduleId in result.outdatedDependencies) {
+/******/ 							if (__webpack_require__.o(result.outdatedDependencies, moduleId)) {
+/******/ 								if (!outdatedDependencies[moduleId])
+/******/ 									outdatedDependencies[moduleId] = [];
+/******/ 								addAllToSet(
+/******/ 									outdatedDependencies[moduleId],
+/******/ 									result.outdatedDependencies[moduleId]
+/******/ 								);
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 					if (doDispose) {
+/******/ 						addAllToSet(outdatedModules, [result.moduleId]);
+/******/ 						appliedUpdate[moduleId] = warnUnexpectedRequire;
+/******/ 					}
+/******/ 				}
+/******/ 			}
+/******/ 			currentUpdate = undefined;
+/******/ 		
+/******/ 			// Store self accepted outdated modules to require them later by the module system
+/******/ 			var outdatedSelfAcceptedModules = [];
+/******/ 			for (var j = 0; j < outdatedModules.length; j++) {
+/******/ 				var outdatedModuleId = outdatedModules[j];
+/******/ 				var module = __webpack_require__.c[outdatedModuleId];
+/******/ 				if (
+/******/ 					module &&
+/******/ 					(module.hot._selfAccepted || module.hot._main) &&
+/******/ 					// removed self-accepted modules should not be required
+/******/ 					appliedUpdate[outdatedModuleId] !== warnUnexpectedRequire &&
+/******/ 					// when called invalidate self-accepting is not possible
+/******/ 					!module.hot._selfInvalidated
+/******/ 				) {
+/******/ 					outdatedSelfAcceptedModules.push({
+/******/ 						module: outdatedModuleId,
+/******/ 						require: module.hot._requireSelf,
+/******/ 						errorHandler: module.hot._selfAccepted
+/******/ 					});
+/******/ 				}
+/******/ 			}
+/******/ 		
+/******/ 			var moduleOutdatedDependencies;
+/******/ 		
+/******/ 			return {
+/******/ 				dispose: function () {
+/******/ 					currentUpdateRemovedChunks.forEach(function (chunkId) {
+/******/ 						delete installedChunks[chunkId];
+/******/ 					});
+/******/ 					currentUpdateRemovedChunks = undefined;
+/******/ 		
+/******/ 					var idx;
+/******/ 					var queue = outdatedModules.slice();
+/******/ 					while (queue.length > 0) {
+/******/ 						var moduleId = queue.pop();
+/******/ 						var module = __webpack_require__.c[moduleId];
+/******/ 						if (!module) continue;
+/******/ 		
+/******/ 						var data = {};
+/******/ 		
+/******/ 						// Call dispose handlers
+/******/ 						var disposeHandlers = module.hot._disposeHandlers;
+/******/ 						for (j = 0; j < disposeHandlers.length; j++) {
+/******/ 							disposeHandlers[j].call(null, data);
+/******/ 						}
+/******/ 						__webpack_require__.hmrD[moduleId] = data;
+/******/ 		
+/******/ 						// disable module (this disables requires from this module)
+/******/ 						module.hot.active = false;
+/******/ 		
+/******/ 						// remove module from cache
+/******/ 						delete __webpack_require__.c[moduleId];
+/******/ 		
+/******/ 						// when disposing there is no need to call dispose handler
+/******/ 						delete outdatedDependencies[moduleId];
+/******/ 		
+/******/ 						// remove "parents" references from all children
+/******/ 						for (j = 0; j < module.children.length; j++) {
+/******/ 							var child = __webpack_require__.c[module.children[j]];
+/******/ 							if (!child) continue;
+/******/ 							idx = child.parents.indexOf(moduleId);
+/******/ 							if (idx >= 0) {
+/******/ 								child.parents.splice(idx, 1);
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 		
+/******/ 					// remove outdated dependency from module children
+/******/ 					var dependency;
+/******/ 					for (var outdatedModuleId in outdatedDependencies) {
+/******/ 						if (__webpack_require__.o(outdatedDependencies, outdatedModuleId)) {
+/******/ 							module = __webpack_require__.c[outdatedModuleId];
+/******/ 							if (module) {
+/******/ 								moduleOutdatedDependencies =
+/******/ 									outdatedDependencies[outdatedModuleId];
+/******/ 								for (j = 0; j < moduleOutdatedDependencies.length; j++) {
+/******/ 									dependency = moduleOutdatedDependencies[j];
+/******/ 									idx = module.children.indexOf(dependency);
+/******/ 									if (idx >= 0) module.children.splice(idx, 1);
+/******/ 								}
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 				},
+/******/ 				apply: function (reportError) {
+/******/ 					// insert new code
+/******/ 					for (var updateModuleId in appliedUpdate) {
+/******/ 						if (__webpack_require__.o(appliedUpdate, updateModuleId)) {
+/******/ 							__webpack_require__.m[updateModuleId] = appliedUpdate[updateModuleId];
+/******/ 						}
+/******/ 					}
+/******/ 		
+/******/ 					// run new runtime modules
+/******/ 					for (var i = 0; i < currentUpdateRuntime.length; i++) {
+/******/ 						currentUpdateRuntime[i](__webpack_require__);
+/******/ 					}
+/******/ 		
+/******/ 					// call accept handlers
+/******/ 					for (var outdatedModuleId in outdatedDependencies) {
+/******/ 						if (__webpack_require__.o(outdatedDependencies, outdatedModuleId)) {
+/******/ 							var module = __webpack_require__.c[outdatedModuleId];
+/******/ 							if (module) {
+/******/ 								moduleOutdatedDependencies =
+/******/ 									outdatedDependencies[outdatedModuleId];
+/******/ 								var callbacks = [];
+/******/ 								var errorHandlers = [];
+/******/ 								var dependenciesForCallbacks = [];
+/******/ 								for (var j = 0; j < moduleOutdatedDependencies.length; j++) {
+/******/ 									var dependency = moduleOutdatedDependencies[j];
+/******/ 									var acceptCallback =
+/******/ 										module.hot._acceptedDependencies[dependency];
+/******/ 									var errorHandler =
+/******/ 										module.hot._acceptedErrorHandlers[dependency];
+/******/ 									if (acceptCallback) {
+/******/ 										if (callbacks.indexOf(acceptCallback) !== -1) continue;
+/******/ 										callbacks.push(acceptCallback);
+/******/ 										errorHandlers.push(errorHandler);
+/******/ 										dependenciesForCallbacks.push(dependency);
+/******/ 									}
+/******/ 								}
+/******/ 								for (var k = 0; k < callbacks.length; k++) {
+/******/ 									try {
+/******/ 										callbacks[k].call(null, moduleOutdatedDependencies);
+/******/ 									} catch (err) {
+/******/ 										if (typeof errorHandlers[k] === "function") {
+/******/ 											try {
+/******/ 												errorHandlers[k](err, {
+/******/ 													moduleId: outdatedModuleId,
+/******/ 													dependencyId: dependenciesForCallbacks[k]
+/******/ 												});
+/******/ 											} catch (err2) {
+/******/ 												if (options.onErrored) {
+/******/ 													options.onErrored({
+/******/ 														type: "accept-error-handler-errored",
+/******/ 														moduleId: outdatedModuleId,
+/******/ 														dependencyId: dependenciesForCallbacks[k],
+/******/ 														error: err2,
+/******/ 														originalError: err
+/******/ 													});
+/******/ 												}
+/******/ 												if (!options.ignoreErrored) {
+/******/ 													reportError(err2);
+/******/ 													reportError(err);
+/******/ 												}
+/******/ 											}
+/******/ 										} else {
+/******/ 											if (options.onErrored) {
+/******/ 												options.onErrored({
+/******/ 													type: "accept-errored",
+/******/ 													moduleId: outdatedModuleId,
+/******/ 													dependencyId: dependenciesForCallbacks[k],
+/******/ 													error: err
+/******/ 												});
+/******/ 											}
+/******/ 											if (!options.ignoreErrored) {
+/******/ 												reportError(err);
+/******/ 											}
+/******/ 										}
+/******/ 									}
+/******/ 								}
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 		
+/******/ 					// Load self accepted modules
+/******/ 					for (var o = 0; o < outdatedSelfAcceptedModules.length; o++) {
+/******/ 						var item = outdatedSelfAcceptedModules[o];
+/******/ 						var moduleId = item.module;
+/******/ 						try {
+/******/ 							item.require(moduleId);
+/******/ 						} catch (err) {
+/******/ 							if (typeof item.errorHandler === "function") {
+/******/ 								try {
+/******/ 									item.errorHandler(err, {
+/******/ 										moduleId: moduleId,
+/******/ 										module: __webpack_require__.c[moduleId]
+/******/ 									});
+/******/ 								} catch (err1) {
+/******/ 									if (options.onErrored) {
+/******/ 										options.onErrored({
+/******/ 											type: "self-accept-error-handler-errored",
+/******/ 											moduleId: moduleId,
+/******/ 											error: err1,
+/******/ 											originalError: err
+/******/ 										});
+/******/ 									}
+/******/ 									if (!options.ignoreErrored) {
+/******/ 										reportError(err1);
+/******/ 										reportError(err);
+/******/ 									}
+/******/ 								}
+/******/ 							} else {
+/******/ 								if (options.onErrored) {
+/******/ 									options.onErrored({
+/******/ 										type: "self-accept-errored",
+/******/ 										moduleId: moduleId,
+/******/ 										error: err
+/******/ 									});
+/******/ 								}
+/******/ 								if (!options.ignoreErrored) {
+/******/ 									reportError(err);
+/******/ 								}
+/******/ 							}
+/******/ 						}
+/******/ 					}
+/******/ 		
+/******/ 					return outdatedModules;
+/******/ 				}
+/******/ 			};
+/******/ 		}
+/******/ 		__webpack_require__.hmrI.jsonp = function (moduleId, applyHandlers) {
+/******/ 			if (!currentUpdate) {
+/******/ 				currentUpdate = {};
+/******/ 				currentUpdateRuntime = [];
+/******/ 				currentUpdateRemovedChunks = [];
+/******/ 				applyHandlers.push(applyHandler);
+/******/ 			}
+/******/ 			if (!__webpack_require__.o(currentUpdate, moduleId)) {
+/******/ 				currentUpdate[moduleId] = __webpack_require__.m[moduleId];
+/******/ 			}
+/******/ 		};
+/******/ 		__webpack_require__.hmrC.jsonp = function (
+/******/ 			chunkIds,
+/******/ 			removedChunks,
+/******/ 			removedModules,
+/******/ 			promises,
+/******/ 			applyHandlers,
+/******/ 			updatedModulesList
+/******/ 		) {
+/******/ 			applyHandlers.push(applyHandler);
+/******/ 			currentUpdateChunks = {};
+/******/ 			currentUpdateRemovedChunks = removedChunks;
+/******/ 			currentUpdate = removedModules.reduce(function (obj, key) {
+/******/ 				obj[key] = false;
+/******/ 				return obj;
+/******/ 			}, {});
+/******/ 			currentUpdateRuntime = [];
+/******/ 			chunkIds.forEach(function (chunkId) {
+/******/ 				if (
+/******/ 					__webpack_require__.o(installedChunks, chunkId) &&
+/******/ 					installedChunks[chunkId] !== undefined
+/******/ 				) {
+/******/ 					promises.push(loadUpdateChunk(chunkId, updatedModulesList));
+/******/ 					currentUpdateChunks[chunkId] = true;
+/******/ 				} else {
+/******/ 					currentUpdateChunks[chunkId] = false;
+/******/ 				}
+/******/ 			});
+/******/ 			if (__webpack_require__.f) {
+/******/ 				__webpack_require__.f.jsonpHmr = function (chunkId, promises) {
+/******/ 					if (
+/******/ 						currentUpdateChunks &&
+/******/ 						__webpack_require__.o(currentUpdateChunks, chunkId) &&
+/******/ 						!currentUpdateChunks[chunkId]
+/******/ 					) {
+/******/ 						promises.push(loadUpdateChunk(chunkId));
+/******/ 						currentUpdateChunks[chunkId] = true;
+/******/ 					}
+/******/ 				};
+/******/ 			}
+/******/ 		};
+/******/ 		
+/******/ 		__webpack_require__.hmrM = () => {
+/******/ 			if (typeof fetch === "undefined") throw new Error("No browser support: need fetch API");
+/******/ 			return fetch(__webpack_require__.p + __webpack_require__.hmrF()).then((response) => {
+/******/ 				if(response.status === 404) return; // no update available
+/******/ 				if(!response.ok) throw new Error("Failed to fetch update manifest " + response.statusText);
+/******/ 				return response.json();
+/******/ 			});
+/******/ 		};
+/******/ 		
+/******/ 		// no on chunks loaded
+/******/ 		
+/******/ 		// no jsonp function
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	
+/******/ 	// module cache are used so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	__webpack_require__("./node_modules/webpack-dev-server/client/index.js?protocol=ws%3A&hostname=127.0.0.1&port=8080&pathname=%2Fws&logging=info&overlay=true&reconnect=10&hot=true&live-reload=true");
+/******/ 	__webpack_require__("./node_modules/webpack/hot/dev-server.js");
+/******/ 	var __webpack_exports__ = __webpack_require__("./src/ts/index.ts");
+/******/ 	
+/******/ 	return __webpack_exports__;
+/******/ })()
+;
+});

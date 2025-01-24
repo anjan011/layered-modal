@@ -7,6 +7,7 @@
   \*******************************************************************************************************************/
 .layered-modal-overlay {
   font-family: "Roboto Serif", serif;
+  font-size: 24px;
   position: fixed;
   top: 0;
   left: 0;
@@ -14,26 +15,72 @@
   height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  overflow: scroll;
+  flex-direction: column;
+  padding: 40px;
 }
 .layered-modal-overlay.secondary {
-  background: rgba(0, 0, 0, 0.15);
+  background: rgba(0, 0, 0, 0.25);
 }
-.layered-modal-overlay *:not(.icon) {
+.layered-modal-overlay *:not(.icon, .fa, .fa-solid, .fas, h1, h2, h3, h4, h5, h6) {
   font-family: inherit;
+  font-size: inherit;
+}
+.layered-modal-overlay * h1, .layered-modal-overlay * h2, .layered-modal-overlay * h3, .layered-modal-overlay * h4, .layered-modal-overlay * h5, .layered-modal-overlay * h6 {
+  font-family: initial;
+}
+.layered-modal-overlay.top-left {
+  align-items: start;
+  justify-content: start;
+}
+.layered-modal-overlay.top-center {
+  align-items: center;
+  justify-content: start;
+}
+.layered-modal-overlay.top-right {
+  align-items: end;
+  justify-content: start;
+}
+.layered-modal-overlay.middle-left {
+  align-items: start;
+  justify-content: center;
+}
+.layered-modal-overlay.middle-center {
+  align-items: center;
+  justify-content: center;
+}
+.layered-modal-overlay.middle-right {
+  align-items: end;
+  justify-content: center;
+}
+.layered-modal-overlay.bottom-left {
+  align-items: start;
+  justify-content: end;
+}
+.layered-modal-overlay.bottom-center {
+  align-items: center;
+  justify-content: end;
+}
+.layered-modal-overlay.bottom-right {
+  align-items: end;
+  justify-content: end;
 }
 
 .layered-modal {
   background: white;
-  width: 400px;
-  padding: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
-  /*border-radius: 8px;*/
-  opacity: 0; /* Initially hidden (for fading effect) */
-  transition: opacity 0.3s ease; /* Fade-in effect */
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: ease;
+  /* max-height: 95vh !important;
+   max-width: 95vw !important;*/
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   /* General Button Styles */
   /* Default (Neutral) Button */
   /* Success (Green) Button */
@@ -42,23 +89,30 @@
   /* Info (Blue) Button */
   /* Disabled Button State */
 }
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 1023px) {
   .layered-modal {
-    width: 90%;
     margin-left: auto !important;
     margin-right: auto !important;
+    max-width: 95% !important;
   }
+  .layered-modal .layered-modal-body {
+    width: 100% !important;
+  }
+}
+.layered-modal.no-user-select {
+  user-select: none;
 }
 .layered-modal > .x-btn {
   font-family: monospace;
   display: flex;
-  width: 24px;
-  height: 24px;
+  width: 48px;
+  height: 48px;
   background-color: red;
   color: #fff;
   justify-content: center;
   align-items: center;
-  font-size: 14px;
+  font-size: 24px;
+  border: solid 5px #000;
   border-radius: 50%;
   user-select: none;
   cursor: pointer;
@@ -68,7 +122,11 @@
   transform: translateX(40%) translateY(-40%);
 }
 .layered-modal > .x-btn:hover {
-  box-shadow: 0 0 10px 3px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.5);
+  transition-duration: 100ms;
+}
+.layered-modal.stacked > .x-btn {
+  display: none !important;
 }
 .layered-modal .lm-btn {
   display: inline-block;
@@ -216,22 +274,49 @@
 .layered-modal .d-flex.gap-3 {
   gap: 1rem;
 }
+.layered-modal .d-block {
+  display: block !important;
+}
+.layered-modal .full-width {
+  width: 100%;
+}
+.layered-modal.lm-draggable .lm-drag-handle {
+  user-select: none;
+  cursor: move;
+}
 
 .layered-modal-header {
   font-weight: bold;
-  padding-bottom: 10px;
+  padding: 15px;
   border-bottom: 1px solid #ccc;
 }
-.layered-modal-header h2, .layered-modal-header h3, .layered-modal-header h1 {
+.layered-modal-header h1, .layered-modal-header h2, .layered-modal-header h3, .layered-modal-header h4, .layered-modal-header h5, .layered-modal-header h6 {
   margin: 0;
 }
 
 .layered-modal-body {
-  padding: 10px 0;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  overflow: scroll;
+  /*max-height: 70vh;*/
+}
+.layered-modal-body iframe {
+  width: 100% !important;
+  height: 100% !important;
+  display: block;
+  flex: 1;
+}
+.layered-modal-body.no-padding {
+  padding: 0 !important;
 }
 
 .layered-modal-footer {
-  padding-top: 10px;
+  padding: 15px;
   border-top: 1px solid #ccc;
   text-align: right;
 }

@@ -4,52 +4,58 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 module.exports = {
     entry: './src/ts/index.ts',
     output: {
-        filename: 'minified.bundle.js',  // Output JavaScript bundle
+        filename: 'bundle.min.umd.js',  // Output JavaScript bundle
         path: path.resolve(__dirname, 'dist'),
-        //library: 'LayeredModalManager',
         library: {
-            name: 'LayeredModal',
+            name: 'LayeredModalSystem',
             type: 'umd',
-            export: 'default', // Ensures the default export is exposed globally
         },
-        libraryTarget: 'umd',
-        globalObject: "this",
+        globalObject: "typeof self !== 'undefined' ? self : this",
     },
     resolve: {
-        extensions: ['.ts','.js'],
+        extensions: ['.ts','.js','.tsx'],
     },
     module: {
         rules: [
             {
-                test: /\.ts$/,
+                test: /\.tsx?$/,
                 use: 'ts-loader',
                 exclude: /node_modules/,
             },
             {
                 test: /\.scss$/,
                 use: [
-                    MiniCssExtractPlugin.loader, // Extracts CSS into a separate file
-                    "css-loader", // Translates CSS into CommonJS
-                    "sass-loader" // Compiles Sass to CSS
+                    MiniCssExtractPlugin.loader,
+                    "css-loader",
+                    "sass-loader"
                 ],
             },
         ],
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: "styles.min.css", // Minified CSS output
+            filename: "styles.min.css",
         }),
     ],
-    mode: 'development', // Change to 'development' for debugging
-    /*watch: true,*/ // Enable watch mode to auto-rebuild on SCSS & TS file changes
+    mode: 'development',
+    /*watch: true,*/
 
     devServer: {
-        static: path.resolve(__dirname, 'dist'), // Serve 'demo' as the document root
-        compress: true, // Enable gzip compression
+        static: [
+            {directory: path.resolve(__dirname, 'demo'), publicPath: '/'},
+            {directory: path.resolve(__dirname, 'dist'), publicPath: '/dist'}
+        ],
+        compress: true,
         host: '127.0.0.1',
-        port: 8080, // Change to any port if needed
-        open: true, // Auto-open browser on start
-        hot: true, // Enable Hot Module Replacement (HMR)
+        port: 8080,
+        open: true,
+        hot: true,
         liveReload: true,
+        devMiddleware: {
+            writeToDisk: (filePath) => {
+                return filePath.endsWith('bundle.min.umd.js')
+                    || filePath.endsWith('styles.min.css');
+            },
+        },
     },
 };

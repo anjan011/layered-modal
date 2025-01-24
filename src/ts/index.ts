@@ -1,8 +1,10 @@
 import '../styles/main.scss';
 import _ from './app/utils/mixins';
-import {LayeredModal} from "./app/layered-modal";
-import LayeredModalManager from "./app/layered-modal-manager";
+import {Modal} from "./app/modal";
+import {ModalManager} from "./app/modal-manager";
 
-(window as any).LayeredModalManager = LayeredModalManager;
+/**
+ * Exporting all that can be used ...
+ */
 
-export {LayeredModal,LayeredModalManager,_}
+export {ModalManager,Modal,_}
