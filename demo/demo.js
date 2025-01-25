@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let dragId = LMS._.guid();
 
         modalManager.addModal({
-            delayInMilliSeconds : 4000,
+            delayInMilliSeconds : 0,
             position : 'bottom-right',
             cssClass : {
                 modal : '',

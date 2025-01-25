@@ -182,10 +182,43 @@ export class Modal {
 
         let modalInlineCss = [
             this.generateMarginShift(),
-            CssRulesGenerator.generateDimensionCss(this.#params.width, 'width'),
-            CssRulesGenerator.generateDimensionCss(this.#params.height, 'height'),
             `transition-duration: ${this.#params.transitionDuration}ms;`,
         ];
+
+        if(this.#params.width) {
+
+            if(!this.#params.autoWidth) {
+                modalInlineCss.push(
+                    CssRulesGenerator.generateDimensionCss(this.#params.width, 'width')
+                );
+            }
+
+        }
+
+        if (this.#params.maxWidth) {
+            modalInlineCss.push(
+                CssRulesGenerator.generateDimensionCss(this.#params.maxWidth, 'max-width')
+            );
+        }
+
+        if (this.#params.height) {
+
+            if (!this.#params.autoHeight) {
+                modalInlineCss.push(
+                    CssRulesGenerator.generateDimensionCss(this.#params.height, 'height')
+                );
+            }
+
+        }
+
+        if(this.#params.maxHeight) {
+            modalInlineCss.push(
+                CssRulesGenerator.generateDimensionCss(this.#params.maxHeight, 'max-height')
+            );
+        }
+
+        console.log('Generated inline css ....');
+        console.log(modalInlineCss.join(''));
 
         // endregion
 
@@ -227,8 +260,6 @@ export class Modal {
         }
 
         let btn = this.#params.xButton;
-
-        console.log(btn);
 
         if(!btn.enabled) {
             return '';
@@ -343,7 +374,68 @@ export class Modal {
 
         } else if (body.contentType === 'image') {
 
-            content = 'Image type ...';
+            if(body.imageParams !== undefined) {
+
+                let imgParams = body.imageParams;
+
+                let imageUrl = imgParams.url.trim();
+
+                if(!imageUrl) {
+                    content = 'Image url cannot be empty';
+                } else {
+
+                    let imgAttrs : any = {
+                        class : 'lm-single-image',
+                        src : imageUrl,
+                    };
+
+                    if(imgParams.title) {
+                        imgAttrs.title = imgParams.title;
+                    }
+
+                    if (imgParams.alt) {
+                        imgAttrs.alt = imgParams.alt;
+                    }
+
+                    if (imgParams.cssClass) {
+                        imgAttrs.class += ` ${imgParams.cssClass}`;
+                    }
+
+                    if (imgParams.inlineStyles) {
+                        imgAttrs.style = imgParams.inlineStyles;
+                    }
+
+                    let captionText = '';
+                    let captionMarkup = '';
+
+
+                    if(imgParams.captionTemplate) {
+
+                        let captionTemplate = document.getElementById(imgParams.captionTemplate);
+
+                        if(captionTemplate) {
+                            captionText = captionTemplate.innerHTML;
+                        } else {
+                            captionText = `Caption template not found with id: ${captionTemplate}`;
+                        }
+
+                    } else if(imgParams.caption) {
+                        captionText = imgParams.caption;
+                    }
+
+                    if(captionText) {
+                        captionMarkup = `<div class="lm-image-caption ${imgParams.captionCssClass}">${captionText}</div>`;
+                    }
+
+
+                    content = `<img ${this.#attrGenerator.generateAttributes(imgAttrs)} />${captionMarkup}`;
+
+                }
+
+            } else {
+                content = 'Image url not provided';
+            }
+
 
         } else if (body.contentType === 'ajax') {
             content = 'Ajax type ...';
@@ -532,8 +624,19 @@ export class Modal {
             this.getManager().adjustStackCssClassForModals();
 
 
+            /**
+             * If there is any on hide callback, execute it ...
+             */
+
             if (this.#params.onHide) {
-                this.#params.onHide.apply(this);
+
+                if(_.isFunction(this.#params.onHide)) {
+                    this.#params.onHide.apply(this);
+                } else if (_.isString(this.#params.onHide)) {
+                    DomUtils.executeFunction(this.#params.onHide, '', this);
+                }
+
+
             }
 
         }, this.#params.transitionDuration);
@@ -613,7 +716,13 @@ export class Modal {
          */
 
         if (_this.#params.onShow) {
-            _this.#params.onShow.apply(this);
+
+            if(_.isFunction(_this.#params.onShow)) {
+                _this.#params.onShow.apply(this);
+            } else if(_.isString(_this.#params.onShow)) {
+                DomUtils.executeFunction(_this.#params.onShow,'',this);
+            }
+
         }
 
         /**

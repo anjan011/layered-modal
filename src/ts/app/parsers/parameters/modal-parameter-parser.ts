@@ -135,17 +135,32 @@ export default class ModalParameterParser {
         params.footer = footer as ModalFooterParams;
 
         /**
+         * Auto width ...
+         */
+
+        if(params.hasOwnProperty('autoWidth')) {
+            params.autoWidth = _.objValueAsBool(params,'autoWidth',false);
+        }
+
+        /**
+         * Max width ...
+         */
+
+        if(params.hasOwnProperty('maxWidth')) {
+
+            let maxWidth : Partial<Dimension> = _.objValueAsObject(params,'maxWidth');
+
+            maxWidth.value = _.objValueAsFloat(maxWidth,'value',100);
+            maxWidth.unit = _.objValueAsString(maxWidth,'unit','%');
+
+        }
+
+        /**
          * Width
          */
 
         if (params.hasOwnProperty('width')) {
             let w: Partial<Dimension> = _.objValueAsObject(params, 'width');
-
-            w.value = _.objValueAsFloat(w, 'value', 600);
-
-            if (w.value < 300) {
-                w.value = 300;
-            }
 
             w.unit = _.objValueAsString(w, 'unit', 'px');
 
@@ -153,7 +168,51 @@ export default class ModalParameterParser {
                 w.unit = 'px';
             }
 
+            w.value = _.objValueAsFloat(w, 'value', 0);
+
+            if(w.unit === 'px') {
+
+                if(w.value <= 0) {
+                    w.value = 800;
+                }
+
+            } else if (w.unit === 'vw') {
+
+                if (w.value <= 0) {
+                    w.value = 90;
+                }
+
+            } else {
+
+                if (w.value <= 0) {
+                    w.value = 50;
+                }
+
+            }
+
+
             params.width = w as Dimension;
+        }
+
+        /**
+         * Auto height ...
+         */
+
+        if (params.hasOwnProperty('autoHeight')) {
+            params.autoHeight = _.objValueAsBool(params, 'autoHeight', false);
+        }
+
+        /**
+         * Max height ...
+         */
+
+        if (params.hasOwnProperty('maxHeight')) {
+
+            let maxHeight: Partial<Dimension> = _.objValueAsObject(params, 'maxHeight');
+
+            maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 100);
+            maxHeight.unit = _.objValueAsString(maxHeight, 'unit', '%');
+
         }
 
 
@@ -165,12 +224,30 @@ export default class ModalParameterParser {
 
             let h: Partial<Dimension> = _.objValueAsObject(params, 'height');
 
-            h.value = _.objValueAsFloat(h, 'value', 0);
-
             h.unit = _.objValueAsString(h, 'unit', 'px');
 
             if (!h.unit) {
                 h.unit = 'px';
+            }
+
+            h.value = _.objValueAsFloat(h, 'value', 0);
+
+            if(h.unit === 'px') {
+
+                if(h.value <= 0) {
+                    h.value = 100;
+                }
+
+            } else if (h.unit === 'vh') {
+
+                if (h.value <= 0) {
+                    h.value = 80;
+                }
+
+            } else {
+                if (h.value <= 0) {
+                    h.value = 50;
+                }
             }
 
             params.height = h as Dimension;
@@ -188,8 +265,8 @@ export default class ModalParameterParser {
          * On show and on hide ...
          */
 
-        params.onShow = _.objValueAsMethod(params, 'onShow', null);
-        params.onHide = _.objValueAsMethod(params, 'onHide', null);
+        params.onShow = _.objValue(params, 'onShow', null);
+        params.onHide = _.objValue(params, 'onHide', null);
 
         /**
          * Drag ...
@@ -247,6 +324,11 @@ export default class ModalParameterParser {
 
         return params as ModalParams;
     }
+
+    /**
+     * X button data parsing ...
+     * @param obj
+     */
 
     static parseXButton(obj: ModalXButton) {
 
@@ -359,6 +441,9 @@ export default class ModalParameterParser {
             ip.alt = _.objValueAsString(ip, 'alt');
             ip.title = _.objValueAsString(ip, 'title');
             ip.caption = _.objValueAsString(ip, 'caption');
+            ip.captionTemplate = _.objValueAsString(ip, 'captionTemplate');
+            ip.captionCssClass = _.objValueAsString(ip, 'captionCssClass');
+            ip.inlineStyles = _.objValueAsString(ip, 'inlineStyles');
 
         } else if (body.contentType === 'youtube-video') {
 
@@ -367,6 +452,10 @@ export default class ModalParameterParser {
         } else if (body.contentType === 'template') {
 
             body.templateId = _.objValueAsString(body, 'templateId');
+
+        } else if (body.contentType === 'image') {
+
+            body.imageParams = _.objValueAsObject(body, 'imageParams') as ImageParams;
 
         }
 

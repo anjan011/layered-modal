@@ -54,14 +54,18 @@ export interface ModalParams {
     content?: string;
     header?: ModalHeaderParams;
     footer?: ModalFooterParams;
+    autoWidth? : boolean,
+    maxWidth? : Dimension,
     width?: Dimension;
+    autoHeight? : boolean;
+    maxHeight?: Dimension,
     height?: Dimension;
     position: "top-left" | "top-center" | "top-right" | "middle-left" | "middle-center" | "middle-right" | "bottom-left" | "bottom-center" | "bottom-right";
     shiftDistance?: Position;
     transitionDuration?: number;
     cssClass?: ModalCssClassNames;
-    onShow?: Function | null;
-    onHide?: Function | null;
+    onShow?: Function | string | null;
+    onHide?: Function | string | null;
     secondaryOverlay?: boolean;
     stackIndex: number;
     draggable: boolean;

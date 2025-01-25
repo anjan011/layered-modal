@@ -12,7 +12,7 @@ export interface Dimension {
 
 export interface AjaxParams {
     url: string,
-    method : string,
+    method: string,
 }
 
 export interface ImageParams {
@@ -20,6 +20,9 @@ export interface ImageParams {
     alt?: string,
     title?: string,
     caption?: string,
-    cssClass? : string,
+    cssClass?: string,
+    inlineStyles?: string,
+    captionTemplate?: string,
+    captionCssClass?: string,
 }
 

@@ -435,6 +435,16 @@ export class ModalManager {
                         functionArguments : _.objValueAsString(attrs, 'lm-b-function-args'),
                         templateId : _.objValueAsString(attrs, 'lm-b-template-id'),
                         videoUrl : _.objValueAsString(attrs,'lm-b-video-url'),
+                        imageParams : {
+                            url: _.objValueAsString(attrs, 'lm-b-image-url'),
+                            title: _.objValueAsString(attrs, 'lm-b-image-title'),
+                            alt: _.objValueAsString(attrs, 'lm-b-image-alt'),
+                            cssClass: _.objValueAsString(attrs, 'lm-b-image-css-class'),
+                            inlineStyles: _.objValueAsString(attrs, 'lm-b-image-inline-styles'),
+                            caption : _.objValueAsString(attrs,'lm-b-image-caption'),
+                            captionTemplate : _.objValueAsString(attrs,'lm-b-image-caption-template'),
+                            captionCssClass : _.objValueAsString(attrs,'lm-b-image-caption-css-class'),
+                        },
                         cssClass : _.objValueAsString(attrs,'lm-b-css-class'),
                         aspectRatio : _.objValueAsFloat(attrs,'lm-b-aspect-ratio'),
                     }
@@ -452,6 +462,16 @@ export class ModalManager {
 
                 }
 
+                let maxWidth: Partial<Dimension> = {};
+
+                if (attrs.hasOwnProperty('lm-max-width-value')) {
+                    maxWidth.value = _.objValueAsFloat(attrs, 'lm-max-width-value',100);
+                    maxWidth.unit = _.objValueAsString(attrs, 'lm-max-width-unit', '%');
+
+                    modalParams.maxWidth = maxWidth as Dimension;
+
+                }
+
                 let height: Partial<Dimension> = {};
 
                 if (attrs.hasOwnProperty('lm-height-value')) {
@@ -459,6 +479,15 @@ export class ModalManager {
                     height.unit = _.objValueAsString(attrs, 'lm-height-unit', 'px');
 
                     modalParams.height = height as Dimension;
+                }
+
+                let maxHeight: Partial<Dimension> = {};
+
+                if (attrs.hasOwnProperty('lm-max-height-value')) {
+                    maxHeight.value = _.objValueAsFloat(attrs, 'lm-max-height-value',100);
+                    maxHeight.unit = _.objValueAsString(attrs, 'lm-max-height-unit', '%');
+
+                    modalParams.maxHeight = maxHeight as Dimension;
                 }
 
                 // endregion
@@ -486,7 +515,39 @@ export class ModalManager {
 
                 // endregion
 
-                console.log(modalParams);
+                // region [On Show and on hide ...]
+
+                if(attrs.hasOwnProperty('lm-on-show')) {
+                    let lmOnShow = _.objValueAsString(attrs,'lm-on-show');
+
+
+
+                    if(lmOnShow) {
+                        modalParams.onShow = lmOnShow;
+                    }
+                }
+
+                if (attrs.hasOwnProperty('lm-on-hide')) {
+                    let lmOnHide = _.objValueAsString(attrs, 'lm-on-hide');
+
+                    if (lmOnHide) {
+                        modalParams.onHide = lmOnHide;
+                    }
+                }
+
+                if(attrs.hasOwnProperty('lm-auto-width')) {
+                    modalParams.autoWidth = _.objValueAsIntFlag(attrs,'lm-auto-width',0) > 0;
+                }
+
+                if (attrs.hasOwnProperty('lm-auto-height')) {
+                    modalParams.autoHeight = _.objValueAsIntFlag(attrs, 'lm-auto-height', 0) > 0;
+                }
+
+                // endregion
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', 'Attrs ...',attrs);
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', 'Modal Params',modalParams);
 
                 this.addModal(modalParams);
 
