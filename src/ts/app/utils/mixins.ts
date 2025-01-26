@@ -418,4 +418,11 @@ _.mixin({
 
 });
 
+// UMD Export to support both ES6 and non-ES6 modules.
+/*if (typeof module !== 'undefined' && module.exports) {
+    module.exports = _; // CommonJS
+}  else {
+    window._ = _; // Global for browsers
+}*/
+
 export default _;

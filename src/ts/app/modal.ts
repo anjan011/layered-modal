@@ -1,5 +1,5 @@
 import _ from "./utils/mixins";
-import {ModalManager} from "./modal-manager";
+import ModalManager from "./modal-manager";
 import {Position, Dimension} from "./interfaces/common";
 import {
     ModalBodyParams,
@@ -14,8 +14,7 @@ import {CssRulesGenerator} from "./generators/css-rules-generator";
 import {DomUtils} from "./utils/dom";
 import {EmbedCodeGenerator} from "./generators/embed-code-generator";
 
-
-export class Modal {
+export default class Modal {
 
     /**
      * Attributes generator ...
@@ -142,6 +141,13 @@ export class Modal {
 
     }
 
+    isAjaxContentType(): boolean {
+        return this.#params.body?.contentType === 'ajax';
+    }
+
+    generateAjaxLoaderMarkup(): string {
+        return `<div class="loader"></div>`;
+    }
 
     /**
      * Generate markup ...
@@ -161,13 +167,13 @@ export class Modal {
             cssClassList.push(this.#params.position);
         }
 
-        if(secondaryOverlay !== undefined && secondaryOverlay) {
+        if (secondaryOverlay !== undefined && secondaryOverlay) {
             cssClassList.push('secondary');
         }
 
         return `
         <div id="${this.getOverlayId()}" class="${cssClassList.join(' ')}" style="z-index: ${zIndex};">
-            ${this.generateModalMarkup()}
+            ${this.isAjaxContentType() ? this.generateAjaxLoaderMarkup() : this.generateModalMarkup()}
         </div>
     `;
     }
@@ -185,9 +191,9 @@ export class Modal {
             `transition-duration: ${this.#params.transitionDuration}ms;`,
         ];
 
-        if(this.#params.width) {
+        if (this.#params.width) {
 
-            if(!this.#params.autoWidth) {
+            if (!this.#params.autoWidth) {
                 modalInlineCss.push(
                     CssRulesGenerator.generateDimensionCss(this.#params.width, 'width')
                 );
@@ -211,7 +217,7 @@ export class Modal {
 
         }
 
-        if(this.#params.maxHeight) {
+        if (this.#params.maxHeight) {
             modalInlineCss.push(
                 CssRulesGenerator.generateDimensionCss(this.#params.maxHeight, 'max-height')
             );
@@ -255,17 +261,17 @@ export class Modal {
 
     generateXButtonMarkup(): string {
 
-        if(this.#params.xButton === undefined) {
+        if (this.#params.xButton === undefined) {
             return '';
         }
 
         let btn = this.#params.xButton;
 
-        if(!btn.enabled) {
+        if (!btn.enabled) {
             return '';
         }
 
-        return `<span class="x-btn ${btn.cssClass} ${this.#params.cssClass?.modalClose}" ${btn.inlineStyles ? `style="${btn.inlineStyles}"`:''}>${btn.content}</span>`;
+        return `<span class="x-btn ${btn.cssClass} ${this.#params.cssClass?.modalClose}" ${btn.inlineStyles ? `style="${btn.inlineStyles}"` : ''}>${btn.content}</span>`;
     }
 
     /**
@@ -294,11 +300,9 @@ export class Modal {
 
         // region [Inline styles ...]
 
-        let styles = [
+        let styles = [];
 
-        ];
-
-        if(body.inlineStyles !== undefined) {
+        if (body.inlineStyles !== undefined) {
             styles.push(_.ensureSemicolon(body.inlineStyles as string));
         }
 
@@ -308,10 +312,10 @@ export class Modal {
             }
         }
 
-        if(body.maxHeight !== undefined) {
-            let maxHeight = CssRulesGenerator.generateDimensionCss(body.maxHeight,'max-height');
+        if (body.maxHeight !== undefined) {
+            let maxHeight = CssRulesGenerator.generateDimensionCss(body.maxHeight, 'max-height');
 
-            if(maxHeight) {
+            if (maxHeight) {
                 styles.push(maxHeight);
             }
         }
@@ -354,15 +358,15 @@ export class Modal {
 
         } else if (body.contentType === 'template') {
 
-            let templateId = _.objValueAsString(body,'templateId');
+            let templateId = _.objValueAsString(body, 'templateId');
 
-            if(templateId === '') {
+            if (templateId === '') {
                 content = 'Template element id is required';
             } else {
 
                 let templateElement = document.getElementById(templateId);
 
-                if(templateElement === null || !(templateElement instanceof HTMLTemplateElement)) {
+                if (templateElement === null || !(templateElement instanceof HTMLTemplateElement)) {
 
                     content = `Template element not found by ID: ${templateId}`;
 
@@ -374,22 +378,22 @@ export class Modal {
 
         } else if (body.contentType === 'image') {
 
-            if(body.imageParams !== undefined) {
+            if (body.imageParams !== undefined) {
 
                 let imgParams = body.imageParams;
 
                 let imageUrl = imgParams.url.trim();
 
-                if(!imageUrl) {
+                if (!imageUrl) {
                     content = 'Image url cannot be empty';
                 } else {
 
-                    let imgAttrs : any = {
-                        class : 'lm-single-image',
-                        src : imageUrl,
+                    let imgAttrs: any = {
+                        class: 'lm-single-image',
+                        src: imageUrl,
                     };
 
-                    if(imgParams.title) {
+                    if (imgParams.title) {
                         imgAttrs.title = imgParams.title;
                     }
 
@@ -409,21 +413,21 @@ export class Modal {
                     let captionMarkup = '';
 
 
-                    if(imgParams.captionTemplate) {
+                    if (imgParams.captionTemplate) {
 
                         let captionTemplate = document.getElementById(imgParams.captionTemplate);
 
-                        if(captionTemplate) {
+                        if (captionTemplate) {
                             captionText = captionTemplate.innerHTML;
                         } else {
                             captionText = `Caption template not found with id: ${captionTemplate}`;
                         }
 
-                    } else if(imgParams.caption) {
+                    } else if (imgParams.caption) {
                         captionText = imgParams.caption;
                     }
 
-                    if(captionText) {
+                    if (captionText) {
                         captionMarkup = `<div class="lm-image-caption ${imgParams.captionCssClass}">${captionText}</div>`;
                     }
 
@@ -468,7 +472,7 @@ export class Modal {
 
         let header = this.#params.header;
 
-        if(header === undefined) {
+        if (header === undefined) {
             return '';
         }
 
@@ -482,7 +486,7 @@ export class Modal {
             classList.push('lm-drag-handle');
         }
 
-        if(header.cssClass) {
+        if (header.cssClass) {
             classList.push(header.cssClass);
         }
 
@@ -500,7 +504,7 @@ export class Modal {
 
         let footer = this.#params.footer;
 
-        if(footer === undefined) {
+        if (footer === undefined) {
             return '';
         }
 
@@ -530,16 +534,92 @@ export class Modal {
     }
 
 
-    /**
-     * Show modal ...
-     */
-
     show() {
 
+        if (this.isAjaxContentType()) {
+            this.showAjax();
+        } else {
+            this.showOther();
+        }
 
-        document.body.insertAdjacentHTML('beforeend', this.generateHtml());
+    }
 
-        let modal = document.getElementById(this.getModalId());
+    async loadHtmlInModalViaFetch() {
+
+        if (!this.#params.body) {
+            return;
+        }
+
+        let ap = this.#params.body?.ajaxParams;
+
+        let url : string = _.objValueAsString(ap,'url');
+
+
+        try {
+
+            if (url === '') {
+                this.#params.body.contentType = 'html';
+                this.#params.body.content = `AJAX url not defined or empty`;
+            } else {
+
+                const response = await fetch(url,{
+                    method : _.objValueAsString(ap,'method','GET'),
+                    headers : _.objValueAsObject(ap,'headers')
+                } as RequestInit);
+
+                if (!response.ok) {
+
+                    if (this.#params.body) {
+
+                        this.#params.body.contentType = 'html';
+                        this.#params.body.content = `HTTP error! Status: ${response.status}`;
+
+                    }
+
+                } else {
+                    let html : string = await response.text();
+
+                    if(typeof ap?.transform === 'function') {
+                        html = ap.transform.apply(this,[html]);
+                    }
+
+                    if (this.#params.body) {
+
+                        this.#params.body.contentType = 'html';
+                        this.#params.body.content = html;
+                    }
+                }
+
+            }
+
+
+        } catch (error: any) {
+
+            if (this.#params.body) {
+
+                this.#params.body.contentType = 'html';
+                this.#params.body.content = `Error fetching ajax content.<hr>Error: ` + error.message;
+
+            }
+
+
+        }
+
+        let elem = document.getElementById(this.getOverlayId());
+
+        if (elem) {
+
+            elem.innerHTML = this.generateModalMarkup();
+
+            let modal = document.getElementById(this.getModalId());
+
+            this.handleModalDisplay(modal);
+
+
+        }
+    }
+
+    handleModalDisplay(modal: HTMLElement | null) {
 
         if (!modal) {
             return;
@@ -555,7 +635,41 @@ export class Modal {
             this.#bindEvents();
 
         }, this.#params.transitionDuration); // Small delay to trigger the opacity transition
+    }
 
+    showAjax() {
+
+        if (!this.isAjaxContentType()) {
+            return;
+        }
+
+        document.body.insertAdjacentHTML('beforeend', this.generateHtml());
+
+        let overlay = document.getElementById(this.getOverlayId());
+
+        if (!overlay) {
+            return;
+        }
+
+        this.loadHtmlInModalViaFetch();
+
+    }
+
+    /**
+     * Show modal ...
+     */
+
+    showOther() {
+
+        if (this.isAjaxContentType()) {
+            return;
+        }
+
+        document.body.insertAdjacentHTML('beforeend', this.generateHtml());
+
+        let modal = document.getElementById(this.getModalId());
+
+        this.handleModalDisplay(modal);
 
     }
 
@@ -630,7 +744,7 @@ export class Modal {
 
             if (this.#params.onHide) {
 
-                if(_.isFunction(this.#params.onHide)) {
+                if (_.isFunction(this.#params.onHide)) {
                     this.#params.onHide.apply(this);
                 } else if (_.isString(this.#params.onHide)) {
                     DomUtils.executeFunction(this.#params.onHide, '', this);
@@ -650,8 +764,6 @@ export class Modal {
 
     #bindEvents() {
 
-        let _this = this;
-
         let overlay = document.getElementById(this.getOverlayId());
 
         if (!overlay) {
@@ -662,9 +774,49 @@ export class Modal {
          * Modal close trigger click handlers ...
          */
 
-        if (this.#params.cssClass?.modalClose) {
+        this.handleModalClose(overlay);
 
-            let closeClass = this.#params.cssClass?.modalClose;
+        /**
+         * Modal ok  trigger click handlers ...
+         */
+
+
+        this.handleFooterOnOk(overlay);
+
+        /**
+         * Handle onShow ...
+         */
+
+        this.handleOnShow();
+
+
+        /**
+         * Handle dragging ...
+         */
+
+
+        this.handleDragEvents();
+
+
+    }
+
+    /**
+     * Handle modal close event clicks ...
+     *
+     * @param overlay
+     */
+
+    handleModalClose(overlay?: HTMLElement) {
+
+        if (!overlay) {
+            return;
+        }
+
+        let _this = this;
+
+        if (_this.#params.cssClass?.modalClose) {
+
+            let closeClass = _this.#params.cssClass?.modalClose;
 
             overlay
                 .querySelectorAll(`.${closeClass}`)
@@ -676,63 +828,66 @@ export class Modal {
 
         }
 
+    }
 
-        /**
-         * Modal ok  trigger click handlers ...
-         */
+    /**
+     * In confirm mode, the footer has an ok button, this function handles
+     * the click event for this button.
+     */
+
+    handleFooterOnOk(overlay?: HTMLElement) {
+
+        if (!overlay) {
+            return;
+        }
+
+        let _this = this;
 
         if (_.isFunction(this.#params.footer?.onOk)) {
 
-            let okCssClass: string = '.' + this.#params.cssClass?.modalOk;
+            let okCssClass: string = '.' + _this.#params.cssClass?.modalOk;
 
             overlay
                 .querySelectorAll(okCssClass)
-                .forEach(function (item) {
-                    item.addEventListener('click', function () {
+                .forEach((item) => {
+                    item.addEventListener('click', () => {
                         _this.getParams().footer?.onOk.apply(_this);
                     });
                 });
-        } else if (_.isString(this.#params.footer?.onOk)) {
+        } else if (_.isString(_this.#params.footer?.onOk)) {
 
-            let functionName = this.#params.footer?.onOk;
+            let functionName = _this.#params.footer?.onOk;
 
-            let okCssClass: string = '.' + this.#params.cssClass?.modalOk;
+            let okCssClass: string = '.' + _this.#params.cssClass?.modalOk;
 
             overlay
                 .querySelectorAll(okCssClass)
                 .forEach(function (item) {
-                    item.addEventListener('click',  () => {
+                    item.addEventListener('click', () => {
 
-                        DomUtils.executeFunction(functionName,'',_this);
+                        DomUtils.executeFunction(functionName, '', _this);
                     });
                 });
         }
 
+    }
 
-        /**
-         * Do we have a onShow callback? if so, apply this here.
-         * This will ensure that the callback is called when the modal
-         * is added to DOm and fully visible.
-         */
+    /**
+     * Do we have a onShow callback? if so, apply this here.
+     * This will ensure that the callback is called when the modal
+     * is added to DOm and fully visible.
+     */
 
-        if (_this.#params.onShow) {
+    handleOnShow() {
+        if (this.#params.onShow) {
 
-            if(_.isFunction(_this.#params.onShow)) {
-                _this.#params.onShow.apply(this);
-            } else if(_.isString(_this.#params.onShow)) {
-                DomUtils.executeFunction(_this.#params.onShow,'',this);
+            if (_.isFunction(this.#params.onShow)) {
+                this.#params.onShow.apply(this);
+            } else if (_.isString(this.#params.onShow)) {
+                DomUtils.executeFunction(this.#params.onShow, '', this);
             }
 
         }
-
-        /**
-         * Handle dragging ...
-         */
-
-
-        this.handleDragEvents();
-
-
     }
 
     handleDragEvents() {

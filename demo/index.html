@@ -21,177 +21,96 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
         <link rel="stylesheet" href="/dist/styles.min.css">
-        <script src="/dist/bundle.min.umd.js"></script>
-        <style>
-            .rounded {
-                border-radius: 15px !important;
 
-            }
-
-            .large-button {
-                width: fit-content !important;
-                padding: 6px 12px;
-                border-radius: 6px !important;
-            }
-
-            .caption-img {
-                color: red !important;
-                font-size: 1.5rem !important;
-            }
-
-        </style>
     </head>
     <body>
 
-        <div style="position: fixed;top:0;left:0;right:0;height: 60px;display: flex;justify-content: center;align-items: center;gap: 20px;z-index: 9999999;">
+        <div class="loader"></div>
 
-            From Demo
+        <div class="container mt-3">
+            <div class="row">
+                <div class="column text-center">
 
-            <button id="openModal" class="modal-open-trigger btn btn-primary">Open Modal</button>
-            <button id="openVideoModal" class="modal-open-trigger btn btn-info">Open Video</button>
-            <button id="closeModal" class="modal-close-trigger btn btn-danger">Close Modal</button>
+                    <button id="ajax-btn" class="btn btn-success">
+                        Load via Ajax
+                    </button>
 
-            <button
-                    id="openModalViaData"
-                    class="btn btn-warning lm-btn-success"
-
-                    data-lms-trigger="1"
-
-                    data-lm-css-class=""
-                    data-lm-auto-width="1"
-                    data-lm-auto-height="1"
-
-                    data-lm-width-value="1200"
-                    data-lm-width-unit="px"
-
-                    data-lm-max-width-value="60"
-                    data-lm-max-width-unit="vw"
-
-                    data-lm-height-value="600"
-                    data-lm-height-unit="px"
-
-                    data-lm-max-height-value2="80"
-                    data-lm-max-height-unit2="vh"
-
-                    data-lm-on-show="__on_show"
-                    data-lm-on-hide="__on_hide"
-
-                    data-lm-h-enabled="0"
-                    data-lm-h-title="A video!"
-                    data-lm-h-title-tag="h1"
-
-                    data-lm-b-css-class="no-padding"
-                    data-lm-b-content-type="image"
-                    data-lm-b-function-name="__mc_content"
-                    data-lm-b-function-args='{"name":"Justin","age":20}'
-                    data-lm-b-content="<div>What the hell Mary! <span class='text-danger'>using html for content ...</span></div>"
-                    data-lm-b-template-id="modal-content-1234"
-                    data-lm-b-video-url="https://www.youtube.com/watch?v=ShJw2I8cgBE"
-                    data-lm-b-aspect-ratio="1.77777777778"
-                    data-lm-b-image-url="/assets/svg/1600x900.svg"
-
-
-                    data-lm-footer-enabled="0"
-                    data-lm-footer-mode="confirm"
-                    data-lm-footer-template-id="footer-12"
-                    data-lm-footer-on-ok="__on_ok"
-
-            ><span>Open Using Data Attributes</span></button>
-
-            <button
-                    class="btn btn-secondary"
-
-                    data-lms-trigger="1"
-
-                    data-lm-auto-width="0"
-                    data-lm-auto-height="0"
-
-                    data-lm-max-width-value2="80"
-                    data-lm-max-width-unit2="vw"
-
-                    data-lm-max-height-value2="80"
-                    data-lm-max-height-unit2="vh"
-
-                    data-lm-height-value2="600"
-                    data-lm-height-unit2="px"
-
-                    data-lm-width-value2="600"
-                    data-lm-width-unit2="px"
-
-                    data-lm-h-enabled="0"
-
-                    data-lm-b-css-class="no-padding"
-                    data-lm-b-content-type="image"
-
-                    data-lm-b-image-url="/assets/svg/900x1600.svg"
-                    data-lm-b-image-title="Image Url"
-                    data-lm-b-image-alt="Image Alt"
-                    data-lm-b-image-css-class=""
-                    data-lm-b-image-inline-styles2="height: 80vh;"
-                    data-lm-b-image-caption="Whats a caption? ---"
-                    data-lm-b-image-caption-template="caption-template"
-                    data-lm-b-image-caption-css-class="caption-img"
-
-
-                    data-lm-footer-enabled="0"
-
-            ><span>Open Using Data Attributes</span></button>
-
-            <template id="caption-template"><strong>Note:</strong> A html caption</template>
+                </div>
+            </div>
         </div>
 
-        <template id="footer-12">
-            <div class="text-center d-flex jc-between ai-center">
-                <button type="button" class="btn btn-primary">What?</button>
-                <button type="button" class="btn btn-primary">When?</button>
-                <button type="button" class="btn btn-primary">Why?</button>
-            </div>
-        </template>
+        <script type="module">
 
+            import {ModalManager} from '/dist/bundle.min.esm.js'
 
+            document.addEventListener('DOMContentLoaded', function () {
 
-        <template id="modal-content-1234">
-            <form class="d-block full-width" style="flex: 1;width: 100%;">
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" class="form-control" id="username" required>
-                </div>
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" class="form-control" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
+                let ajaxBtn = document.getElementById('ajax-btn');
 
-        </template>
+                if(ajaxBtn) {
 
-        <script src="./demo.js" defer></script>
+                    ajaxBtn.addEventListener('click',() => {
 
-        <script>
-            function __on_ok(params = '') {
+                        let manager = new ModalManager();
 
-                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `__on_ok`);
+                        manager.addModal({
+                            transitionDuration : 200,
+                            header : {
+                                enabled : true,
+                                title : 'Account login',
+                                cssClass : 'bg-primary text-white',
+                                inlineStyles: 'padding: 50px;',
+                            },
+                            footer : {
+                                enabled : true,
+                                mode : 'confirm',
+                                onOk : function() {
+                                    this.hide();
+                                },
+                                inlineStyles: 'padding: 50px;',
+                            },
+                            onShow : function() {
 
-                console.log(arguments);
+                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Shown ...`);
 
-                console.log(this);
+                            },
+                            onHide() {
+                                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Hidden ...`);
+                            },
+                            body : {
+                                inlineStyles : 'padding: 50px;',
+                                contentType : 'ajax',
+                                ajaxParams : {
+                                    url : 'http://wpu.localhost',
+                                    method : 'get',
+                                    headers : {
+                                        'Custom-Header' : 'What?'
+                                    },
+                                    /*transform: function (text) {
 
-                this.hide();
+                                        let json = JSON.parse(text);
 
-            }
+                                        return `<div class="mb-3"><strong>Name:</strong> ${json.name}</div> <div class="mb-3"><strong>Code:</strong> ${json.code}</div>`;
 
-            function __on_show() {
-                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Modal shown ...`);
+                                    }*/
+                                },
 
-                console.log(this);
-            }
+                            },
+                            maxWidth : {
+                                value : 60,
+                                unit : 'vw'
+                            },
+                            /*maxHeight: {
+                                value: 60,
+                                unit: 'vh'
+                            }*/
+                        });
 
-            function __on_hide() {
-                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Modal removed ....`);
+                    });
 
-                console.log(this);
-            }
+                }
 
+            });
         </script>
 
     </body>

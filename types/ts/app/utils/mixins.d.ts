@@ -21,6 +21,7 @@ declare module 'underscore' {
         guid(): string;
         objValueAsMethod(o: any, k: string, d?: any): any;
         isAlphanumeric(value: any): boolean;
+        ensureSemicolon(str: string): string;
     }
 }
 export default _;

@@ -13,6 +13,8 @@ export interface Dimension {
 export interface AjaxParams {
     url: string,
     method: string,
+    header? : object,
+    transform? : Function | null,
 }
 
 export interface ImageParams {

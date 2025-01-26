@@ -1,10 +1,10 @@
-import '../styles/main.scss';
-import _ from './app/utils/mixins';
-import {Modal} from "./app/modal";
-import {ModalManager} from "./app/modal-manager";
+import './../styles/main.scss';
 
-/**
- * Exporting all that can be used ...
- */
+/*import Modal from "./app/modal";
+import ModalManager from "./app/modal-manager";
 
-export {ModalManager,Modal,_}
+export {Modal,ModalManager}*/
+
+export {default as Modal} from './app/modal';
+export {default as ModalManager} from './app/modal-manager';
+

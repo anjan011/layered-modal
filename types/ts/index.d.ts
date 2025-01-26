@@ -1,5 +1,4 @@
-import '../styles/main.scss';
-import _ from './app/utils/mixins';
-import { LayeredModal } from "./app/layered-modal";
-import LayeredModalManager from "./app/layered-modal-manager";
-export { LayeredModal, LayeredModalManager, _ };
+import './../styles/main.scss';
+import Modal from "./app/modal";
+import ModalManager from "./app/modal-manager";
+export { Modal, ModalManager };

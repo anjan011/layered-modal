@@ -1,4 +1,4 @@
-import {Modal} from './modal';
+import Modal from './modal';
 import {Dimension, Position} from "./interfaces/common";
 import {DomUtils} from "./utils/dom";
 import _ from "./utils/mixins";
@@ -22,8 +22,7 @@ interface CssClassNames {
     modalClose?: string;
 }
 
-
-export class ModalManager {
+export default class ModalManager {
 
     #params: Partial<LayeredModalManagerParams> = {
         zIndex: 1
@@ -576,21 +575,5 @@ export class ModalManager {
 
         }
 
-    }
-
-    getFunctionResult__(funcName: string, functionArgs : string): any | null {
-
-        if (typeof (window as any)[funcName] === "function") {
-            let val =  (window as any)[funcName].apply(null,[functionArgs]);
-
-            if(typeof val === 'string') {
-                return val;
-            } else {
-                return `Function ${funcName} does not return string data type.`;
-            }
-
-        } else {
-           return `Function ${funcName} not found.`;
-        }
     }
 }

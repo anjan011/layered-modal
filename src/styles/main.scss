@@ -1,5 +1,7 @@
 @use "sass:map";
 
+@use "loader";
+
 @import "https://fonts.googleapis.com/css2?family=Roboto+Serif:ital,wght@0,300;0,400;0,700;1,300;1,700&display=swap";
 
 .layered-modal-overlay {
@@ -356,7 +358,6 @@
     flex: 1;
     overflow: scroll;
     position: relative;
-    /*max-height: 70vh;*/
 
     iframe {
         width: 100% !important;
@@ -390,6 +391,10 @@
         padding: 10px;
         backdrop-filter: blur(5px); /* Adds a subtle blur effect */
         transition: opacity 0.3s ease-in-out;
+    }
+
+    p:last-child {
+        margin-bottom: 0;
     }
 }
 

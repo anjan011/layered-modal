@@ -1,7 +1,7 @@
-import _ from 'underscore';
+import _ from "underscore";
 declare module 'underscore' {
     interface UnderscoreStatic {
-        t: () => string;
+        guid(): string;
     }
 }
 export default _;

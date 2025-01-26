@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add a modal
     document.getElementById('openModal').addEventListener('click', () => {
 
-        let dragId = LMS._.guid();
+        let dragId = '12345';
 
         modalManager.addModal({
             delayInMilliSeconds : 0,

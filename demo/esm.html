@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>ESM</title>
+        <link rel="stylesheet" href="/dist/styles.min.css">
+    </head>
+    <body>
+
+        <script type="module">
+            import {ModalManager} from '/dist/bundle.min.esm.js';
+
+            let manager = new ModalManager();
+
+            manager.addModal({
+                body : {
+                    content : 'Hello there'
+                }
+            });
+
+            manager.addModal({
+                body: {
+                    content: 'Doing well?'
+                }
+            });
+
+        </script>
+
+    </body>
+</html>
