@@ -1,13 +1,7 @@
 import _ from "./utils/mixins";
 import ModalManager from "./modal-manager";
-import {Position, Dimension} from "./interfaces/common";
-import {
-    ModalBodyParams,
-    ModalCssClassNames,
-    ModalFooterParams,
-    ModalHeaderParams,
-    ModalParams
-} from "./interfaces/modal"
+import {Position} from "./interfaces/common";
+import {ModalBodyParams, ModalParams} from "./interfaces/modal"
 import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 import {HtmlAttributeGenerator} from "./generators/html-attribute-generator";
 import {CssRulesGenerator} from "./generators/css-rules-generator";
@@ -207,6 +201,12 @@ export default class Modal {
             );
         }
 
+        if (this.#params.minWidth) {
+            modalInlineCss.push(
+                CssRulesGenerator.generateDimensionCss(this.#params.minWidth, 'min-width')
+            );
+        }
+
         if (this.#params.height) {
 
             if (!this.#params.autoHeight) {
@@ -220,6 +220,12 @@ export default class Modal {
         if (this.#params.maxHeight) {
             modalInlineCss.push(
                 CssRulesGenerator.generateDimensionCss(this.#params.maxHeight, 'max-height')
+            );
+        }
+
+        if (this.#params.minHeight) {
+            modalInlineCss.push(
+                CssRulesGenerator.generateDimensionCss(this.#params.minHeight, 'min-height')
             );
         }
 
@@ -544,6 +550,29 @@ export default class Modal {
 
     }
 
+    /**
+     * Set body content and type ...
+     *
+     * @param contentType
+     * @param content
+     */
+
+    setBodyContent(contentType: string = 'html',content : string) {
+
+        if(!this.#params.body) {
+            this.#params.body = {} as Partial<ModalBodyParams>;
+        }
+
+        if(!ModalParameterParser.isValidBodyContentType(contentType)) {
+            this.#params.body.contentType = 'html';
+        } else {
+            this.#params.body.contentType = contentType;
+        }
+
+
+        this.#params.body.content = content;
+    }
+
     async loadHtmlInModalViaFetch() {
 
         if (!this.#params.body) {
@@ -552,41 +581,104 @@ export default class Modal {
 
         let ap = this.#params.body?.ajaxParams;
 
-        let url : string = _.objValueAsString(ap,'url');
+        let url: string = _.objValueAsString(ap, 'url');
 
+        let timeout = ap?.timeoutMs;
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeout);
 
         try {
 
             if (url === '') {
-                this.#params.body.contentType = 'html';
-                this.#params.body.content = `AJAX url not defined or empty`;
+
+                this.setBodyContent('html', `AJAX url not defined or empty`);
+
             } else {
 
-                const response = await fetch(url,{
-                    method : _.objValueAsString(ap,'method','GET'),
-                    headers : _.objValueAsObject(ap,'headers')
-                } as RequestInit);
+                let fetchParams = {
+                    method: _.objValueAsString(ap, 'method', 'GET'),
+                    headers: _.objValueAsObject(ap, 'headers'),
+                    signal: controller.signal
+                } as RequestInit;
+
+                /**
+                 * Prepare ajax data ...
+                 */
+
+                if(fetchParams.method === 'GET') {
+
+                    if(ap?.data) {
+
+                        if(_.isPlainObject(ap.data)) {
+                            url = _.appendQueryParams(url,ap.data);
+                        }
+
+                    }
+
+                } else if(fetchParams.method === 'POST') {
+
+                    let headers = fetchParams.headers as Record<string, string>;
+
+                    if (ap?.data) {
+
+                        if (_.isPlainObject(ap.data)) {
+
+                            headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
+                            fetchParams.body = _.buildQueryParams(ap.data,'');
+
+                        } else if(ap.data instanceof FormData) {
+
+                            headers['Content-Type'] = 'application/x-www-form-urlencoded';
+
+                            fetchParams.body = new URLSearchParams(ap.data as any).toString();
+
+                        }
+
+                    }
+
+                }
+
+                const response = await fetch(url, fetchParams);
 
                 if (!response.ok) {
 
                     if (this.#params.body) {
 
-                        this.#params.body.contentType = 'html';
-                        this.#params.body.content = `HTTP error! Status: ${response.status}`;
-
+                        this.setBodyContent('html', `HTTP error! Status: ${response.status}`);
                     }
 
                 } else {
-                    let html : string = await response.text();
+                    let html: string = await response.text();
 
-                    if(typeof ap?.transform === 'function') {
-                        html = ap.transform.apply(this,[html]);
+                    if (ap?.contentDataType === 'html') {
+                        if (typeof ap?.transformHtml === 'function') {
+                            html = ap.transformHtml.apply(this, [html]);
+                        }
+                    } else if (ap?.contentDataType === 'json') {
+                        if (typeof ap?.transformJson === 'function') {
+
+                            try {
+
+                                let jsonData = JSON.parse(html);
+
+                                html = ap.transformJson.apply(this, [jsonData]);
+
+                            } catch (error: any) {
+
+                                html = `Could not parse JSON text.<hr>Error: ${_.encodeHTML(error.message)}`;
+
+                            }
+
+
+                        }
                     }
+
 
                     if (this.#params.body) {
 
-                        this.#params.body.contentType = 'html';
-                        this.#params.body.content = html;
+                        this.setBodyContent('html',html);
                     }
                 }
 
@@ -595,14 +687,23 @@ export default class Modal {
 
         } catch (error: any) {
 
+
             if (this.#params.body) {
 
-                this.#params.body.contentType = 'html';
-                this.#params.body.content = `Error fetching ajax content.<hr>Error: ` + error.message;
+
+
+                if ((error as DOMException).name === "AbortError") {
+                    this.setBodyContent('html', `Request timed out after ${timeout}ms`);
+                } else {
+                    this.setBodyContent('html', `Error fetching ajax content.<hr>Error: ` + error.message)
+                }
+
 
             }
 
 
+        } finally {
+            clearTimeout(timeoutId);
         }
 
         let elem = document.getElementById(this.getOverlayId());
@@ -634,7 +735,20 @@ export default class Modal {
 
             this.#bindEvents();
 
+            /**
+             * We add overflow hidden to body with a css class,
+             * preventing body from scrolling
+             */
+
+            this.addNoOverflowToBody();
+
         }, this.#params.transitionDuration); // Small delay to trigger the opacity transition
+    }
+
+    addNoOverflowToBody() {
+
+        document.body.classList.add('no-overflow');
+
     }
 
     showAjax() {
@@ -650,6 +764,8 @@ export default class Modal {
         if (!overlay) {
             return;
         }
+
+        this.addNoOverflowToBody();
 
         this.loadHtmlInModalViaFetch();
 
@@ -737,6 +853,14 @@ export default class Modal {
 
             this.getManager().adjustStackCssClassForModals();
 
+            /**
+             * Remove overflow hidden from body ...
+             */
+
+
+            if (this.getManager().stackSize() === 0) {
+                document.body.classList.remove('no-overflow');
+            }
 
             /**
              * If there is any on hide callback, execute it ...

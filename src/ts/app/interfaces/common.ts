@@ -14,7 +14,11 @@ export interface AjaxParams {
     url: string,
     method: string,
     header? : object,
-    transform? : Function | null,
+    transformHtml? : Function | null,
+    transformJson? : Function | null,
+    contentDataType? : "html" | "json",
+    timeoutMs : number,
+    data : FormData | object | null,
 }
 
 export interface ImageParams {

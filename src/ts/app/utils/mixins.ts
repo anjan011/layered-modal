@@ -43,6 +43,14 @@ declare module 'underscore' {
         isAlphanumeric(value: any): boolean;
 
         ensureSemicolon(str: string): string;
+
+        encodeHTML(html: string): string;
+
+        appendQueryParams(url: string, params: Record<string, any>): string;
+
+        buildQueryParams(obj: Record<string, any>, prefix: string): string;
+
+
     }
 }
 
@@ -416,13 +424,45 @@ _.mixin({
         return str.trim().endsWith(";") ? str.trim() : str.trim() + ";";
     },
 
+    encodeHTML(html: string): string {
+        return html
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    },
+
+    buildQueryParams(obj: Record<string, any>, prefix = ""): string {
+        const queryString: string[] = [];
+
+        for (const key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                const value = obj[key];
+                const fullKey = prefix ? `${prefix}[${key}]` : key;
+
+                if (typeof value === "object" && value !== null) {
+                    // Recursively flatten nested objects & arrays
+                    queryString.push(this.buildQueryParams(value, fullKey));
+                } else {
+                    // Encode key-value pair
+                    queryString.push(`${encodeURIComponent(fullKey)}=${encodeURIComponent(value)}`);
+                }
+            }
+        }
+
+        return queryString.join("&");
+    },
+
+    appendQueryParams(url: string, params: Record<string, any>): string {
+        const urlObj = new URL(url);
+        const newParams = this.buildQueryParams(params);
+
+        // Preserve existing query params
+        urlObj.search = urlObj.search ? `${urlObj.search}&${newParams}` : newParams;
+
+        return urlObj.toString();
+    }
+
 });
-
-// UMD Export to support both ES6 and non-ES6 modules.
-/*if (typeof module !== 'undefined' && module.exports) {
-    module.exports = _; // CommonJS
-}  else {
-    window._ = _; // Global for browsers
-}*/
-
 export default _;

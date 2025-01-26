@@ -156,6 +156,19 @@ export default class ModalParameterParser {
         }
 
         /**
+         * Min width ...
+         */
+
+        if (params.hasOwnProperty('minWidth')) {
+
+            let minWidth: Partial<Dimension> = _.objValueAsObject(params, 'minWidth');
+
+            minWidth.value = _.objValueAsFloat(minWidth, 'value', 0);
+            minWidth.unit = _.objValueAsString(minWidth, 'unit', 'px');
+
+        }
+
+        /**
          * Width
          */
 
@@ -212,6 +225,19 @@ export default class ModalParameterParser {
 
             maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 100);
             maxHeight.unit = _.objValueAsString(maxHeight, 'unit', '%');
+
+        }
+
+        /**
+         * Min height ...
+         */
+
+        if (params.hasOwnProperty('minHeight')) {
+
+            let minHeight: Partial<Dimension> = _.objValueAsObject(params, 'minHeight');
+
+            minHeight.value = _.objValueAsFloat(minHeight, 'value', 0);
+            minHeight.unit = _.objValueAsString(minHeight, 'unit', 'px');
 
         }
 
@@ -348,6 +374,7 @@ export default class ModalParameterParser {
 
     }
 
+
     /**
      * Parse body params ...
      *
@@ -434,6 +461,20 @@ export default class ModalParameterParser {
             ap.url = _.objValueAsString(ap, 'url');
             ap.method = _.objValueAsString(ap, 'method', 'GET').toUpperCase();
 
+            let contentDataType = _.objValueAsString(ap, 'contentDataType');
+
+            if (ModalParameterParser.isValidAjaxContentDataType(contentDataType)) {
+                ap.contentDataType = contentDataType;
+            } else {
+                ap.contentDataType = 'html';
+            }
+
+            ap.timeoutMs = _.objValueAsInt(ap,'timeoutMs',30000);
+
+            if(ap.timeoutMs < 100) {
+                ap.timeoutMs = 100;
+            }
+
         } else if (body.contentType === 'image') {
             let ip = body.imageParams = _.objValueAsObject(body, 'imageParams') as ImageParams;
 
@@ -459,6 +500,15 @@ export default class ModalParameterParser {
 
         }
 
+    }
+
+    /**
+     * Is valid ajax content type
+     * @param type
+     */
+
+    static isValidAjaxContentDataType(type: string): type is "html" | "json" {
+        return [ "html", "json"].includes(type);
     }
 
     /**
