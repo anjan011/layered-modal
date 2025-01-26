@@ -475,6 +475,10 @@ export default class ModalParameterParser {
                 ap.timeoutMs = 100;
             }
 
+            if(ap.hasOwnProperty('decodeParams')) {
+                ap.decodeParams = _.objValueAsBool(ap,'decodeParams',false);
+            }
+
         } else if (body.contentType === 'image') {
             let ip = body.imageParams = _.objValueAsObject(body, 'imageParams') as ImageParams;
 

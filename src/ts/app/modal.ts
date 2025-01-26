@@ -612,6 +612,14 @@ export default class Modal {
 
                         if(_.isPlainObject(ap.data)) {
                             url = _.appendQueryParams(url,ap.data);
+                        } else if (ap.data instanceof FormData) {
+
+                            const urlObject = new URL(url);
+
+                            url = urlObject.search ?
+                                `${url}&${new URLSearchParams(ap.data as any).toString()}` :
+                                `${url}?${urlObject.toString()}`;
+
                         }
 
                     }
@@ -639,6 +647,11 @@ export default class Modal {
                     }
 
                 }
+
+                if(ap?.decodeParams !== undefined && ap.decodeParams) {
+                    url = decodeURIComponent(url);
+                }
+
 
                 const response = await fetch(url, fetchParams);
 

@@ -19,6 +19,7 @@ export interface AjaxParams {
     contentDataType? : "html" | "json",
     timeoutMs : number,
     data : FormData | object | null,
+    decodeParams? : boolean,
 }
 
 export interface ImageParams {

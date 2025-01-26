@@ -11,4 +11,4 @@
     header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
     header("Access-Control-Allow-Headers: *");
 
-    echo json_encode($_POST);
+    echo json_encode($_GET);
