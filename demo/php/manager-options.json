@@ -1,0 +1,76 @@
+[
+  {
+    "name": "zIndex",
+    "type": "integer",
+    "default": "1",
+    "description": "Base zIndex value for entire layered modal system. the modals will be displayed using this zIndex as base. Each modal in stack will have their zIndex value increased by 1."
+  },
+  {
+    "name": "baseShiftDistance",
+    "type": "object",
+    "default": {
+      "top": 0,
+      "right": 0,
+      "bottom": 0,
+      "left": 0
+    },
+    "description": "The layered modal system using base shift distance to move each new modal by the given distance. For example if a shift distance of 50 is added to top and left, then each new modal will be shifted 50px to the left and 50px to the down compared to the last modal. This will give the modals a visual cascading effect. You can also use this to shift a new modal to anywhere so that it does not obstruct the last modal. Useful for cases where user would not want to have their view obstructed, while they need to do something else. For example, while filling in a form in a modal, you need to show some quick help regarding the form filling process."
+  },
+  {
+    "name": "cssClass",
+    "type": "object",
+    "default": {
+      "modal": "",
+      "modalOk": "modal-ok",
+      "modalClose": "modal-close"
+    },
+    "description": "Common css classes to be passed to all modals manageable via this instance of manager. Currently supports only modal css class, modal ok and close button css classes. If you need to have button or link that needs to close the modal, be sure to give it the same css class as cssClass.modalClose or use default modal-close, if you need not set any css class in cssClass.modalClose. Similarly modalOk, is for modal ok button when the modal footer is in confirm mode, having only ok and close buttons. In custom footer mode, if you add custom ok or close links, please sure to use cssClass.modalOk and cssClass.modalClose classes."
+  },
+  {
+    "name": "transitionDuration",
+    "type": "number",
+    "default": "0",
+    "description": "Transition duration for the fade in/out effect. By default this value is set to 0, so that there is no fading animation. This becomes the common transitionDuration value for all modals. Though you can set a different duration value for each modal."
+  },
+  {
+    "name": "xButton",
+    "type": "object",
+    "default": {
+      "enabled": true,
+      "content": "X",
+      "cssClass": "",
+      "inlineStyles": ""
+    },
+    "description": "The common modal close button settings. This is the close button displayed at the top right corner of the modal. You can hide the close button, if you pass false to xButton.enabled parameter. By default the close button just displays the letter X with some styling provided by the modal system's css library. But you can specify your close button content, including button css class and inline styles. This allows you most flexibility to customize the close button to your liking."
+  },
+  {
+    "name": "xButton.enabled",
+    "type": "boolean",
+    "default": true,
+    "description": "Enable the close button or X button"
+  },
+  {
+    "name": "xButton.content",
+    "type": "string",
+    "default": "X",
+    "description": "The button content. Defaults to X character. But you can provide any content you like, including text, image and font icons."
+  },
+  {
+    "name": "xButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes for the button"
+  },
+  {
+    "name": "xButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes for the button"
+  },
+  {
+    "name": "xButton.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional css inline styles for the button"
+  }
+]

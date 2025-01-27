@@ -11,7 +11,7 @@ import {
     ModalCssClassNames,
     ModalFooterParams,
     ModalHeaderParams,
-    ModalParams, ModalXButton, OverlayParams
+    ModalParams, ModalXButton, BackDropParams
 } from "../../interfaces/modal"
 
 export default class ModalParameterParser {
@@ -116,7 +116,7 @@ export default class ModalParameterParser {
          * Secondary Overlay?
          */
 
-        params.secondaryOverlay = _.objValueAsBool(params, 'secondaryOverlay');
+        params.secondaryBackDrop = _.objValueAsBool(params, 'secondaryOverlay');
 
         /**
          * On show and on hide ...
@@ -182,8 +182,8 @@ export default class ModalParameterParser {
          * Overlay ...
          */
 
-        if(params.hasOwnProperty('overlay')) {
-            let ol = params.overlay = _.objValueAsObject(params,'overlay') as Partial<OverlayParams>;
+        if(params.hasOwnProperty('backDrop')) {
+            let ol = params.backDrop = _.objValueAsObject(params,'backDrop') as Partial<BackDropParams>;
 
             ol.bgColor = _.objValueAsString(ol,'bgColor','rgba(0,0,0,0.25)');
             ol.opacity = _.objValueAsFloat(ol,'opacity',1);

@@ -50,7 +50,9 @@ declare module 'underscore' {
 
         buildQueryParams(obj: Record<string, any>, prefix: string): string;
 
+        joinObjectPropertiesAsString(first: Record<string, any>, second: Record<string, any>, properties: string[], separator: string, trim: boolean): object;
 
+        isNumberOrString(value: any): boolean;
     }
 }
 
@@ -59,6 +61,31 @@ declare module 'underscore' {
  */
 
 _.mixin({
+
+    isNumberOrString(value : any) : boolean {
+
+        return typeof value === 'string' || typeof value === 'number';
+
+    },
+
+    joinObjectPropertiesAsString(first: Record<string, any>,second : Record<string, any>,properties : string[],separator : string = ' ', trim: boolean = true) : object {
+
+        if(!properties.length) {
+            return first;
+        }
+
+        properties.forEach( (propName : string) => {
+
+            first[propName] = _.objValueAsString(first,propName,'') + separator + _.objValueAsString(second,propName,'');
+
+            if(trim) {
+                first[propName] = first[propName].trim();
+            }
+        });
+
+        return first;
+
+    },
 
     /**
      * Is the value passed a true javascript object?
@@ -241,7 +268,7 @@ _.mixin({
 
         let val = this.objValue(o, k, d);
 
-        return this.isString(val) ? val : d;
+        return this.isNumberOrString(val) ? val : d;
 
     },
 

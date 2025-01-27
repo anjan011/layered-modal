@@ -53,7 +53,6 @@ export interface ModalXButton {
 export interface ModalParams {
     id: string;
     zIndex: number;
-    content?: string;
     header?: ModalHeaderParams;
     footer?: ModalFooterParams;
     autoWidth? : boolean,
@@ -70,7 +69,7 @@ export interface ModalParams {
     cssClass?: ModalCssClassNames;
     onShow?: Function | string | null;
     onHide?: Function | string | null;
-    secondaryOverlay?: boolean;
+    secondaryBackDrop?: boolean;
     stackIndex: number;
     draggable: boolean;
     dragHandle: string;
@@ -78,10 +77,10 @@ export interface ModalParams {
     body: ModalBodyParams,
     xButton?: ModalXButton,
     delayInMilliSeconds?: number,
-    overlay?: OverlayParams;
+    backDrop?: BackDropParams;
 }
 
-export interface OverlayParams {
+export interface BackDropParams {
     bgColor? : string;
     opacity? : number;
 }

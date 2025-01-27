@@ -126,7 +126,7 @@ export default class ModalManager {
         params.zIndex = (this.#params.zIndex ? this.#params.zIndex : 1)
             + this.#stack.length;
 
-        // secondary overlay?
+        // secondary backDrop?
 
         params.secondaryOverlay = this.#stack.length > 0;
 
@@ -174,15 +174,26 @@ export default class ModalManager {
 
         }
 
-
-
         /**
          * Css Class ....
          */
 
         if (!params.hasOwnProperty('cssClass')) {
-            params.cssClass = this.#params.cssClass;
+            params.cssClass = this.#params.cssClass as CssClassNames;
+
+        } else {
+
+            params.cssClass = _.joinObjectPropertiesAsString(
+                params.cssClass as Record<string, any>,
+                this.#params.cssClass as Record<string, any>,
+                ['modal','modalOk','modalClose'],
+                ' ',
+                true
+            );
+
         }
+
+        console.log(params.cssClass);
 
         /**
          * Transition duration ...

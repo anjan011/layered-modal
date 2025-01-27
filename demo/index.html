@@ -60,11 +60,27 @@
             import {ModalManager} from '/dist/bundle.min.esm.js'
 
             const manager = new ModalManager({
-                cssClass : {
-                    modal : 'my-modal',
+                /*cssClass : {
+                    modal : 'my-modal my-modal-black',
                     modalOk : 'what-ok',
                     modalClose : 'no-ok'
-                }
+                },*/
+                zIndex : 1000,
+                /*baseShiftDistance : {
+                    top : 300,
+                    left : 300
+                }*/
+
+                xButton: {
+                    content: 'Close  <i class="fa fa-fw fa-cogs"></i>',
+                    iconPosition: 'right',
+                    inlineStyles: 'width: auto !important;border-radius: 4px;padding: 8px 16px;'
+                },
+
+                backDrop: {
+                    bgColor: 'rgba(0,255,0,0.20)',
+                    opacity: 1
+                },
             });
 
             document.addEventListener('DOMContentLoaded', function () {
@@ -85,23 +101,50 @@
 
 
                         manager.addModal({
-                            transitionDuration : 200,
+                            secondaryOverlay : true,
+                            /*cssClass : {
+                                modal : 'modal--wide modal--blue',
+                                modalOk : 'ok---1',
+                                modalClose : 'close---2'
+                            },*/
+                            zIndex : 4000,
+                            transitionDuration : 100,
                             draggable : true,
-                            overlay : {
+                            dragHandle : 'dragHandle',
+                            backDrop : {
                                 bgColor : 'rgba(255,0,0,0.20)',
                                 opacity : 1
                             },
                             header : {
-                                enabled : true,
+                                enabled : false,
                                 title : 'Account login',
                                 cssClass : 'bg-primary text-white',
                                 inlineStyles: 'padding: 20px;',
+                                content : 'What content',
                             },
                             footer : {
                                 enabled : true,
                                 mode : 'confirm',
                                 onOk : function() {
-                                    this.hide();
+
+                                    let positions = ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'];
+
+                                    let randomPos = Math.ceil(Math.random() * 9) - 1;
+
+                                    manager.addModal({
+                                        header : {
+                                            enabled : false
+                                        },
+                                        footer: {
+                                            enabled: false
+                                        },
+                                        body : {
+                                            contentType: 'html',
+                                            content: `What is this content? Where did it come from?`
+                                        },
+                                        position : positions[randomPos],
+                                    });
+
                                 },
                                 inlineStyles: 'padding: 20px;',
                                 cssClass : 'bg-warning',
@@ -133,10 +176,17 @@
 
                                 console.log('Latest Modal: ', manager.getLatestModal());
                             },
+                            xButton : {
+                                content : 'Close',
+                                iconClass : 'fa fa-cogs',
+                                iconPosition : 'right',
+                                inlineStyles : 'width: auto !important;border-radius: 4px;padding: 8px 16px;'
+                            },
                             body : {
                                 inlineStyles : 'padding: 20px;',
                                 cssClass : 'bg-info',
-                                contentType : 'ajax',
+                                contentType : 'html',
+                                content: `<div><button type="button" id="dragHandle2" href="#">Drag me</button></div>`,
                                 ajaxParams : {
                                     timeoutMs: 25000,
                                     decodeParams : true,
@@ -162,7 +212,11 @@
                                 },
 
                             },
-                            maxWidth : {
+                            shiftDistance : {
+                                top: -300,
+                                left : -300,
+                            }
+                            /*maxWidth : {
                                 value : 60,
                                 unit : 'vw'
                             },
@@ -177,7 +231,7 @@
                             minHeight: {
                                 value: 300,
                                 unit: 'px'
-                            }
+                            }*/
                         });
 
                     });

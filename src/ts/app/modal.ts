@@ -1,7 +1,7 @@
 import _ from "./utils/mixins";
 import ModalManager from "./modal-manager";
 import {ButtonParams, Position} from "./interfaces/common";
-import {ModalBodyParams, ModalParams, OverlayParams} from "./interfaces/modal"
+import {ModalBodyParams, ModalParams, BackDropParams} from "./interfaces/modal"
 import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 import {HtmlAttributeGenerator} from "./generators/html-attribute-generator";
 import {CssRulesGenerator} from "./generators/css-rules-generator";
@@ -64,6 +64,8 @@ export default class Modal {
     constructor(params: Partial<ModalParams> = {}) {
 
         this.#params = ModalParameterParser.parse(params);
+
+        console.log(this.#params);
     }
 
 
@@ -78,13 +80,13 @@ export default class Modal {
     }
 
     /**
-     * Overlay DOM element ID
+     * BackDrop DOM element ID
      *
      * @return {string}
      */
 
-    getOverlayId(): string {
-        return `overlay-${this.getId()}`;
+    geBackDropId(): string {
+        return `backdrop-${this.getId()}`;
     }
 
     /**
@@ -151,17 +153,17 @@ export default class Modal {
 
     generateHtml(): string {
 
-        const {zIndex, secondaryOverlay} = this.#params;
+        const {zIndex, secondaryBackDrop} = this.#params;
 
         let cssClassList = [
-            'layered-modal-overlay'
+            'layered-modal-backdrop'
         ];
 
         if (this.#params.position !== undefined) {
             cssClassList.push(this.#params.position);
         }
 
-        if (secondaryOverlay !== undefined && secondaryOverlay) {
+        if (secondaryBackDrop !== undefined && secondaryBackDrop) {
             cssClassList.push('secondary');
         }
 
@@ -169,13 +171,13 @@ export default class Modal {
 
         let inlineStyles = [
             `z-index: ${zIndex};`,
-            this.generateOverlayInlineStyles(this.#params.overlay)
+            this.generateBackDropInlineStyles(this.#params.backDrop)
         ];
 
         // endregion
 
         return `
-        <div id="${this.getOverlayId()}" class="${cssClassList.join(' ')}" style="${inlineStyles.join('')}">
+        <div id="${this.geBackDropId()}" class="${cssClassList.join(' ')}" style="${inlineStyles.join('')}">
             ${this.isAjaxContentType() ? this.generateAjaxLoaderMarkup() : this.generateModalMarkup()}
         </div>
     `;
@@ -730,7 +732,7 @@ export default class Modal {
             clearTimeout(timeoutId);
         }
 
-        let elem = document.getElementById(this.getOverlayId());
+        let elem = document.getElementById(this.geBackDropId());
 
         if (elem) {
 
@@ -894,7 +896,7 @@ export default class Modal {
 
     /**
      * Handle the logic of showing modal using AJAX operation.
-     * This first loads the overlay with loader animation. Then
+     * This first loads the backdrop with loader animation. Then
      * when ajax call finishes it loads the content either directly
      * or via transformation. Else, it displays error message, as long
      * as the http status code is not 200
@@ -908,9 +910,9 @@ export default class Modal {
 
         document.body.insertAdjacentHTML('beforeend', this.generateHtml());
 
-        let overlay = document.getElementById(this.getOverlayId());
+        let backDrop = document.getElementById(this.geBackDropId());
 
-        if (!overlay) {
+        if (!backDrop) {
             return;
         }
 
@@ -969,10 +971,10 @@ export default class Modal {
 
             modal.style.display = 'none'; // Hide the modal completely after fade-out
 
-            const overlay = document.getElementById(this.getOverlayId());
+            const backDrop = document.getElementById(this.geBackDropId());
 
-            if (overlay) {
-                overlay.remove();
+            if (backDrop) {
+                backDrop.remove();
             }
 
 
@@ -1043,9 +1045,9 @@ export default class Modal {
 
     #bindEvents() {
 
-        let overlay = document.getElementById(this.getOverlayId());
+        let backDrop = document.getElementById(this.geBackDropId());
 
-        if (!overlay) {
+        if (!backDrop) {
             return;
         }
 
@@ -1070,14 +1072,14 @@ export default class Modal {
          * Modal close trigger click handlers ...
          */
 
-        this.handleModalClose(overlay);
+        this.handleModalClose(backDrop);
 
         /**
          * Modal ok  trigger click handlers ...
          */
 
 
-        this.handleFooterOnOk(overlay);
+        this.handleFooterOnOk(backDrop);
 
         /**
          * Handle onShow ...
@@ -1099,12 +1101,12 @@ export default class Modal {
     /**
      * Handle modal close event clicks ...
      *
-     * @param overlay
+     * @param backDrop
      */
 
-    handleModalClose(overlay?: HTMLElement) {
+    handleModalClose(backDrop?: HTMLElement) {
 
-        if (!overlay) {
+        if (!backDrop) {
             return;
         }
 
@@ -1114,7 +1116,7 @@ export default class Modal {
 
             let closeClass = _this.#params.cssClass?.modalClose;
 
-            overlay
+            backDrop
                 .querySelectorAll(`.${closeClass}`)
                 .forEach(function (item) {
                     item.addEventListener('click', function () {
@@ -1131,9 +1133,9 @@ export default class Modal {
      * the click event for this button.
      */
 
-    handleFooterOnOk(overlay?: HTMLElement) {
+    handleFooterOnOk(backDrop?: HTMLElement) {
 
-        if (!overlay) {
+        if (!backDrop) {
             return;
         }
 
@@ -1143,7 +1145,7 @@ export default class Modal {
 
             let okCssClass: string = '.' + _this.#params.cssClass?.modalOk;
 
-            overlay
+            backDrop
                 .querySelectorAll(okCssClass)
                 .forEach((item) => {
                     item.addEventListener('click', () => {
@@ -1156,7 +1158,7 @@ export default class Modal {
 
             let okCssClass: string = '.' + _this.#params.cssClass?.modalOk;
 
-            overlay
+            backDrop
                 .querySelectorAll(okCssClass)
                 .forEach(function (item) {
                     item.addEventListener('click', () => {
@@ -1325,21 +1327,21 @@ export default class Modal {
 
     }
 
-    generateOverlayInlineStyles(overlay?: Partial<OverlayParams>) : string {
+    generateBackDropInlineStyles(backDrop?: Partial<BackDropParams>) : string {
 
-        if(!overlay) {
+        if(!backDrop) {
             return '';
         }
 
         let styles = [];
 
-        let bgColor = _.objValueAsString(overlay,'bgColor');
+        let bgColor = _.objValueAsString(backDrop,'bgColor');
 
         if(bgColor) {
             styles.push(`background-color: ${bgColor};`);
         }
 
-        let opacity = _.objValueAsFloat(overlay,'opacity',1);
+        let opacity = _.objValueAsFloat(backDrop,'opacity',1);
 
         styles.push(`opacity: ${opacity};`);
 

@@ -8,7 +8,7 @@
 .loader {
   width: 100px;
   height: 100px;
-  border: 10px solid rgba(0, 0, 0, 0.2);
+  border: 5px solid rgba(0, 0, 0, 0.1);
   border-top-color: #3498db;
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -22,7 +22,7 @@
     transform: rotate(360deg);
   }
 }
-.layered-modal-overlay {
+.layered-modal-backdrop {
   font-family: "Roboto Serif", serif;
   font-size: 24px;
   position: fixed;
@@ -38,49 +38,49 @@
   flex-direction: column;
   padding: 40px;
 }
-.layered-modal-overlay.secondary {
+.layered-modal-backdrop.secondary {
   background: rgba(0, 0, 0, 0.25);
 }
-.layered-modal-overlay *:not(.icon, .fa, .fa-solid, .fas, h1, h2, h3, h4, h5, h6) {
+.layered-modal-backdrop *:not(.icon, .fa, .fa-solid, .fas, h1, h2, h3, h4, h5, h6) {
   font-family: inherit;
   font-size: inherit;
 }
-.layered-modal-overlay * h1, .layered-modal-overlay * h2, .layered-modal-overlay * h3, .layered-modal-overlay * h4, .layered-modal-overlay * h5, .layered-modal-overlay * h6 {
+.layered-modal-backdrop * h1, .layered-modal-backdrop * h2, .layered-modal-backdrop * h3, .layered-modal-backdrop * h4, .layered-modal-backdrop * h5, .layered-modal-backdrop * h6 {
   font-family: initial;
 }
-.layered-modal-overlay.top-left {
+.layered-modal-backdrop.top-left {
   align-items: start;
   justify-content: start;
 }
-.layered-modal-overlay.top-center {
+.layered-modal-backdrop.top-center {
   align-items: center;
   justify-content: start;
 }
-.layered-modal-overlay.top-right {
+.layered-modal-backdrop.top-right {
   align-items: end;
   justify-content: start;
 }
-.layered-modal-overlay.middle-left {
+.layered-modal-backdrop.middle-left {
   align-items: start;
   justify-content: center;
 }
-.layered-modal-overlay.middle-center {
+.layered-modal-backdrop.middle-center {
   align-items: center;
   justify-content: center;
 }
-.layered-modal-overlay.middle-right {
+.layered-modal-backdrop.middle-right {
   align-items: end;
   justify-content: center;
 }
-.layered-modal-overlay.bottom-left {
+.layered-modal-backdrop.bottom-left {
   align-items: start;
   justify-content: end;
 }
-.layered-modal-overlay.bottom-center {
+.layered-modal-backdrop.bottom-center {
   align-items: center;
   justify-content: end;
 }
-.layered-modal-overlay.bottom-right {
+.layered-modal-backdrop.bottom-right {
   align-items: end;
   justify-content: end;
 }

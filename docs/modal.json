@@ -1,0 +1,444 @@
+[
+  {
+    "name": "id",
+    "type": "string",
+    "default": "",
+    "description": "An unique ID used assigned to the modal. This id is used to generate various UI component ids, like the modal overlay, modal dialog itself, etc. If empty or not provided, an unique identifier in this format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx is generated."
+  },
+  {
+    "name": "zIndex",
+    "type": "number",
+    "default": "",
+    "description": "this zIndex value is passed by the ModalManager instance, so you cannot directly set a zIndex value for a modal instance. Thus it reduces unwanted zIndex mess up. Each new modal gets it's zIndex calculated based on modal manager's base zIndex and it's current position in stack."
+  },
+  {
+    "name": "header",
+    "type": "object",
+    "default": "",
+    "description": "The header section configuration. See below for all available parameters. All parameter below starting with header. belongs to header configuration object. These header.* parameter names follow javascript object key access format. Please DO NOT use the header.* parameters as they are! It wont work."
+  },
+
+  {
+    "name": "header.enabled",
+    "type": "boolean",
+    "default": true,
+    "description": "If not set to true, the header section will not be generated."
+  },
+  {
+    "name": "header.title",
+    "type": "string",
+    "default": "Modal title",
+    "description": "The title text for the header section"
+  },
+  {
+    "name": "header.titleTag",
+    "type": "string",
+    "default": "h2",
+    "description": "The html tag name for title. Defaults to h2."
+  },
+  {
+    "name": "header.content",
+    "type": "string",
+    "default": "",
+    "description": "If you dont want title and replace it with custom content, pass the custom html content for header here."
+  },
+  {
+    "name": "header.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class for header"
+  },
+  {
+    "name": "header.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional inline css styles for header"
+  },
+
+  {
+    "name": "footer",
+    "type": "object",
+    "default": "",
+    "description": "The footer section configuration. See below for all available parameters. All parameter below starting with footer. belongs to footer configuration object. These footer.* parameter names follow javascript object key access format. Please DO NOT use the footer.* parameters as they are! It wont work."
+  },
+  {
+    "name": "footer.enabled",
+    "type": "boolean",
+    "default": true,
+    "description": "If true footer will be generated."
+  },
+  {
+    "name": "footer.mode",
+    "type": "string",
+    "default": "alert",
+    "description": "Footer has 3 different modes: alert, confirm and custom. The default is the alert. In alert mode footer only generates a close button centered inside the footer area. You can configure this close button using footer.closeButton.* parameters. In confirm mode a close button and an ok button is generated which are spaced around the footer area, making it a confirm dialog. Like the close button you can configure ok button using footer.okButton.* parameters. In custom mode you are responsible to provide the content for the footer section."
+  },
+  {
+    "name": "footer.content",
+    "type": "string",
+    "default": "",
+    "description": "When footer.mode is set to custom, this parameter is where you set your custom footer content."
+  },
+  {
+    "name": "footer.onOk",
+    "type": "function | null",
+    "default": null,
+    "description": "Footer ok button click event callback. This only applies if footer mode is set to confirm or in your custom content there is an element with cssClass.modalOk css class. In here you can handle any processing that should happen when the ok button is clicked. Note that inside onOk callback this refers to the Modal object. So, you can make use of it to access modal DOM elements, and hiding the modal when done."
+  },
+  {
+    "name": "footer.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes to be passed to footer element."
+  },
+  {
+    "name": "footer.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional inline css styles to be passed to footer element."
+  },
+  {
+    "name": "footer.okButton",
+    "type": "object",
+    "default": "-",
+    "description": "The Ok button configuration. All footer.okButton.* params belongs to this object"
+  },
+  {
+    "name": "footer.okButton.text",
+    "type": "string",
+    "default": "Ok",
+    "description": "Ok button text. Defaults to Ok. Change this to your liking."
+  },
+  {
+    "name": "footer.okButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class for OK button. If you want to use your own button style matching your theme this is the right place for you."
+  },
+  {
+    "name": "footer.okButton.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Pass on inline css styles to the Ok button"
+  },
+  {
+    "name": "footer.okButton.iconClass",
+    "type": "string",
+    "default": "",
+    "description": "Use a font icon class. For example any font-awesome icon class."
+  },
+  {
+    "name": "footer.okButton.iconPosition",
+    "type": "string",
+    "default": "left",
+    "description": "Place the icon on left or right. Default is left."
+  },
+  {
+    "name": "footer.closeButton",
+    "type": "object",
+    "default": "-",
+    "description": "The Close button configuration. All footer.closeButton.* params belongs to this object"
+  },
+  {
+    "name": "footer.closeButton.text",
+    "type": "string",
+    "default": "Close",
+    "description": "Close button text. Defaults to Close. Change this to your liking."
+  },
+  {
+    "name": "footer.closeButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class for OK button. If you want to use your own button style matching your theme this is the right place for you."
+  },
+  {
+    "name": "footer.closeButton.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Pass on inline css styles to the Close button"
+  },
+  {
+    "name": "footer.closeButton.iconClass",
+    "type": "string",
+    "default": "",
+    "description": "Use a font icon class. For example any font-awesome icon class."
+  },
+  {
+    "name": "footer.closeButton.iconPosition",
+    "type": "string",
+    "default": "left",
+    "description": "Place the icon on left or right. Default is left."
+  },
+
+  {
+    "name": "autoWidth",
+    "type": "boolean | null",
+    "default": "false",
+    "description": "Should the modal be as wide as the content? If set to true, the width parameter will be ignored!"
+  },
+  {
+    "name": "width",
+    "type": "object | null",
+    "default": "-",
+    "description": "The width object, it will be ignored if autoWidth is set to true."
+  },
+  {
+    "name": "width.value",
+    "type": "number",
+    "default": "",
+    "description": "The width value"
+  },
+  {
+    "name": "width.unit",
+    "type": "string",
+    "default": "px",
+    "description": "The width unit. Can be px/vw or any other css unit applicable."
+  },
+  {
+    "name": "maxWidth",
+    "type": "object | null",
+    "default": "-",
+    "description": "The maximum width object. If set modal width will not surpass given value."
+  },
+  {
+    "name": "maxWidth.value",
+    "type": "number",
+    "default": "",
+    "description": "The maximum width value"
+  },
+  {
+    "name": "maxWidth.unit",
+    "type": "string",
+    "default": "px",
+    "description": "The maximum width unit. Can be px/vw or any other css unit applicable."
+  },
+  {
+    "name": "minWidth",
+    "type": "object | null",
+    "default": "-",
+    "description": "The minimum width object. If set modal width will at least be equal to this value."
+  },
+  {
+    "name": "minWidth.value",
+    "type": "number",
+    "default": "",
+    "description": "The minimum width value"
+  },
+  {
+    "name": "minWidth.unit",
+    "type": "string",
+    "default": "px",
+    "description": "The minimum width unit. Can be px/vw or any other css unit applicable."
+  },
+  {
+    "name": "autoHeight",
+    "type": "boolean | null",
+    "default": "false",
+    "description": "Should the modal be as high as the content? If set to true, the height parameter will be ignored!"
+  },
+  {
+    "name": "height",
+    "type": "object | null",
+    "default": "-",
+    "description": "The height object, it will be ignored if autoHeight is set to true."
+  },
+  {
+    "name": "height.value",
+    "type": "number",
+    "default": "",
+    "description": "The height value"
+  },
+  {
+    "name": "height.unit",
+    "type": "string",
+    "default": "px",
+    "description": "The height unit. Can be px/vw or any other css unit applicable."
+  },
+  {
+    "name": "maxHeight",
+    "type": "object | null",
+    "default": "-",
+    "description": "The maximum height object. If set modal height will not surpass given value."
+  },
+  {
+    "name": "maxHeight.value",
+    "type": "number",
+    "default": "",
+    "description": "The maximum height value"
+  },
+  {
+    "name": "maxHeight.unit",
+    "type": "string",
+    "default": "px",
+    "description": "The maximum height unit. Can be px/vw or any other css unit applicable."
+  },
+  {
+    "name": "minHeight",
+    "type": "object | null",
+    "default": "-",
+    "description": "The minimum height object. If set modal height will at least be equal to this value."
+  },
+  {
+    "name": "minHeight.value",
+    "type": "number",
+    "default": "",
+    "description": "The minimum height value"
+  },
+  {
+    "name": "minHeight.unit",
+    "type": "string",
+    "default": "px",
+    "description": "The minimum height unit. Can be px/vw or any other css unit applicable."
+  },
+  {
+    "name": "position",
+    "type": "string",
+    "default": "middle-center",
+    "description": "Determines the modal dialog's position on the screen. It has one of these 9 possible values ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right']. Using one of these values you can control where the modal will show up. For example using bottom-right option, you can display the modal at the bottom right corner. A good position to display if the visitor want's to subscribe to a newsletter or something. Though most of the time you will want the modal to be centered in screen, but some time you may want to do otherwise."
+  },
+  {
+    "name": "shiftDistance",
+    "type": "object",
+    "default": "-",
+    "description": "This shift distance is internally used by the modal, in conjunction with the modal manager's baseShiftDistance param to calculate if the modal needs to be shifted from it's original position. This cannot be used to configure a specific modal's shifting distance."
+  },
+  {
+    "name": "transitionDuration",
+    "type": "number",
+    "default": "0",
+    "description": "The duration in milliseconds for the fade in/out animation to complete. You can pass in 0 to disable the fading animation. This can also be configured for each individual modal instance."
+  },
+  {
+    "name": "cssClass",
+    "type": "object",
+    "default": "-",
+    "description": "An object that accepts additional css classes for modal dialog, ok and close buttons. This object combines the class names from modal manager's cssClass parameter objects. So in modal manager's cssClass object you can specify all css classes common for all modals, then in each modal you can assign unique classes to alter look and feel for each modal."
+  },
+  {
+    "name": "cssClass.modal",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class names for modal dialog"
+  },
+  {
+    "name": "cssClass.modalOk",
+    "type": "string",
+    "default": "modal-ok",
+    "description": "Additional css class names for modal ok button in footer"
+  },
+  {
+    "name": "cssClass.modalClose",
+    "type": "string",
+    "default": "modal-close",
+    "description": "Additional css class names for modal close button in footer"
+  },
+  {
+    "name": "onShow",
+    "type": "function | null",
+    "default": null,
+    "description": "A callback which is called after modal is displayed in the page. It is fired after modal is added in DOM and animations ended. This is the perfect place to bind any events or transform any UI elements. For example beautifying select elements with custom components etc."
+  },
+  {
+    "name": "onHide",
+    "type": "function | null",
+    "default": null,
+    "description": "A callback which is called after modal removed from DOM. Its is where you can cleanup any resources that pertains to this modal instance."
+  },
+
+  {
+    "name": "draggable",
+    "type": "boolean",
+    "default": false,
+    "description": "Determines whether or not modal is draggable."
+  },
+  {
+    "name": "dragHandle",
+    "type": "string",
+    "default": "",
+    "description": "The element to be used as drag handle. If not provided or empty, the modal header will become the drag handle. If header is not available, then entire modal becomes drag handle. If a value is provided, it will be treated as an element id. If the element is found it will be used as drag handle. Else, the modal itself becomes drag handle, that is you can click and drag anywhere on the modal dialog. Dragging is an experimental feature!"
+  },
+  {
+    "name": "userSelect",
+    "type": "boolean",
+    "default": false,
+    "description": "Enables user to select text content on the modal. By default it is disabled, so user's cannot select select text on the modal."
+  },
+  {
+    "name": "xButton",
+    "type": "object",
+    "default": {
+      "enabled": true,
+      "content": "X",
+      "cssClass": "",
+      "inlineStyles": ""
+    },
+    "description": "The close or X button settings for this modal instance. the modal manager's xButton parameter object defines common X button content and styling. And, this xButton object affects this modal's X button only."
+  },
+
+  {
+    "name": "xButton.enabled",
+    "type": "boolean",
+    "default": true,
+    "description": "Enable the close button or X button"
+  },
+  {
+    "name": "xButton.content",
+    "type": "string",
+    "default": "X",
+    "description": "The button content. Defaults to X character. But you can provide any content you like, including text, image and font icons."
+  },
+  {
+    "name": "xButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes for the button"
+  },
+  {
+    "name": "xButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes for the button"
+  },
+  {
+    "name": "xButton.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional css inline styles for the button"
+  },
+  {
+    "name": "delayInMilliSeconds",
+    "type": "integer",
+    "default": 0,
+    "description": "By specifying a delay in milliseconds you can make the modal delay it's display and after display actions, like event bindings. You can use this in scenarios, where you need to display a popup N seconds after page loads."
+  },
+  {
+    "name": "overlay",
+    "type": "object | null",
+    "default": null,
+    "description": "Modal "
+  },
+  {
+    "name": "",
+    "type": "",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "",
+    "default": "",
+    "description": ""
+  }
+]

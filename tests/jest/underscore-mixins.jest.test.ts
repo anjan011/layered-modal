@@ -13,6 +13,106 @@ function red(text: string): string {
     return `\x1b[31m${text}\x1b[0m`;
 }
 
+describe('Testing object property join', () => {
+
+    let testData = [
+        {
+            first : {},
+            second : {},
+            props : [],
+            label : 'Both objects and properties list is empty. So result is empty',
+            separator : ' ',
+            trim : true,
+            eval : `JSON.stringify(result) === '{}'`
+        },
+
+        {
+            first: {
+                name : 'Anjan'
+            },
+            second: {},
+            props: [],
+            label: `first.name === "Anjan", second.name === undefined`,
+            separator: ' ',
+            trim: true,
+            eval: `result.name === 'Anjan'`
+        },
+
+        {
+            first: {
+
+            },
+            second: {
+                name: 'Anjan'
+            },
+            props: [],
+            label: `first.name === undefined, second.name === 'Anjan'`,
+            separator: ' ',
+            trim: true,
+            eval: `result.name === 'Anjan'`
+        },
+
+        {
+            first: {
+                name : 40
+            },
+            second: {
+                name: 'Anjan'
+            },
+            props: [],
+            label: `first.name === 40, second.name === 'Anjan'`,
+            separator: ' ',
+            trim: true,
+            eval: `result.name === '40 Anjan'`
+        },
+
+        {
+            first: {
+                name: '40'
+            },
+            second: {
+                name: 50
+            },
+            props: [],
+            label: `first.name === '40', second.name === 50`,
+            separator: ' ',
+            trim: true,
+            eval: `result.name === '40 50'`
+        },
+
+        {
+            first: {
+                name: ' 40'
+            },
+            second: {
+                name: 50
+            },
+            props: [],
+            label: `first.name === '40', second.name === 50 width trim = false and separator = ' + '`,
+            separator: ' + ',
+            trim: false,
+            eval: `result.name === ' 40 + 50'`
+        },
+    ];
+
+    testData.forEach(function (item, index, itemList) {
+
+        test(item.label, () => {
+
+            let result = _.joinObjectPropertiesAsString(
+                item.first, item.second, item.props, item.separator, item.trim);
+
+            expect(eval(item.eval));
+        })
+
+    });
+
+
+
+
+
+});
+
 describe('Converting data to different types', () => {
 
     let object = {a: 10, b: [1, 2, 3]};
