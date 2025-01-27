@@ -59,7 +59,13 @@
 
             import {ModalManager} from '/dist/bundle.min.esm.js'
 
-            const manager = new ModalManager();
+            const manager = new ModalManager({
+                cssClass : {
+                    modal : 'my-modal',
+                    modalOk : 'what-ok',
+                    modalClose : 'no-ok'
+                }
+            });
 
             document.addEventListener('DOMContentLoaded', function () {
 

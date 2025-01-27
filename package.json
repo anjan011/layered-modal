@@ -26,7 +26,7 @@
     "test": "jest",
     "watch": "webpack --watch",
     "serve": "npx webpack serve",
-    "php:server" : "php -S 127.0.0.1:9000 -t ~\/Sites\/layered-model\/demo\/php"
+    "php:server" : "php -S 127.0.0.1:9000 -t ./"
   },
   "type": "module"
 }
