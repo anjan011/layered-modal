@@ -1,13 +1,18 @@
 import _ from "../../utils/mixins";
-import {AjaxParams, Dimension, ImageParams, Position} from "../../interfaces/common";
+import {
+    AjaxParams,
+    ButtonParams,
+    Dimension,
+    ImageParams,
+    Position
+} from "../../interfaces/common";
 import {
     ModalBodyParams,
     ModalCssClassNames,
     ModalFooterParams,
     ModalHeaderParams,
-    ModalParams, ModalXButton
+    ModalParams, ModalXButton, OverlayParams
 } from "../../interfaces/modal"
-import {DomUtils} from "../../utils/dom";
 
 export default class ModalParameterParser {
 
@@ -85,201 +90,27 @@ export default class ModalParameterParser {
          * header ...
          */
 
-        let header: Partial<ModalHeaderParams> = _.objValueAsObject(params, 'header');
+        ModalParameterParser.parseHeader(params);
 
-        header.enabled = _.objValueAsBool(header, 'enabled', false);
-        header.content = _.objValueAsString(header, 'content', '');
-        header.title = _.objValueAsString(header, 'title', 'Modal Header');
-        header.titleTag = _.objValueAsString(header, 'titleTag', 'h2');
-
-        header.cssClass = _.objValueAsString(header, 'cssClass');
-        header.inlineStyles = _.objValueAsString(header, 'inlineStyles');
-
-        if (!header.titleTag) {
-            header.titleTag = 'h2';
-        }
-
-        if (!header.content) {
-            if (!header.title) {
-                header.title = 'Modal Header';
-            }
-
-            header.content = `<${header.titleTag}>${header.title}</${header.titleTag}>`;
-        }
-
-        params.header = header as ModalHeaderParams;
 
         /**
          * footer ...
          */
 
-        let footer: Partial<ModalFooterParams> = _.objValueAsObject(params, 'footer');
-
-        footer.enabled = _.objValueAsBool(footer, 'enabled', false);
-
-        footer.cssClass = _.objValueAsString(footer, 'cssClass');
-        footer.inlineStyles = _.objValueAsString(footer, 'inlineStyles');
-
-        footer.mode = _.objValueAsString(footer, 'mode', 'alert');
-
-        if (!['alert', 'confirm', 'custom'].includes(footer.mode)) {
-            footer.mode = 'alert';
-        }
-
-        if (footer.mode === 'custom') {
-            footer.content = _.objValueAsString(footer, 'content', `<div class="text-center"><button type="button" class="lm-btn lm-btn-error ${params.cssClass.modalClose}">Close</button></div>`);
-        }
-
-        footer.onOk = _.objValue(footer, 'onOk');
-
-        params.footer = footer as ModalFooterParams;
-
-        /**
-         * Auto width ...
-         */
-
-        if(params.hasOwnProperty('autoWidth')) {
-            params.autoWidth = _.objValueAsBool(params,'autoWidth',false);
-        }
-
-        /**
-         * Max width ...
-         */
-
-        if(params.hasOwnProperty('maxWidth')) {
-
-            let maxWidth : Partial<Dimension> = _.objValueAsObject(params,'maxWidth');
-
-            maxWidth.value = _.objValueAsFloat(maxWidth,'value',100);
-            maxWidth.unit = _.objValueAsString(maxWidth,'unit','%');
-
-        }
-
-        /**
-         * Min width ...
-         */
-
-        if (params.hasOwnProperty('minWidth')) {
-
-            let minWidth: Partial<Dimension> = _.objValueAsObject(params, 'minWidth');
-
-            minWidth.value = _.objValueAsFloat(minWidth, 'value', 0);
-            minWidth.unit = _.objValueAsString(minWidth, 'unit', 'px');
-
-        }
-
-        /**
-         * Width
-         */
-
-        if (params.hasOwnProperty('width')) {
-            let w: Partial<Dimension> = _.objValueAsObject(params, 'width');
-
-            w.unit = _.objValueAsString(w, 'unit', 'px');
-
-            if (!w.unit) {
-                w.unit = 'px';
-            }
-
-            w.value = _.objValueAsFloat(w, 'value', 0);
-
-            if(w.unit === 'px') {
-
-                if(w.value <= 0) {
-                    w.value = 800;
-                }
-
-            } else if (w.unit === 'vw') {
-
-                if (w.value <= 0) {
-                    w.value = 90;
-                }
-
-            } else {
-
-                if (w.value <= 0) {
-                    w.value = 50;
-                }
-
-            }
-
-
-            params.width = w as Dimension;
-        }
-
-        /**
-         * Auto height ...
-         */
-
-        if (params.hasOwnProperty('autoHeight')) {
-            params.autoHeight = _.objValueAsBool(params, 'autoHeight', false);
-        }
-
-        /**
-         * Max height ...
-         */
-
-        if (params.hasOwnProperty('maxHeight')) {
-
-            let maxHeight: Partial<Dimension> = _.objValueAsObject(params, 'maxHeight');
-
-            maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 100);
-            maxHeight.unit = _.objValueAsString(maxHeight, 'unit', '%');
-
-        }
-
-        /**
-         * Min height ...
-         */
-
-        if (params.hasOwnProperty('minHeight')) {
-
-            let minHeight: Partial<Dimension> = _.objValueAsObject(params, 'minHeight');
-
-            minHeight.value = _.objValueAsFloat(minHeight, 'value', 0);
-            minHeight.unit = _.objValueAsString(minHeight, 'unit', 'px');
-
-        }
+        ModalParameterParser.parseFooter(params);
 
 
         /**
-         * Height
+         * Width params ...
          */
 
-        if (params.hasOwnProperty('height')) {
+        ModalParameterParser.parseWidths(params);
 
-            let h: Partial<Dimension> = _.objValueAsObject(params, 'height');
+        /**
+         * Height params ...
+         */
 
-            h.unit = _.objValueAsString(h, 'unit', 'px');
-
-            if (!h.unit) {
-                h.unit = 'px';
-            }
-
-            h.value = _.objValueAsFloat(h, 'value', 0);
-
-            if(h.unit === 'px') {
-
-                if(h.value <= 0) {
-                    h.value = 100;
-                }
-
-            } else if (h.unit === 'vh') {
-
-                if (h.value <= 0) {
-                    h.value = 80;
-                }
-
-            } else {
-                if (h.value <= 0) {
-                    h.value = 50;
-                }
-            }
-
-            params.height = h as Dimension;
-
-        }
-
+        ModalParameterParser.parseHeights(params);
 
         /**
          * Secondary Overlay?
@@ -347,8 +178,323 @@ export default class ModalParameterParser {
             }
         }
 
+        /**
+         * Overlay ...
+         */
+
+        if(params.hasOwnProperty('overlay')) {
+            let ol = params.overlay = _.objValueAsObject(params,'overlay') as Partial<OverlayParams>;
+
+            ol.bgColor = _.objValueAsString(ol,'bgColor','rgba(0,0,0,0.25)');
+            ol.opacity = _.objValueAsFloat(ol,'opacity',1);
+
+            if(ol.opacity < 0) {
+                ol.opacity = 0;
+            } else if(ol.opacity > 1) {
+                ol.opacity = 1;
+            }
+
+        }
+
 
         return params as ModalParams;
+    }
+
+    /**
+     * Parses height related params ...
+     *
+     * @param params
+     */
+
+    static parseHeights(params: Partial<ModalParams>) {
+
+        /**
+         * Auto height ...
+         */
+
+        if (params.hasOwnProperty('autoHeight')) {
+            params.autoHeight = _.objValueAsBool(params, 'autoHeight', false);
+        }
+
+        /**
+         * Max height ...
+         */
+
+        if (params.hasOwnProperty('maxHeight')) {
+
+            let maxHeight: Partial<Dimension> = _.objValueAsObject(params, 'maxHeight');
+
+            maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 100);
+            maxHeight.unit = _.objValueAsString(maxHeight, 'unit', '%');
+
+        }
+
+        /**
+         * Min height ...
+         */
+
+        if (params.hasOwnProperty('minHeight')) {
+
+            let minHeight: Partial<Dimension> = _.objValueAsObject(params, 'minHeight');
+
+            minHeight.value = _.objValueAsFloat(minHeight, 'value', 0);
+            minHeight.unit = _.objValueAsString(minHeight, 'unit', 'px');
+
+        }
+
+
+        /**
+         * Height
+         */
+
+        if (params.hasOwnProperty('height')) {
+
+            let h: Partial<Dimension> = _.objValueAsObject(params, 'height');
+
+            h.unit = _.objValueAsString(h, 'unit', 'px');
+
+            if (!h.unit) {
+                h.unit = 'px';
+            }
+
+            h.value = _.objValueAsFloat(h, 'value', 0);
+
+            if (h.unit === 'px') {
+
+                if (h.value <= 0) {
+                    h.value = 100;
+                }
+
+            } else if (h.unit === 'vh') {
+
+                if (h.value <= 0) {
+                    h.value = 80;
+                }
+
+            } else {
+                if (h.value <= 0) {
+                    h.value = 50;
+                }
+            }
+
+            params.height = h as Dimension;
+
+        }
+
+    }
+
+    /**
+     * Parse width related params ....
+     *
+     * @param params
+     */
+
+    static parseWidths(params : Partial<ModalParams>) {
+
+        /**
+         * Auto width ...
+         */
+
+        if (params.hasOwnProperty('autoWidth')) {
+            params.autoWidth = _.objValueAsBool(params, 'autoWidth', false);
+        }
+
+        /**
+         * Max width ...
+         */
+
+        if (params.hasOwnProperty('maxWidth')) {
+
+            let maxWidth: Partial<Dimension> = _.objValueAsObject(params, 'maxWidth');
+
+            maxWidth.value = _.objValueAsFloat(maxWidth, 'value', 100);
+            maxWidth.unit = _.objValueAsString(maxWidth, 'unit', '%');
+
+        }
+
+        /**
+         * Min width ...
+         */
+
+        if (params.hasOwnProperty('minWidth')) {
+
+            let minWidth: Partial<Dimension> = _.objValueAsObject(params, 'minWidth');
+
+            minWidth.value = _.objValueAsFloat(minWidth, 'value', 0);
+            minWidth.unit = _.objValueAsString(minWidth, 'unit', 'px');
+
+        }
+
+        /**
+         * Width
+         */
+
+        if (params.hasOwnProperty('width')) {
+            let w: Partial<Dimension> = _.objValueAsObject(params, 'width');
+
+            w.unit = _.objValueAsString(w, 'unit', 'px');
+
+            if (!w.unit) {
+                w.unit = 'px';
+            }
+
+            w.value = _.objValueAsFloat(w, 'value', 0);
+
+            if (w.unit === 'px') {
+
+                if (w.value <= 0) {
+                    w.value = 800;
+                }
+
+            } else if (w.unit === 'vw') {
+
+                if (w.value <= 0) {
+                    w.value = 90;
+                }
+
+            } else {
+
+                if (w.value <= 0) {
+                    w.value = 50;
+                }
+
+            }
+
+
+            params.width = w as Dimension;
+        }
+
+    }
+
+    /**
+     * Parse header params ...
+     *
+     * @param params
+     */
+
+    static parseHeader(params: Partial<ModalParams>) {
+
+        let header: Partial<ModalHeaderParams> = _.objValueAsObject(params, 'header');
+
+        header.enabled = _.objValueAsBool(header, 'enabled', false);
+        header.content = _.objValueAsString(header, 'content', '');
+        header.title = _.objValueAsString(header, 'title', 'Modal Header');
+        header.titleTag = _.objValueAsString(header, 'titleTag', 'h2');
+
+        header.cssClass = _.objValueAsString(header, 'cssClass');
+        header.inlineStyles = _.objValueAsString(header, 'inlineStyles');
+
+        if (!header.titleTag) {
+            header.titleTag = 'h2';
+        }
+
+        if (!header.content) {
+            if (!header.title) {
+                header.title = 'Modal Header';
+            }
+
+            header.content = `<${header.titleTag}>${header.title}</${header.titleTag}>`;
+        }
+
+        params.header = header as ModalHeaderParams;
+
+    }
+
+    /**
+     * Parse footer data ....
+     *
+     * @param params
+     */
+
+    static parseFooter(params: Partial<ModalParams>) {
+
+        let footer: Partial<ModalFooterParams> = _.objValueAsObject(params, 'footer');
+
+
+
+
+
+        footer.enabled = _.objValueAsBool(footer, 'enabled', false);
+
+        footer.cssClass = _.objValueAsString(footer, 'cssClass');
+        footer.inlineStyles = _.objValueAsString(footer, 'inlineStyles');
+
+        footer.mode = _.objValueAsString(footer, 'mode', 'alert');
+
+        if (!['alert', 'confirm', 'custom'].includes(footer.mode)) {
+            footer.mode = 'alert';
+        }
+
+        if (footer.mode === 'custom') {
+            footer.content = _.objValueAsString(footer, 'content', `<div class="text-center"><button type="button" class="lm-btn lm-btn-error ${params.cssClass?.modalClose}">Close</button></div>`);
+        }
+
+        footer.onOk = _.objValue(footer, 'onOk');
+
+        // region [Ok Button]
+
+        let okBtn = footer.okButton = _.objValueAsObject(footer, 'okButton') as Partial<ButtonParams>;
+
+        okBtn.cssClass = _.objValueAsString(okBtn, 'cssClass');
+
+        if (!okBtn.cssClass) {
+
+            okBtn.cssClass = `lm-btn lm-btn-success ${params.cssClass?.modalOk}`;
+
+        } else {
+            okBtn.cssClass += ` lm-btn lm-btn-success ${params.cssClass?.modalOk}`;
+        }
+
+        okBtn.text = _.objValueAsString(okBtn, 'text', 'Ok');
+
+        if (!okBtn.text) {
+            okBtn.text = 'Ok';
+        }
+
+        okBtn.inlineStyles = _.objValueAsString(okBtn, 'inlineStyles');
+        okBtn.iconClass = _.objValueAsString(okBtn, 'iconClass');
+        okBtn.iconPosition = _.objValueAsString(okBtn, 'iconPosition', 'left').toLowerCase();
+
+        if (['left', 'right'].includes(okBtn.iconPosition)) {
+            okBtn.iconPosition = 'left';
+        }
+
+        // endregion
+
+        // region [Close Button]
+
+        let closeBtn = footer.closeButton = _.objValueAsObject(footer, 'closeButton') as Partial<ButtonParams>;
+
+        closeBtn.cssClass = _.objValueAsString(closeBtn, 'cssClass');
+
+        if (!closeBtn.cssClass) {
+
+            closeBtn.cssClass = `lm-btn lm-btn-error ${params.cssClass?.modalClose}`;
+
+        } else {
+            closeBtn.cssClass += ` lm-btn lm-btn-error ${params.cssClass?.modalClose}`;
+        }
+
+        closeBtn.text = _.objValueAsString(closeBtn, 'text', 'Close');
+
+        if (!closeBtn.text) {
+            closeBtn.text = 'Close';
+        }
+
+        closeBtn.inlineStyles = _.objValueAsString(closeBtn, 'inlineStyles');
+
+        closeBtn.iconClass = _.objValueAsString(closeBtn, 'iconClass');
+
+        closeBtn.iconPosition = _.objValueAsString(closeBtn, 'iconPosition', 'left').toLowerCase();
+
+        if (['left', 'right'].includes(closeBtn.iconPosition)) {
+            closeBtn.iconPosition = 'left';
+        }
+
+        // endregion
+
+        params.footer = footer as ModalFooterParams;
+
     }
 
     /**

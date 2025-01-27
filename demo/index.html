@@ -22,6 +22,16 @@
 
         <link rel="stylesheet" href="/dist/styles.min.css">
 
+        <style>
+            .big-border {
+                border: solid 10px #333 !important;
+            }
+
+            .rounded {
+                border-radius: 20px !important;
+            }
+        </style>
+
     </head>
     <body style="height: 1200px;">
 
@@ -37,9 +47,19 @@
             </div>
         </div>
 
+        <script>
+            class JsonTransformer {
+                static transform(data) {
+                    return `Transformed Data: ${JSON.stringify(data)}`;
+                }
+            }
+        </script>
+
         <script type="module">
 
             import {ModalManager} from '/dist/bundle.min.esm.js'
+
+            const manager = new ModalManager();
 
             document.addEventListener('DOMContentLoaded', function () {
 
@@ -56,10 +76,15 @@
                         formData.append('dee[]','--');
                         formData.append('dee[]','**');
 
-                        let manager = new ModalManager();
+
 
                         manager.addModal({
                             transitionDuration : 200,
+                            draggable : true,
+                            overlay : {
+                                bgColor : 'rgba(255,0,0,0.20)',
+                                opacity : 1
+                            },
                             header : {
                                 enabled : true,
                                 title : 'Account login',
@@ -73,15 +98,34 @@
                                     this.hide();
                                 },
                                 inlineStyles: 'padding: 20px;',
-                                cssClass : 'bg-warning'
+                                cssClass : 'bg-warning',
+                                okButton : {
+                                    text : 'Whats ok?',
+                                    iconClass : 'fa fa-fw fa-cogs',
+                                    /*iconPosition : 'right',
+                                    inlineStyles : 'padding: 30px;font-size: 30px;',
+                                    cssClass : 'text-danger'*/
+                                },
+                                closeButton: {
+                                    text: 'Now close!',
+                                    iconClass: 'fa fa-fw fa-chevron-right',
+                                    cssClass : 'big-border rounded'
+                                    /*iconPosition: 'left',
+                                    inlineStyles: 'padding: 30px;font-size: 30px;margin-left: 50px;',
+                                    cssClass: 'text-success'*/
+                                }
                             },
                             onShow : function() {
 
                                 console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Shown ...`);
 
+                                console.log('Latest Modal: ',manager.getLatestModal());
+
                             },
                             onHide() {
                                 console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Hidden ...`);
+
+                                console.log('Latest Modal: ', manager.getLatestModal());
                             },
                             body : {
                                 inlineStyles : 'padding: 20px;',
@@ -108,9 +152,7 @@
                                         }
                                     },
                                     contentDataType : 'html',
-                                    transformJson : function(json) {
-                                        return `<div class="mb-3"><strong>Name:</strong> ${json.name} ?? </div> <div class="mb-3"><strong>Code:</strong> ${json.code} ##</div>`;
-                                    }
+                                    transformJson : JsonTransformer.transform
                                 },
 
                             },

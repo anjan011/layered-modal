@@ -1,4 +1,4 @@
-import {AjaxParams, Dimension, ImageParams, Position} from "./common";
+import {AjaxParams, ButtonParams, Dimension, ImageParams, Position} from "./common";
 
 export interface ModalCssClassNames {
     modal?: string;
@@ -39,6 +39,8 @@ export interface ModalFooterParams {
     onOk?: any;
     cssClass: string;
     inlineStyles: string;
+    okButton: Partial<ButtonParams>;
+    closeButton : Partial<ButtonParams>;
 }
 
 export interface ModalXButton {
@@ -76,4 +78,10 @@ export interface ModalParams {
     body: ModalBodyParams,
     xButton?: ModalXButton,
     delayInMilliSeconds?: number,
+    overlay?: OverlayParams;
+}
+
+export interface OverlayParams {
+    bgColor? : string;
+    opacity? : number;
 }

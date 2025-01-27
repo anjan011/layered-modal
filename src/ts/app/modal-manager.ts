@@ -576,4 +576,18 @@ export default class ModalManager {
         }
 
     }
+
+    /**
+     * Gets latest modal that is displayed
+     */
+
+    getLatestModal() : Modal | null {
+
+        if(this.#stack.length) {
+            return this.#stack[this.#stack.length - 1];
+        }
+
+        return null;
+
+    }
 }

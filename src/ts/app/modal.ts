@@ -1,7 +1,7 @@
 import _ from "./utils/mixins";
 import ModalManager from "./modal-manager";
-import {Position} from "./interfaces/common";
-import {ModalBodyParams, ModalParams} from "./interfaces/modal"
+import {ButtonParams, Position} from "./interfaces/common";
+import {ModalBodyParams, ModalParams, OverlayParams} from "./interfaces/modal"
 import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 import {HtmlAttributeGenerator} from "./generators/html-attribute-generator";
 import {CssRulesGenerator} from "./generators/css-rules-generator";
@@ -165,8 +165,17 @@ export default class Modal {
             cssClassList.push('secondary');
         }
 
+        // region [Inline Styles ...]
+
+        let inlineStyles = [
+            `z-index: ${zIndex};`,
+            this.generateOverlayInlineStyles(this.#params.overlay)
+        ];
+
+        // endregion
+
         return `
-        <div id="${this.getOverlayId()}" class="${cssClassList.join(' ')}" style="z-index: ${zIndex};">
+        <div id="${this.getOverlayId()}" class="${cssClassList.join(' ')}" style="${inlineStyles.join('')}">
             ${this.isAjaxContentType() ? this.generateAjaxLoaderMarkup() : this.generateModalMarkup()}
         </div>
     `;
@@ -229,8 +238,8 @@ export default class Modal {
             );
         }
 
-        console.log('Generated inline css ....');
-        console.log(modalInlineCss.join(''));
+        /*console.log('Generated inline css ....');
+        console.log(modalInlineCss.join(''));*/
 
         // endregion
 
@@ -523,15 +532,14 @@ export default class Modal {
         } else if (footer?.mode === 'alert') {
 
             return `<div class="layered-modal-footer d-flex fd-row jc-center  ${footer.cssClass}" style="${footer.inlineStyles}">
-    <button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass?.modalClose}">Close</button>
+    ${this.generateFooterButtonMarkup(footer.closeButton)}
 </div>`;
 
         } else if (footer?.mode === 'confirm') {
 
             return `<div class="layered-modal-footer d-flex fd-row jc-between  ${footer.cssClass}" style="${footer.inlineStyles}">
-    <button type="button" class="lm-btn lm-btn-error ${this.#params.cssClass?.modalClose}">Close</button>
-    
-    <button type="button" class="lm-btn lm-btn-success ${this.#params.cssClass?.modalOk}">Ok</button>
+    ${this.generateFooterButtonMarkup(footer.closeButton)}
+    ${this.generateFooterButtonMarkup(footer.okButton)}
 </div>`;
 
         }
@@ -557,13 +565,13 @@ export default class Modal {
      * @param content
      */
 
-    setBodyContent(contentType: string = 'html',content : string) {
+    setBodyContent(contentType: string = 'html', content: string) {
 
-        if(!this.#params.body) {
+        if (!this.#params.body) {
             this.#params.body = {} as Partial<ModalBodyParams>;
         }
 
-        if(!ModalParameterParser.isValidBodyContentType(contentType)) {
+        if (!ModalParameterParser.isValidBodyContentType(contentType)) {
             this.#params.body.contentType = 'html';
         } else {
             this.#params.body.contentType = contentType;
@@ -606,12 +614,12 @@ export default class Modal {
                  * Prepare ajax data ...
                  */
 
-                if(fetchParams.method === 'GET') {
+                if (fetchParams.method === 'GET') {
 
-                    if(ap?.data) {
+                    if (ap?.data) {
 
-                        if(_.isPlainObject(ap.data)) {
-                            url = _.appendQueryParams(url,ap.data);
+                        if (_.isPlainObject(ap.data)) {
+                            url = _.appendQueryParams(url, ap.data);
                         } else if (ap.data instanceof FormData) {
 
                             const urlObject = new URL(url);
@@ -624,7 +632,7 @@ export default class Modal {
 
                     }
 
-                } else if(fetchParams.method === 'POST') {
+                } else if (fetchParams.method === 'POST') {
 
                     let headers = fetchParams.headers as Record<string, string>;
 
@@ -634,9 +642,9 @@ export default class Modal {
 
                             headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
-                            fetchParams.body = _.buildQueryParams(ap.data,'');
+                            fetchParams.body = _.buildQueryParams(ap.data, '');
 
-                        } else if(ap.data instanceof FormData) {
+                        } else if (ap.data instanceof FormData) {
 
                             headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
@@ -648,7 +656,7 @@ export default class Modal {
 
                 }
 
-                if(ap?.decodeParams !== undefined && ap.decodeParams) {
+                if (ap?.decodeParams !== undefined && ap.decodeParams) {
                     url = decodeURIComponent(url);
                 }
 
@@ -663,13 +671,19 @@ export default class Modal {
                     }
 
                 } else {
+
                     let html: string = await response.text();
 
                     if (ap?.contentDataType === 'html') {
+
+                        html = this.ajaxScriptsAndStylesParsers(html);
+
                         if (typeof ap?.transformHtml === 'function') {
                             html = ap.transformHtml.apply(this, [html]);
                         }
+
                     } else if (ap?.contentDataType === 'json') {
+
                         if (typeof ap?.transformJson === 'function') {
 
                             try {
@@ -685,14 +699,12 @@ export default class Modal {
                             }
 
 
+                        } else {
+                            html = 'transformJson callback is required to transform JSON data into html code as modal body content.';
                         }
                     }
 
-
-                    if (this.#params.body) {
-
-                        this.setBodyContent('html',html);
-                    }
+                    this.setBodyContent('html', html);
                 }
 
             }
@@ -702,7 +714,6 @@ export default class Modal {
 
 
             if (this.#params.body) {
-
 
 
                 if ((error as DOMException).name === "AbortError") {
@@ -733,6 +744,114 @@ export default class Modal {
         }
     }
 
+    #ajaxScripts: Array<HTMLScriptElement> = [];
+
+    /**
+     * Parse script tags from AJAX html ...
+     *
+     * @param html
+     */
+
+    ajaxScriptsAndStylesParsers(html : string) : string {
+
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+
+        let nodes = doc.querySelectorAll('link,script,style');
+
+        if(nodes.length) {
+
+            nodes.forEach( (item : Element, index, itemList) => {
+
+                let newNode = item.cloneNode(true) as Element;
+
+                newNode.setAttribute('data-modal',this.getId());
+
+                if(newNode.tagName.toLowerCase() === 'script') {
+
+                    /**
+                     * We have to do attributes cloning, because
+                     * a cloned script if used as it is, will not execute
+                     * again
+                     */
+
+                    let newScript = document.createElement('script');
+
+                    [...newNode.attributes].forEach(attr => {
+                        newScript.setAttribute(attr.name, attr.value);
+                    });
+
+
+                    if (newNode.textContent) {
+                        newScript.textContent = newNode.textContent;
+                    }
+
+                    this.#ajaxScripts.push(newScript);
+                } else {
+                    document.head.appendChild(newNode);
+                }
+
+
+                item.remove();
+
+            });
+
+        }
+
+
+        return doc.body.innerHTML;
+
+    }
+
+    /**
+     * On modal remove, remove all script, style and link tanks that was inserted as
+     * part of modal content ...
+     */
+
+    cleanUpAjaxScriptsAndStyles() {
+
+        let scriptsList = document.querySelectorAll(`[data-modal="${this.getId()}"]`);
+
+        if(scriptsList.length > 0) {
+
+            scriptsList.forEach(function (item, index, itemList) {
+
+                item.remove();
+
+            });
+
+        }
+
+        this.#ajaxScripts = [];
+
+    }
+
+    /**
+     * Generates footer button markup ...
+     *
+     * @param button
+     */
+
+    generateFooterButtonMarkup(button: Partial<ButtonParams>) : string {
+
+        if(!button) {
+            return '';
+        }
+
+        return `<button type="button" class="${button.cssClass ?? ''}" style="${button.inlineStyles}">
+    ${(button.iconClass && button.iconPosition === 'left') ? `<i class="${button.iconClass}"></i> `:''}
+    ${button.text}
+    ${(button.iconClass && button.iconPosition === 'right') ? ` <i class="${button.iconClass}"></i>` : ''}
+</button>`;
+
+    }
+
+    /**
+     * Handle modal display logic.
+     *
+     * @param modal
+     */
+
     handleModalDisplay(modal: HTMLElement | null) {
 
         if (!modal) {
@@ -746,6 +865,10 @@ export default class Modal {
 
             this.getManager().adjustStackCssClassForModals();
 
+            /**
+             * Bind events and other things after modal is displayed ...
+             */
+
             this.#bindEvents();
 
             /**
@@ -758,11 +881,24 @@ export default class Modal {
         }, this.#params.transitionDuration); // Small delay to trigger the opacity transition
     }
 
+    /**
+     * Adds a css class to body, to make overflow hidden,
+     * this is to make the body non scollable.
+     */
+
     addNoOverflowToBody() {
 
         document.body.classList.add('no-overflow');
 
     }
+
+    /**
+     * Handle the logic of showing modal using AJAX operation.
+     * This first loads the overlay with loader animation. Then
+     * when ajax call finishes it loads the content either directly
+     * or via transformation. Else, it displays error message, as long
+     * as the http status code is not 200
+     */
 
     showAjax() {
 
@@ -785,7 +921,7 @@ export default class Modal {
     }
 
     /**
-     * Show modal ...
+     * Show modal for any other content types other than ajax.
      */
 
     showOther() {
@@ -876,6 +1012,12 @@ export default class Modal {
             }
 
             /**
+             * Clean up ajax scripts ...
+             */
+
+            this.cleanUpAjaxScriptsAndStyles();
+
+            /**
              * If there is any on hide callback, execute it ...
              */
 
@@ -905,6 +1047,23 @@ export default class Modal {
 
         if (!overlay) {
             return;
+        }
+
+        /**
+         * If we have any scripts loaded through ajax, append them to DOM here.
+         */
+
+        if(this.#params.body) {
+
+            if(this.#ajaxScripts.length) {
+
+                this.#ajaxScripts.forEach(function (item : HTMLScriptElement, index, itemList) {
+
+                        document.body.appendChild(item);
+
+                });
+            }
+
         }
 
         /**
@@ -1026,6 +1185,10 @@ export default class Modal {
 
         }
     }
+
+    /**
+     * Handle drag events ...
+     */
 
     handleDragEvents() {
 
@@ -1159,6 +1322,28 @@ export default class Modal {
         if (adjustMargins) {
             this.adjustMargin(distance);
         }
+
+    }
+
+    generateOverlayInlineStyles(overlay?: Partial<OverlayParams>) : string {
+
+        if(!overlay) {
+            return '';
+        }
+
+        let styles = [];
+
+        let bgColor = _.objValueAsString(overlay,'bgColor');
+
+        if(bgColor) {
+            styles.push(`background-color: ${bgColor};`);
+        }
+
+        let opacity = _.objValueAsFloat(overlay,'opacity',1);
+
+        styles.push(`opacity: ${opacity};`);
+
+        return styles.join('');
 
     }
 

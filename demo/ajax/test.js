@@ -1,0 +1,1 @@
+console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `Text 1234 ...`);
