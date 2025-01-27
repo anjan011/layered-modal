@@ -185,7 +185,9 @@
                             body : {
                                 inlineStyles : 'padding: 20px;',
                                 cssClass : 'bg-info',
-                                contentType : 'html',
+                                contentType : 'function',
+                                functionName : '__abraca_dabra',
+                                functionArguments : [1,2,3],
                                 content: `<div><button type="button" id="dragHandle2" href="#">Drag me</button></div>`,
                                 ajaxParams : {
                                     timeoutMs: 25000,
@@ -241,5 +243,10 @@
             });
         </script>
 
+        <script>
+            function __abraca_dabra(params) {
+                return `Here lies: ${JSON.stringify(params)}`;
+            }
+        </script>
     </body>
 </html>

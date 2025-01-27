@@ -412,33 +412,195 @@
     "description": "By specifying a delay in milliseconds you can make the modal delay it's display and after display actions, like event bindings. You can use this in scenarios, where you need to display a popup N seconds after page loads."
   },
   {
-    "name": "overlay",
+    "name": "backDrop",
     "type": "object | null",
     "default": null,
-    "description": "Modal "
+    "description": "Modal back drop. This element is a fixed positioned div element, that covers entire visible viewport. And, this also acts as the parent container of the modal dialog."
   },
   {
-    "name": "",
-    "type": "",
+    "name": "bgColor",
+    "type": "string",
     "default": "",
-    "description": ""
+    "description": "A color that can have alpha transparency. like the rgba format. This acts as back drop's background color."
   },
   {
-    "name": "",
-    "type": "",
-    "default": "",
-    "description": ""
+    "name": "opacity",
+    "type": "number",
+    "default": 1,
+    "description": "The backdrop opacity. Do note that, having opacity less than 1, will turn entire backdrop including the modal dialog with transparent! So use this carefully."
   },
   {
-    "name": "",
-    "type": "",
-    "default": "",
-    "description": ""
+    "name": "body",
+    "type": "object",
+    "default": "-",
+    "description": "The mandatory modal content configuration object. Modal header and footer can be omitted, but body object must be present. See all the body.* parameters below to learn about what it supports."
   },
   {
-    "name": "",
-    "type": "",
+    "name": "body.contentType",
+    "type": "string",
+    "default": "html",
+    "description": "The modal content type. Any one of these values are supported: ['html', 'iframe', 'function', 'ajax', 'image', 'youtube-video', 'template']. Defaults to 'html'."
+  },
+  {
+    "name": "body.content",
+    "type": "string",
     "default": "",
-    "description": ""
+    "description": "when body.contentType === 'html', use this to provide the modal with html markup as string to display inside modal body."
+  },
+  {
+    "name": "body.iframeCode",
+    "type": "string",
+    "default": "",
+    "description": "The iframe embed code when body.contentType === 'iframe'. The embed code must be valid with <iframe> tag present. A check is made for validity using regex."
+  },
+  {
+    "name": "body.functionName",
+    "type": "function | string",
+    "default": null,
+    "description": "If body.contentType === 'function', use this property to supply the modal with a JS function or a valid function name that is available on global content. This is required!"
+  },
+  {
+    "name": "body.functionArguments",
+    "type": "any",
+    "default": "",
+    "description": "If body.functionName is the name of the function, then any arguments to be passed to body.functionName. Can be any thing."
+  },
+  {
+    "name": "body.ajaxParams",
+    "type": "object",
+    "default": null,
+    "description": "if body.contentType === 'ajax', this is where you pass the ajax related options. See detailed parameters below."
+  },
+  {
+    "name" : "body.ajaxParams.contentDataType",
+    "type": "string",
+    "default": "html",
+    "description": "The response format from the AJAX call. Can only be json or html. Default is html."
+  },
+  {
+    "name": "body.ajaxParams.url",
+    "type": "string",
+    "default": "",
+    "description": "AJAX url to load. Must be a valid http URL"
+  },
+  {
+    "name": "body.ajaxParams.method",
+    "type": "string",
+    "default": "GET",
+    "description": "The http method for this ajax call. can be any http method."
+  },
+  {
+    "name": "body.ajaxParams.header",
+    "type": "object",
+    "default": null,
+    "description": "An object containing http headers. Header names as this object's key and header value as property value. For example: {'Content-Type' : 'application/json'}"
+  },
+  {
+    "name": "body.ajaxParams.transformHtml",
+    "type": "function | null",
+    "default": null,
+    "description": "A transformer method that can further process or transform loaded html content via ajax. This can be a function or global function name. The function must return content as string, usually the processed modal body content markup."
+  },
+  {
+    "name": "body.ajaxParams.transformJson",
+    "type": "function | null",
+    "default": null,
+    "description": "Similar to body.ajaxParams.transformHtml, but for JSON data. Same rules apply."
+  },
+  {
+    "name": "body.ajaxParams.timeoutMs",
+    "type": "integer",
+    "default": 30000,
+    "description": "Timeout in milliseconds till the ajax operation aborts. Defaults to 30 seconds or 30000 milliseconds. Adjust this timeout based on your requirements or expectations."
+  },
+  {
+    "name": "body.ajaxParams.decodeParams",
+    "type": "boolean",
+    "default": false,
+    "description": "if the http method is GET, then removes the encoding from ajax url. While this may be desired from some cases, but for most cases you should keep the url with query params encoded so that the url can remain safe. Just added this for edge cases, where it may be required."
+  },
+  {
+    "name": "body.ajaxParams.data",
+    "type": "FormData | object | null",
+    "default": null,
+    "description": "AJAX request data. Data can be a plain object or FormData. Note that as of now, file upload using FormData is not supported. This data can be used for any HTTP methods. if used for GET, it will turn into query params."
+  },
+  {
+    "name": "body.imageParams",
+    "type": "object",
+    "default": null,
+    "description": "Required only if body.contentType === 'image'. See options below."
+  },
+  {
+    "name": "body.imageParams.url",
+    "type": "string",
+    "default": "",
+    "description": "Image url. Required."
+  },
+  {
+    "name": "body.imageParams.alt",
+    "type": "string",
+    "default": "",
+    "description": "Image alt text."
+  },
+  {
+    "name": "body.imageParams.title",
+    "type": "string",
+    "default": "",
+    "description": "Image title."
+  },
+  {
+    "name": "body.imageParams.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional image css class"
+  },
+  {
+    "name": "body.imageParams.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional css inline styles for the image"
+  },
+  {
+    "name": "body.imageParams.caption",
+    "type": "string",
+    "default": "",
+    "description": "Caption content to be displayed at the bottom of the image."
+  },
+  {
+    "name": "body.imageParams.captionTemplate",
+    "type": "string",
+    "default": "",
+    "description": "If a valid <template> element ID is provided, that template's content is used as caption content. In this case the usual caption parameter above is ignored."
+  },
+  {
+    "name": "body.imageParams.captionCssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes to be added to caption element."
+  },
+  {
+    "name": "body.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css classes to be added to modal body."
+  },
+  {
+    "name": "body.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional css inline styles to be added to modal body."
+  },
+  {
+    "name": "body.videoUrl",
+    "type": "string",
+    "default": "",
+    "description": "If body.contentType === 'youtube-video', pass the video url here. As of now only YouTube video urls are supported, including shorts."
+  },
+  {
+    "name": "body.templateId",
+    "type": "string",
+    "default": "",
+    "description": "ID of a <template> element. Usable when body.contentType === 'template'. In this case the template element content becomes the modal body content."
   }
 ]
