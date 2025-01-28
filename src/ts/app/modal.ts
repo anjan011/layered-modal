@@ -533,13 +533,13 @@ export default class Modal {
             return `<div class="layered-modal-footer ${footer.cssClass}" style="${footer.inlineStyles}">${footer.content}</div>`;
         } else if (footer?.mode === 'alert') {
 
-            return `<div class="layered-modal-footer d-flex fd-row jc-center  ${footer.cssClass}" style="${footer.inlineStyles}">
+            return `<div class="layered-modal-footer d-flex fd-row jc-center gap-2 ${footer.cssClass}" style="${footer.inlineStyles}">
     ${this.generateFooterButtonMarkup(footer.closeButton)}
 </div>`;
 
         } else if (footer?.mode === 'confirm') {
 
-            return `<div class="layered-modal-footer d-flex fd-row jc-between  ${footer.cssClass}" style="${footer.inlineStyles}">
+            return `<div class="layered-modal-footer d-flex fd-row jc-between gap-2 ${footer.cssClass}" style="${footer.inlineStyles}">
     ${this.generateFooterButtonMarkup(footer.closeButton)}
     ${this.generateFooterButtonMarkup(footer.okButton)}
 </div>`;
@@ -1026,9 +1026,9 @@ export default class Modal {
             if (this.#params.onHide) {
 
                 if (_.isFunction(this.#params.onHide)) {
-                    this.#params.onHide.apply(this);
+                    (this.#params.onHide as Function).apply(this);
                 } else if (_.isString(this.#params.onHide)) {
-                    DomUtils.executeFunction(this.#params.onHide, '', this);
+                    DomUtils.executeFunction(this.#params.onHide as string, '', this);
                 }
 
 
@@ -1180,9 +1180,9 @@ export default class Modal {
         if (this.#params.onShow) {
 
             if (_.isFunction(this.#params.onShow)) {
-                this.#params.onShow.apply(this);
+                (this.#params.onShow as Function).apply(this);
             } else if (_.isString(this.#params.onShow)) {
-                DomUtils.executeFunction(this.#params.onShow, '', this);
+                DomUtils.executeFunction(this.#params.onShow as string, '', this);
             }
 
         }

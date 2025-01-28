@@ -1,6 +1,6 @@
 import ModalManager from "./modal-manager";
-import { Position } from "./interfaces/common";
-import { ModalParams } from "./interfaces/modal";
+import { ButtonParams, Position } from "./interfaces/common";
+import { ModalParams, BackDropParams } from "./interfaces/modal";
 export default class Modal {
     #private;
     getManager(): ModalManager;
@@ -8,10 +8,12 @@ export default class Modal {
     getParams(): Partial<ModalParams>;
     constructor(params?: Partial<ModalParams>);
     getId(): string;
-    getOverlayId(): string;
+    geBackDropId(): string;
     getModalId(): string;
     getModalHeaderId(): string;
     generateMarginShift(): string;
+    isAjaxContentType(): boolean;
+    generateAjaxLoaderMarkup(): string;
     generateHtml(): string;
     generateModalMarkup(): string;
     generateXButtonMarkup(): string;
@@ -19,11 +21,24 @@ export default class Modal {
     generateHeaderMarkup(): string;
     generateFooterMarkup(): string | undefined;
     show(): void;
+    setBodyContent(contentType: string | undefined, content: string): void;
+    loadHtmlInModalViaFetch(): Promise<void>;
+    ajaxScriptsAndStylesParsers(html: string): string;
+    cleanUpAjaxScriptsAndStyles(): void;
+    generateFooterButtonMarkup(button: Partial<ButtonParams>): string;
+    handleModalDisplay(modal: HTMLElement | null): void;
+    addNoOverflowToBody(): void;
+    showAjax(): void;
+    showOther(): void;
     hide(callback?: Function | null): void;
+    handleModalClose(backDrop?: HTMLElement): void;
+    handleFooterOnOk(backDrop?: HTMLElement): void;
+    handleOnShow(): void;
     handleDragEvents(): void;
     toggleModalClass(className: string): void;
     addModalClass(className: string): void;
     removeModalClass(className: string): void;
     adjustMargin(position: Position): void;
     setShiftingDistance(distance: Position, adjustMargins?: boolean): void;
+    generateBackDropInlineStyles(backDrop?: Partial<BackDropParams>): string;
 }

@@ -1,4 +1,4 @@
-import { AjaxParams, Dimension, ImageParams, Position } from "./common";
+import { AjaxParams, ButtonParams, Dimension, ImageParams, Position } from "./common";
 export interface ModalCssClassNames {
     modal?: string;
     modalOk?: string;
@@ -35,6 +35,8 @@ export interface ModalFooterParams {
     onOk?: any;
     cssClass: string;
     inlineStyles: string;
+    okButton: Partial<ButtonParams>;
+    closeButton: Partial<ButtonParams>;
 }
 export interface ModalXButton {
     enabled: boolean;
@@ -45,14 +47,15 @@ export interface ModalXButton {
 export interface ModalParams {
     id: string;
     zIndex: number;
-    content?: string;
     header?: ModalHeaderParams;
     footer?: ModalFooterParams;
     autoWidth?: boolean;
     maxWidth?: Dimension;
+    minWidth?: Dimension;
     width?: Dimension;
     autoHeight?: boolean;
     maxHeight?: Dimension;
+    minHeight?: Dimension;
     height?: Dimension;
     position: "top-left" | "top-center" | "top-right" | "middle-left" | "middle-center" | "middle-right" | "bottom-left" | "bottom-center" | "bottom-right";
     shiftDistance?: Position;
@@ -60,7 +63,7 @@ export interface ModalParams {
     cssClass?: ModalCssClassNames;
     onShow?: Function | string | null;
     onHide?: Function | string | null;
-    secondaryOverlay?: boolean;
+    secondaryBackDrop?: boolean;
     stackIndex: number;
     draggable: boolean;
     dragHandle: string;
@@ -68,4 +71,9 @@ export interface ModalParams {
     body: ModalBodyParams;
     xButton?: ModalXButton;
     delayInMilliSeconds?: number;
+    backDrop?: BackDropParams;
+}
+export interface BackDropParams {
+    bgColor?: string;
+    opacity?: number;
 }

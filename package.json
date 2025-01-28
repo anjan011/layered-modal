@@ -1,7 +1,9 @@
 {
   "dependencies": {
+    "escape-html": "^1.0.3",
     "glob": "^11.0.1",
-    "underscore": "^1.13.7"
+    "he": "^1.2.0",
+    "sanitize-html": "^2.14.0"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
@@ -23,10 +25,12 @@
   },
   "scripts": {
     "build": "webpack",
+    "build:production": "webpack --mode production",
     "test": "jest",
     "watch": "webpack --watch",
     "serve": "npx webpack serve",
-    "php:server" : "php -S 127.0.0.1:9000 -t ./"
+    "php:server": "php -S 127.0.0.1:9000 -t ./",
+    "build:readme": "node merge-markdown.js"
   },
   "type": "module"
 }

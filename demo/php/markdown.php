@@ -18,21 +18,32 @@
         $markdown = "## ⚙️ ModalManager Configuration Options\n\n";
         $markdown .= "The `ModalManager` class allows customization through various options. Below are the available parameters you can set when initializing the manager.\n\n";
         $markdown .= "### **Available Options:**\n\n";
-        $markdown .= "| Option Name | Type | Default Value | Description |\n";
-        $markdown .= "|------------|------|--------------|-------------|\n";
+        $markdown .= "| Option Name | Type | Description |\n";
+        $markdown .= "|------------|------|-------------|\n";
 
         // Generate Table Rows
         foreach ($data as $option => $details) {
-            $type = $details['type'] ?? 'unknown';
-            $default = json_encode($details['default'] ?? 'N/A', JSON_UNESCAPED_SLASHES);
-            $description = $details['description'] ?? 'No description provided.';
 
-            $markdown .= "| **`$option`** | `$type` | `$default` | $description |\n";
+            $name = $details['name'];
+
+            $type = $details['type'] ?? 'unknown';
+            $default = $details['default'] ? "Default: `".json_encode($details['default'], JSON_UNESCAPED_SLASHES)."`" : '';
+            $description = htmlentities($details['description']) ?? 'No description provided.';
+
+            $type = str_ireplace('|',"\|",$type);
+
+            $markdown .= "| **`$name`** | `$type` | $description $default |\n";
         }
 
         return $markdown;
     }
 
+    $json_path = $_SERVER['DOCUMENT_ROOT'].'/docs/modal.json';
+
+    if(!file_exists($json_path)) {
+        exit("File not found: $json_path");
+    }
+
 // Example Usage
-    $jsonString = file_get_contents('manager-options.json'); // Assuming the JSON file is stored locally
+    $jsonString = file_get_contents($json_path); // Assuming the JSON file is stored locally
     echo generateMarkdownTable($jsonString);

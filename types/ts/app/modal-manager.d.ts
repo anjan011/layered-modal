@@ -28,5 +28,6 @@ export default class ModalManager {
     adjustStackCssClassForModals(): void;
     bindTriggerClickUsingDataAttributes(): void;
     getContentFromTemplateElement(templateId: string): string;
+    getLatestModal(): Modal | null;
 }
 export {};

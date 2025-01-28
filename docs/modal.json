@@ -366,12 +366,7 @@
   {
     "name": "xButton",
     "type": "object",
-    "default": {
-      "enabled": true,
-      "content": "X",
-      "cssClass": "",
-      "inlineStyles": ""
-    },
+    "default": "",
     "description": "The close or X button settings for this modal instance. the modal manager's xButton parameter object defines common X button content and styling. And, this xButton object affects this modal's X button only."
   },
 

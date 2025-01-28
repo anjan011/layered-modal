@@ -1,27 +1,38 @@
-import _ from "underscore";
-declare module 'underscore' {
-    interface UnderscoreStatic {
-        isPlainObject(o: any): boolean;
-        asObject<T extends object>(v: any, d?: T): T;
-        asString(v: any, d?: string): string;
-        asInt(v: any, d?: number): number;
-        asFloat(v: any, d?: number): number;
-        asArray<T>(v: any, d?: T[]): T[];
-        objOwnValue<T>(o: any, k: string, d?: T): T;
-        objValue<T>(o: any, k: string, d?: T): T;
-        objValueAsString(o: unknown, k: string, d?: string): string;
-        objValueAsObject(o: any, k: string, d?: object): object;
-        objValueAsInt(o: any, k: string, d?: number): number;
-        objValueAsIntFlag(o: any, k: string, d?: number): 0 | 1;
-        objValueAsFloat(o: any, k: string, d?: number): number;
-        objValueAsBool(o: any, k: string, d?: boolean): boolean;
-        objValueAsArray<T>(o: any, k: string, d?: T[]): T[];
-        hasMethod(o: object, m: string): boolean;
-        hasProperty(o: object, k: string): boolean;
-        guid(): string;
-        objValueAsMethod(o: any, k: string, d?: any): any;
-        isAlphanumeric(value: any): boolean;
-        ensureSemicolon(str: string): string;
-    }
-}
+declare const _: {
+    has(obj: any, key: any): boolean;
+    isFunction(value: any): boolean;
+    isString(value: any): boolean;
+    isArray(value: any): boolean;
+    isNumberOrString(value: any): boolean;
+    joinObjectPropertiesAsString(first: Record<string, any>, second: Record<string, any>, properties: string[], separator?: string, trim?: boolean): object;
+    isPlainObject: (o: any) => boolean;
+    asObject: (v: any, d: object) => object;
+    asString: (v: any, d: string) => string;
+    asInt: (v: any, d?: number) => number;
+    asFloat: (v: any, d?: number) => number;
+    asArray: (v: any, d: unknown[]) => unknown[];
+    objOwnValue: (o: any, k: string, d?: any) => any;
+    objValue: (o: any, k: string, d?: any) => any;
+    objValueAsString: (o: unknown, k: string, d?: string) => string;
+    objValueAsObject: (o: any, k: string, d?: object) => object;
+    objValueAsInt: (o: object, k: string, d?: number) => number;
+    objValueAsIntFlag: (o: object, k: string, d?: number) => number;
+    objValueAsFloat: (o: object, k: string, d?: number) => number;
+    objValueAsBool: (o: object, k: string, d?: boolean) => boolean;
+    objValueAsArray: (o: object, k: string, d?: unknown[]) => unknown[];
+    hasMethod: (o: object, m: string) => boolean;
+    isNull(value: any): boolean;
+    isUndefined(value: any): boolean;
+    functions(obj: any): string[];
+    hasProperty: (o: object, k: string) => boolean;
+    isObject(value: any): boolean;
+    allKeys(obj: any): string[];
+    guid: () => string;
+    objValueAsMethod: (o: any, k: string, d?: unknown) => unknown;
+    isAlphanumeric(value: any): boolean;
+    ensureSemicolon(str: string): string;
+    encodeHTML(html: string): string;
+    buildQueryParams(obj: Record<string, any>, prefix?: string): string;
+    appendQueryParams(url: string, params: Record<string, any>): string;
+};
 export default _;
