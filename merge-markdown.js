@@ -44,24 +44,39 @@ class HtmlEncoder {
 
 let encoder = new HtmlEncoder();
 
-let skipChars = ['`',"'",'"'];
+let skipChars = ['`', "'", '"'];
 
 // Define the order of .md files
 const files = [
-    "markdown/intro.md",
-    "markdown/setup.md",
-    "markdown/usage.md",
-    "markdown/modal-manager.md",
-    "markdown/modal.md",
+    {
+        file: "markdown/intro.md",
+        skipChars : skipChars,
+    },
+    {
+        file: "markdown/setup.md",
+        skipChars: skipChars,
+    },
+    {
+        file: "markdown/usage.md",
+        skipChars: [...skipChars,'<','>'],
+    },
+    {
+        file: "markdown/modal-manager.md",
+        skipChars: skipChars,
+    },
+    {
+        file: "markdown/modal.md",
+        skipChars: skipChars,
+    },
 ];
 
 const outputFile = "README.md";
 
 // Read and merge the files
 const content = files
-    .map((file) => {
-        let rawContent = fs.readFileSync(path.resolve(__dirname, file), "utf8");
-        return encoder.escapeHtml(rawContent,skipChars); // Sanitize before merging
+    .map((item) => {
+        let rawContent = fs.readFileSync(path.resolve(__dirname, item.file), "utf8");
+        return encoder.escapeHtml(rawContent, item.skipChars); // Sanitize before merging
     })
     .join("\n\n"); // Adds spacing between sections
 

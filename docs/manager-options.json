@@ -8,24 +8,59 @@
   {
     "name": "baseShiftDistance",
     "type": "object",
-    "default": {
-      "top": 0,
-      "right": 0,
-      "bottom": 0,
-      "left": 0
-    },
-    "description": "The layered modal system using base shift distance to move each new modal by the given distance. For example if a shift distance of 50 is added to top and left, then each new modal will be shifted 50px to the left and 50px to the down compared to the last modal. This will give the modals a visual cascading effect. You can also use this to shift a new modal to anywhere so that it does not obstruct the last modal. Useful for cases where user would not want to have their view obstructed, while they need to do something else. For example, while filling in a form in a modal, you need to show some quick help regarding the form filling process."
+    "default": null,
+    "description": "The layered modal system using base shift distance to move each new modal by the given distance. For example if a shift distance of 50 is added to top and left, then each new modal will be shifted 50px to the left and 50px to the down compared to the last modal. This will give the modals a visual cascading effect. You can also use this to shift a new modal to anywhere so that it does not obstruct the last modal. Useful for cases where user would not want to have their view obstructed, while they need to do something else. For example, while filling in a form in a modal, you need to show some quick help regarding the form filling process. All the supported parameters below allows both positive and negative numbers."
   },
+  {
+    "name": "baseShiftDistance.top",
+    "type": "integer | null",
+    "default": 0,
+    "description": "Shift vertically using top margin"
+  },
+  {
+    "name": "baseShiftDistance.right",
+    "type": "integer | null",
+    "default": 0,
+    "description": "Shift horizontally using right margin"
+  },
+  {
+    "name": "baseShiftDistance.bottom",
+    "type": "integer | null",
+    "default": 0,
+    "description": "Shift vertically using bottom margin"
+  },
+  {
+    "name": "baseShiftDistance.left",
+    "type": "integer | null",
+    "default": 0,
+    "description": "Shift horizontally using left margin"
+  },
+
   {
     "name": "cssClass",
     "type": "object",
-    "default": {
-      "modal": "",
-      "modalOk": "modal-ok",
-      "modalClose": "modal-close"
-    },
-    "description": "Common css classes to be passed to all modals manageable via this instance of manager. Currently supports only modal css class, modal ok and close button css classes. If you need to have button or link that needs to close the modal, be sure to give it the same css class as cssClass.modalClose or use default modal-close, if you need not set any css class in cssClass.modalClose. Similarly modalOk, is for modal ok button when the modal footer is in confirm mode, having only ok and close buttons. In custom footer mode, if you add custom ok or close links, please sure to use cssClass.modalOk and cssClass.modalClose classes."
+    "default": null,
+    "description": "Common css classes to be passed to all modals manageable via this instance of manager. See supported properties below."
   },
+  {
+    "name": "cssClass.modal",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class to be added to modal dialog."
+  },
+  {
+    "name": "cssClass.modalOk",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class to be added to ok button in footer, if applicable in custom or confirm footer mode."
+  },
+  {
+    "name": "cssClass.modalClose",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class for close button for close button in footer."
+  },
+
   {
     "name": "transitionDuration",
     "type": "number",
@@ -34,13 +69,32 @@
   },
   {
     "name": "xButton",
-    "type": "object",
-    "default": {
-      "enabled": true,
-      "content": "X",
-      "cssClass": "",
-      "inlineStyles": ""
-    },
-    "description": "The common modal close button settings. This is the close button displayed at the top right corner of the modal. You can hide the close button, if you pass false to xButton.enabled parameter. By default the close button just displays the letter X with some styling provided by the modal system's css library. But you can specify your close button content, including button css class and inline styles. This allows you most flexibility to customize the close button to your liking."
+    "type": "object | null",
+    "default": null,
+    "description": "The common modal close button settings. If this parameter is not provided the close button will be shown with default settings. See below for supported options."
+  },
+  {
+    "name": "xButton.enabled",
+    "type": "boolean",
+    "default": true,
+    "description": "Show or hide X button"
+  },
+  {
+    "name": "xButton.content",
+    "type": "string",
+    "default": "X",
+    "description": "The X button content."
+  },
+  {
+    "name": "xButton.cssClass",
+    "type": "string",
+    "default": "",
+    "description": "Additional css class for X button"
+  },
+  {
+    "name": "xButton.inlineStyles",
+    "type": "string",
+    "default": "",
+    "description": "Additional inline styles for X button"
   }
 ]

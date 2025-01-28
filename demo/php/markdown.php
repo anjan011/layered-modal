@@ -28,7 +28,7 @@
 
             $type = $details['type'] ?? 'unknown';
             $default = $details['default'] ? "Default: `".json_encode($details['default'], JSON_UNESCAPED_SLASHES)."`" : '';
-            $description = htmlentities($details['description']) ?? 'No description provided.';
+            $description = ($details['description']) ?? 'No description provided.';
 
             $type = str_ireplace('|',"\|",$type);
 
@@ -38,7 +38,7 @@
         return $markdown;
     }
 
-    $json_path = $_SERVER['DOCUMENT_ROOT'].'/docs/modal.json';
+    $json_path = $_SERVER['DOCUMENT_ROOT'].'/docs/manager-options.json';
 
     if(!file_exists($json_path)) {
         exit("File not found: $json_path");

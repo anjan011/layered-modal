@@ -1,14 +1,13 @@
-## ⚙️ ModalManager Configuration Options
+## ⚙️ Modal Configuration Options
 
-The `ModalManager` class allows customization through various options. Below are the available parameters you can set
-when initializing the manager.
+The `Modal` class allows customization through the parameters below. Do note that, modals should only be created through the `ModalManager` class instance!
 
 ### **Available Options:**
 
 | Option Name | Type | Description |
 |------------|------|-------------|
 | **`id`** | `string` | An unique ID used assigned to the modal. This id is used to generate various UI component ids, like the modal overlay, modal dialog itself, etc. If empty or not provided, an unique identifier in this format xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx is generated.  |
-| **`zIndex`** | `number` | this zIndex value is passed by the ModalManager instance, so you cannot directly set a zIndex value for a modal instance. Thus it reduces unwanted zIndex mess up. Each new modal gets it&#039;s zIndex calculated based on modal manager&#039;s base zIndex and it&#039;s current position in stack.  |
+| **`zIndex`** | `number` | this zIndex value is passed by the ModalManager instance, so you cannot directly set a zIndex value for a modal instance. Thus it reduces unwanted zIndex mess up. Each new modal gets it's zIndex calculated based on modal manager's base zIndex and it's current position in stack.  |
 | **`header`** | `object` | The header section configuration. See below for all available parameters. All parameter below starting with header. belongs to header configuration object. These header.* parameter names follow javascript object key access format. Please DO NOT use the header.* parameters as they are! It wont work.  |
 | **`header.enabled`** | `boolean` | If not set to true, the header section will not be generated. Default: `true` |
 | **`header.title`** | `string` | The title text for the header section Default: `"Modal title"` |
@@ -55,10 +54,10 @@ when initializing the manager.
 | **`minHeight`** | `object \| null` | The minimum height object. If set modal height will at least be equal to this value. Default: `"-"` |
 | **`minHeight.value`** | `number` | The minimum height value  |
 | **`minHeight.unit`** | `string` | The minimum height unit. Can be px/vw or any other css unit applicable. Default: `"px"` |
-| **`position`** | `string` | Determines the modal dialog&#039;s position on the screen. It has one of these 9 possible values [&#039;top-left&#039;, &#039;top-center&#039;, &#039;top-right&#039;, &#039;middle-left&#039;, &#039;middle-center&#039;, &#039;middle-right&#039;, &#039;bottom-left&#039;, &#039;bottom-center&#039;, &#039;bottom-right&#039;]. Using one of these values you can control where the modal will show up. For example using bottom-right option, you can display the modal at the bottom right corner. A good position to display if the visitor want&#039;s to subscribe to a newsletter or something. Though most of the time you will want the modal to be centered in screen, but some time you may want to do otherwise. Default: `"middle-center"` |
-| **`shiftDistance`** | `object` | This shift distance is internally used by the modal, in conjunction with the modal manager&#039;s baseShiftDistance param to calculate if the modal needs to be shifted from it&#039;s original position. This cannot be used to configure a specific modal&#039;s shifting distance. Default: `"-"` |
+| **`position`** | `string` | Determines the modal dialog's position on the screen. It has one of these 9 possible values ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right']. Using one of these values you can control where the modal will show up. For example using bottom-right option, you can display the modal at the bottom right corner. A good position to display if the visitor want's to subscribe to a newsletter or something. Though most of the time you will want the modal to be centered in screen, but some time you may want to do otherwise. Default: `"middle-center"` |
+| **`shiftDistance`** | `object` | This shift distance is internally used by the modal, in conjunction with the modal manager's baseShiftDistance param to calculate if the modal needs to be shifted from it's original position. This cannot be used to configure a specific modal's shifting distance. Default: `"-"` |
 | **`transitionDuration`** | `number` | The duration in milliseconds for the fade in/out animation to complete. You can pass in 0 to disable the fading animation. This can also be configured for each individual modal instance.  |
-| **`cssClass`** | `object` | An object that accepts additional css classes for modal dialog, ok and close buttons. This object combines the class names from modal manager&#039;s cssClass parameter objects. So in modal manager&#039;s cssClass object you can specify all css classes common for all modals, then in each modal you can assign unique classes to alter look and feel for each modal. Default: `"-"` |
+| **`cssClass`** | `object` | An object that accepts additional css classes for modal dialog, ok and close buttons. This object combines the class names from modal manager's cssClass parameter objects. So in modal manager's cssClass object you can specify all css classes common for all modals, then in each modal you can assign unique classes to alter look and feel for each modal. Default: `"-"` |
 | **`cssClass.modal`** | `string` | Additional css class names for modal dialog  |
 | **`cssClass.modalOk`** | `string` | Additional css class names for modal ok button in footer Default: `"modal-ok"` |
 | **`cssClass.modalClose`** | `string` | Additional css class names for modal close button in footer Default: `"modal-close"` |
@@ -66,44 +65,43 @@ when initializing the manager.
 | **`onHide`** | `function \| null` | A callback which is called after modal removed from DOM. Its is where you can cleanup any resources that pertains to this modal instance.  |
 | **`draggable`** | `boolean` | Determines whether or not modal is draggable.  |
 | **`dragHandle`** | `string` | The element to be used as drag handle. If not provided or empty, the modal header will become the drag handle. If header is not available, then entire modal becomes drag handle. If a value is provided, it will be treated as an element id. If the element is found it will be used as drag handle. Else, the modal itself becomes drag handle, that is you can click and drag anywhere on the modal dialog. Dragging is an experimental feature!  |
-| **`userSelect`** | `boolean` | Enables user to select text content on the modal. By default it is disabled, so user&#039;s cannot select select text on the modal.  |
-| **`xButton`** | `object` | The close or X button settings for this modal instance. the modal manager&#039;s xButton parameter object defines common X button content and styling. And, this xButton object affects this modal&#039;s X button only.  |
+| **`userSelect`** | `boolean` | Enables user to select text content on the modal. By default it is disabled, so user's cannot select select text on the modal.  |
+| **`xButton`** | `object` | The close or X button settings for this modal instance. the modal manager's xButton parameter object defines common X button content and styling. And, this xButton object affects this modal's X button only.  |
 | **`xButton.enabled`** | `boolean` | Enable the close button or X button Default: `true` |
 | **`xButton.content`** | `string` | The button content. Defaults to X character. But you can provide any content you like, including text, image and font icons. Default: `"X"` |
 | **`xButton.cssClass`** | `string` | Additional css classes for the button  |
 | **`xButton.cssClass`** | `string` | Additional css classes for the button  |
 | **`xButton.inlineStyles`** | `string` | Additional css inline styles for the button  |
-| **`delayInMilliSeconds`** | `integer` | By specifying a delay in milliseconds you can make the modal delay it&#039;s display and after display actions, like event bindings. You can use this in scenarios, where you need to display a popup N seconds after page loads.  |
+| **`delayInMilliSeconds`** | `integer` | By specifying a delay in milliseconds you can make the modal delay it's display and after display actions, like event bindings. You can use this in scenarios, where you need to display a popup N seconds after page loads.  |
 | **`backDrop`** | `object \| null` | Modal back drop. This element is a fixed positioned div element, that covers entire visible viewport. And, this also acts as the parent container of the modal dialog.  |
-| **`bgColor`** | `string` | A color that can have alpha transparency. like the rgba format. This acts as back drop&#039;s background color.  |
+| **`bgColor`** | `string` | A color that can have alpha transparency. like the rgba format. This acts as back drop's background color.  |
 | **`opacity`** | `number` | The backdrop opacity. Do note that, having opacity less than 1, will turn entire backdrop including the modal dialog with transparent! So use this carefully. Default: `1` |
 | **`body`** | `object` | The mandatory modal content configuration object. Modal header and footer can be omitted, but body object must be present. See all the body.* parameters below to learn about what it supports. Default: `"-"` |
-| **`body.contentType`** | `string` | The modal content type. Any one of these values are supported: [&#039;html&#039;, &#039;iframe&#039;, &#039;function&#039;, &#039;ajax&#039;, &#039;image&#039;, &#039;youtube-video&#039;, &#039;template&#039;]. Defaults to &#039;html&#039;. Default: `"html"` |
-| **`body.content`** | `string` | when body.contentType === &#039;html&#039;, use this to provide the modal with html markup as string to display inside modal body.  |
-| **`body.iframeCode`** | `string` | The iframe embed code when body.contentType === &#039;iframe&#039;. The embed code must be valid with &lt;iframe&gt; tag present. A check is made for validity using regex.  |
-| **`body.functionName`** | `function \| string` | If body.contentType === &#039;function&#039;, use this property to supply the modal with a JS function or a valid function name that is available on global content. This is required!  |
+| **`body.contentType`** | `string` | The modal content type. Any one of these values are supported: ['html', 'iframe', 'function', 'ajax', 'image', 'youtube-video', 'template']. Defaults to 'html'. Default: `"html"` |
+| **`body.content`** | `string` | when body.contentType === 'html', use this to provide the modal with html markup as string to display inside modal body.  |
+| **`body.iframeCode`** | `string` | The iframe embed code when body.contentType === 'iframe'. The embed code must be valid with <iframe> tag present. A check is made for validity using regex.  |
+| **`body.functionName`** | `function \| string` | If body.contentType === 'function', use this property to supply the modal with a JS function or a valid function name that is available on global content. This is required!  |
 | **`body.functionArguments`** | `any` | If body.functionName is the name of the function, then any arguments to be passed to body.functionName. Can be any thing.  |
-| **`body.ajaxParams`** | `object` | if body.contentType === &#039;ajax&#039;, this is where you pass the ajax related options. See detailed parameters below.  |
+| **`body.ajaxParams`** | `object` | if body.contentType === 'ajax', this is where you pass the ajax related options. See detailed parameters below.  |
 | **`body.ajaxParams.contentDataType`** | `string` | The response format from the AJAX call. Can only be json or html. Default is html. Default: `"html"` |
 | **`body.ajaxParams.url`** | `string` | AJAX url to load. Must be a valid http URL  |
 | **`body.ajaxParams.method`** | `string` | The http method for this ajax call. can be any http method. Default: `"GET"` |
-| **`body.ajaxParams.header`** | `object` | An object containing http headers. Header names as this object&#039;s key and header value as property value. For example: {&#039;Content-Type&#039; : &#039;application/json&#039;}  |
+| **`body.ajaxParams.header`** | `object` | An object containing http headers. Header names as this object's key and header value as property value. For example: {'Content-Type' : 'application/json'}  |
 | **`body.ajaxParams.transformHtml`** | `function \| null` | A transformer method that can further process or transform loaded html content via ajax. This can be a function or global function name. The function must return content as string, usually the processed modal body content markup.  |
 | **`body.ajaxParams.transformJson`** | `function \| null` | Similar to body.ajaxParams.transformHtml, but for JSON data. Same rules apply.  |
 | **`body.ajaxParams.timeoutMs`** | `integer` | Timeout in milliseconds till the ajax operation aborts. Defaults to 30 seconds or 30000 milliseconds. Adjust this timeout based on your requirements or expectations. Default: `30000` |
 | **`body.ajaxParams.decodeParams`** | `boolean` | if the http method is GET, then removes the encoding from ajax url. While this may be desired from some cases, but for most cases you should keep the url with query params encoded so that the url can remain safe. Just added this for edge cases, where it may be required.  |
-| **`body.ajaxParams.data`** | `FormData | object | null` | AJAX request data. Data can be a plain object or FormData. Note that as of now, file upload using FormData is not supported. This data can be used for any HTTP methods. if used for GET, it will turn into query params.  |
-| **`body.imageParams`** | `object` | Required only if body.contentType === &#039;image&#039;. See options below.  |
+| **`body.ajaxParams.data`** | `FormData \| object \| null` | AJAX request data. Data can be a plain object or FormData. Note that as of now, file upload using FormData is not supported. This data can be used for any HTTP methods. if used for GET, it will turn into query params.  |
+| **`body.imageParams`** | `object` | Required only if body.contentType === 'image'. See options below.  |
 | **`body.imageParams.url`** | `string` | Image url. Required.  |
 | **`body.imageParams.alt`** | `string` | Image alt text.  |
 | **`body.imageParams.title`** | `string` | Image title.  |
 | **`body.imageParams.cssClass`** | `string` | Additional image css class  |
 | **`body.imageParams.inlineStyles`** | `string` | Additional css inline styles for the image  |
 | **`body.imageParams.caption`** | `string` | Caption content to be displayed at the bottom of the image.  |
-| **`body.imageParams.captionTemplate`** | `string` | If a valid &lt;template&gt; element ID is provided, that template&#039;s content is used as caption content. In this case the usual caption parameter above is ignored.  |
+| **`body.imageParams.captionTemplate`** | `string` | If a valid <template> element ID is provided, that template's content is used as caption content. In this case the usual caption parameter above is ignored.  |
 | **`body.imageParams.captionCssClass`** | `string` | Additional css classes to be added to caption element.  |
 | **`body.cssClass`** | `string` | Additional css classes to be added to modal body.  |
 | **`body.inlineStyles`** | `string` | Additional css inline styles to be added to modal body.  |
-| **`body.videoUrl`** | `string` | If body.contentType === &#039;youtube-video&#039;, pass the video url here. As of now only YouTube video urls are supported, including shorts.  |
-| **`body.templateId`** | `string` | ID of a &lt;template&gt; element. Usable when body.contentType === &#039;template&#039;. In this case the template element content becomes the modal body content.  |
-
+| **`body.videoUrl`** | `string` | If body.contentType === 'youtube-video', pass the video url here. As of now only YouTube video urls are supported, including shorts.  |
+| **`body.templateId`** | `string` | ID of a <template> element. Usable when body.contentType === 'template'. In this case the template element content becomes the modal body content.  |
