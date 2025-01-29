@@ -1,6 +1,6 @@
 # Usage
 
-Use as ESM or ES6 module -
+### Use as ESM or ES6 module -
 
 ```javascript
 <script type="module">
@@ -24,4 +24,26 @@ Use as ESM or ES6 module -
     });
     
 </script>
+```
+
+### In browser
+
+```javascript
+<script src="./dist/bundle.min.umd.js"></script>
+
+<script>
+    const managerUmd = new LayeredModalSystem.ModalManager({
+        // manager parameters ...
+    });
+
+    document.getElementById('some-trigger-element')?.addEventListener('click',() => {
+    
+        managerUmd.addModal({
+            // modal params ...
+        });
+    
+    });
+    
+</script>
+
 ```
