@@ -123,7 +123,9 @@ export default class ModalParameterParser {
          */
 
         params.onShow = _.objValue(params, 'onShow', null);
+        params.onBeforeShow = _.objValue(params, 'onBeforeShow', null);
         params.onHide = _.objValue(params, 'onHide', null);
+        params.onBeforeHide = _.objValue(params, 'onBeforeHide', null);
 
         /**
          * Drag ...

@@ -19,8 +19,6 @@
     overflow: scroll;
     flex-direction: column;
 
-    padding: 40px;
-
 
     &.secondary {
         background: rgba(0, 0, 0, 0.25);
@@ -70,9 +68,6 @@
     transition-property: opacity;
     transition-timing-function: ease;
 
-    /* max-height: 95vh !important;
-     max-width: 95vw !important;*/
-
     position: relative;
 
     display: flex;
@@ -97,8 +92,8 @@
     & > .x-btn {
         font-family: monospace;
         display: flex;
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
         background-color: red;
         color: #fff;
         justify-content: center;
@@ -372,8 +367,8 @@
     }
 
     .lm-single-image {
-        max-width: 80vw;
-        max-height: 80vh;
+        max-width: 100%;
+        max-height: 100%;
         width: auto;
         height: auto;
         object-fit: contain;

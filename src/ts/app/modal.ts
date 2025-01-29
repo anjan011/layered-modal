@@ -64,6 +64,8 @@ export default class Modal {
     constructor(params: Partial<ModalParams> = {}) {
 
         this.#params = ModalParameterParser.parse(params);
+
+        console.log(JSON.stringify(this.#params, null, 4));
     }
 
 
@@ -83,7 +85,7 @@ export default class Modal {
      * @return {string}
      */
 
-    geBackDropId(): string {
+    getBackDropId(): string {
         return `backdrop-${this.getId()}`;
     }
 
@@ -175,7 +177,7 @@ export default class Modal {
         // endregion
 
         return `
-        <div id="${this.geBackDropId()}" class="${cssClassList.join(' ')}" style="${inlineStyles.join('')}">
+        <div id="${this.getBackDropId()}" class="${cssClassList.join(' ')}" style="${inlineStyles.join('')}">
             ${this.isAjaxContentType() ? this.generateAjaxLoaderMarkup() : this.generateModalMarkup()}
         </div>
     `;
@@ -205,15 +207,23 @@ export default class Modal {
         }
 
         if (this.#params.maxWidth) {
-            modalInlineCss.push(
-                CssRulesGenerator.generateDimensionCss(this.#params.maxWidth, 'max-width')
-            );
+
+            if(_.objValueAsFloat(this.#params.maxWidth as object,'value') > 0) {
+                modalInlineCss.push(
+                    CssRulesGenerator.generateDimensionCss(this.#params.maxWidth, 'max-width')
+                );
+            }
+
+
         }
 
         if (this.#params.minWidth) {
-            modalInlineCss.push(
-                CssRulesGenerator.generateDimensionCss(this.#params.minWidth, 'min-width')
-            );
+
+            if (_.objValueAsFloat(this.#params.minWidth as object, 'value') >= 0) {
+                modalInlineCss.push(
+                    CssRulesGenerator.generateDimensionCss(this.#params.minWidth, 'min-width')
+                );
+            }
         }
 
         if (this.#params.height) {
@@ -227,15 +237,21 @@ export default class Modal {
         }
 
         if (this.#params.maxHeight) {
-            modalInlineCss.push(
-                CssRulesGenerator.generateDimensionCss(this.#params.maxHeight, 'max-height')
-            );
+            if (_.objValueAsFloat(this.#params.maxHeight as object,'value') > 0) {
+                modalInlineCss.push(
+                    CssRulesGenerator.generateDimensionCss(this.#params.maxHeight, 'max-height')
+                );
+
+            }
         }
 
         if (this.#params.minHeight) {
-            modalInlineCss.push(
-                CssRulesGenerator.generateDimensionCss(this.#params.minHeight, 'min-height')
-            );
+
+            if (_.objValueAsFloat(this.#params.minHeight as object, 'value') >= 0) {
+                modalInlineCss.push(
+                    CssRulesGenerator.generateDimensionCss(this.#params.minHeight, 'min-height')
+                );
+            }
         }
 
         // endregion
@@ -727,9 +743,11 @@ export default class Modal {
             clearTimeout(timeoutId);
         }
 
-        let elem = document.getElementById(this.geBackDropId());
+        let elem = document.getElementById(this.getBackDropId());
 
         if (elem) {
+
+            this.handleOnBeforeShow();
 
             elem.innerHTML = this.generateModalMarkup();
 
@@ -741,6 +759,44 @@ export default class Modal {
         }
     }
 
+    /**
+     * Handle before show callback ...
+     */
+
+    handleOnBeforeShow() {
+
+        if (!this.#params.onBeforeShow) {
+            return;
+        }
+
+        if (typeof this.#params.onBeforeShow === 'string') {
+            DomUtils.executeFunction(this.#params.onBeforeShow, '', this);
+        } else if (typeof this.#params.onBeforeShow === 'function') {
+            this.#params.onBeforeShow.apply(this, []);
+        }
+
+
+    }
+
+    /**
+     * Handle before hide callback ...
+     */
+
+    handleOnBeforeHide() {
+
+        if (!this.#params.onBeforeHide) {
+            return;
+        }
+
+        if (typeof this.#params.onBeforeHide === 'string') {
+            DomUtils.executeFunction(this.#params.onBeforeHide, '', this);
+        } else if (typeof this.#params.onBeforeHide === 'function') {
+            this.#params.onBeforeHide.apply(this, []);
+        }
+
+
+    }
+
     #ajaxScripts: Array<HTMLScriptElement> = [];
 
     /**
@@ -749,22 +805,22 @@ export default class Modal {
      * @param html
      */
 
-    ajaxScriptsAndStylesParsers(html : string) : string {
+    ajaxScriptsAndStylesParsers(html: string): string {
 
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
 
         let nodes = doc.querySelectorAll('link,script,style');
 
-        if(nodes.length) {
+        if (nodes.length) {
 
-            nodes.forEach( (item : Element, index, itemList) => {
+            nodes.forEach((item: Element, index, itemList) => {
 
                 let newNode = item.cloneNode(true) as Element;
 
-                newNode.setAttribute('data-modal',this.getId());
+                newNode.setAttribute('data-modal', this.getId());
 
-                if(newNode.tagName.toLowerCase() === 'script') {
+                if (newNode.tagName.toLowerCase() === 'script') {
 
                     /**
                      * We have to do attributes cloning, because
@@ -809,7 +865,7 @@ export default class Modal {
 
         let scriptsList = document.querySelectorAll(`[data-modal="${this.getId()}"]`);
 
-        if(scriptsList.length > 0) {
+        if (scriptsList.length > 0) {
 
             scriptsList.forEach(function (item, index, itemList) {
 
@@ -829,14 +885,14 @@ export default class Modal {
      * @param button
      */
 
-    generateFooterButtonMarkup(button: Partial<ButtonParams>) : string {
+    generateFooterButtonMarkup(button: Partial<ButtonParams>): string {
 
-        if(!button) {
+        if (!button) {
             return '';
         }
 
         return `<button type="button" class="${button.cssClass ?? ''}" style="${button.inlineStyles}">
-    ${(button.iconClass && button.iconPosition === 'left') ? `<i class="${button.iconClass}"></i> `:''}
+    ${(button.iconClass && button.iconPosition === 'left') ? `<i class="${button.iconClass}"></i> ` : ''}
     ${button.text}
     ${(button.iconClass && button.iconPosition === 'right') ? ` <i class="${button.iconClass}"></i>` : ''}
 </button>`;
@@ -905,7 +961,7 @@ export default class Modal {
 
         document.body.insertAdjacentHTML('beforeend', this.generateHtml());
 
-        let backDrop = document.getElementById(this.geBackDropId());
+        let backDrop = document.getElementById(this.getBackDropId());
 
         if (!backDrop) {
             return;
@@ -926,6 +982,8 @@ export default class Modal {
         if (this.isAjaxContentType()) {
             return;
         }
+
+        this.handleOnBeforeShow();
 
         document.body.insertAdjacentHTML('beforeend', this.generateHtml());
 
@@ -966,9 +1024,12 @@ export default class Modal {
 
             modal.style.display = 'none'; // Hide the modal completely after fade-out
 
-            const backDrop = document.getElementById(this.geBackDropId());
+            const backDrop = document.getElementById(this.getBackDropId());
 
             if (backDrop) {
+
+                this.handleOnBeforeHide();
+
                 backDrop.remove();
             }
 
@@ -1040,7 +1101,7 @@ export default class Modal {
 
     #bindEvents() {
 
-        let backDrop = document.getElementById(this.geBackDropId());
+        let backDrop = document.getElementById(this.getBackDropId());
 
         if (!backDrop) {
             return;
@@ -1050,13 +1111,13 @@ export default class Modal {
          * If we have any scripts loaded through ajax, append them to DOM here.
          */
 
-        if(this.#params.body) {
+        if (this.#params.body) {
 
-            if(this.#ajaxScripts.length) {
+            if (this.#ajaxScripts.length) {
 
-                this.#ajaxScripts.forEach(function (item : HTMLScriptElement, index, itemList) {
+                this.#ajaxScripts.forEach(function (item: HTMLScriptElement, index, itemList) {
 
-                        document.body.appendChild(item);
+                    document.body.appendChild(item);
 
                 });
             }
@@ -1111,8 +1172,14 @@ export default class Modal {
 
             let closeClass = _this.#params.cssClass?.modalClose;
 
+            let closeSelector = _.cssClassListToSelector(closeClass as string);
+
+            if(!closeSelector) {
+                return;
+            }
+
             backDrop
-                .querySelectorAll(`.${closeClass}`)
+                .querySelectorAll(`${closeSelector}`)
                 .forEach(function (item) {
                     item.addEventListener('click', function () {
                         _this.getManager().removeModal();
@@ -1136,29 +1203,35 @@ export default class Modal {
 
         let _this = this;
 
+        let okCssSelector = _.cssClassListToSelector(_this.#params.cssClass?.modalOk as string);
+
+        console.log(okCssSelector);
+
+        if (!okCssSelector) {
+            return;
+        }
+
         if (_.isFunction(this.#params.footer?.onOk)) {
 
-            let okCssClass: string = '.' + _this.#params.cssClass?.modalOk;
+
 
             backDrop
-                .querySelectorAll(okCssClass)
+                .querySelectorAll(okCssSelector)
                 .forEach((item) => {
                     item.addEventListener('click', () => {
-                        _this.getParams().footer?.onOk.apply(_this);
+                        (_this.getParams().footer?.onOk as Function).apply(_this);
                     });
                 });
         } else if (_.isString(_this.#params.footer?.onOk)) {
 
             let functionName = _this.#params.footer?.onOk;
 
-            let okCssClass: string = '.' + _this.#params.cssClass?.modalOk;
-
             backDrop
-                .querySelectorAll(okCssClass)
+                .querySelectorAll(okCssSelector)
                 .forEach(function (item) {
                     item.addEventListener('click', () => {
 
-                        DomUtils.executeFunction(functionName, '', _this);
+                        DomUtils.executeFunction(functionName as string, '', _this);
                     });
                 });
         }
@@ -1322,21 +1395,21 @@ export default class Modal {
 
     }
 
-    generateBackDropInlineStyles(backDrop?: Partial<BackDropParams>) : string {
+    generateBackDropInlineStyles(backDrop?: Partial<BackDropParams>): string {
 
-        if(!backDrop) {
+        if (!backDrop) {
             return '';
         }
 
         let styles = [];
 
-        let bgColor = _.objValueAsString(backDrop,'bgColor');
+        let bgColor = _.objValueAsString(backDrop, 'bgColor');
 
-        if(bgColor) {
+        if (bgColor) {
             styles.push(`background-color: ${bgColor};`);
         }
 
-        let opacity = _.objValueAsFloat(backDrop,'opacity',1);
+        let opacity = _.objValueAsFloat(backDrop, 'opacity', 1);
 
         styles.push(`opacity: ${opacity};`);
 

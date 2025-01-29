@@ -472,6 +472,40 @@ const _ = {
         urlObj.search = urlObj.search ? `${urlObj.search}&${newParams}` : newParams;
 
         return urlObj.toString();
+    },
+
+    cssClassListToSelector(classList : string | string[]) : string {
+
+        if(typeof classList === 'string' && classList.trim() !== '') {
+
+            let parts: string[] = classList.split(' ');
+
+            parts = parts.map((value: string) => {return value.trim()});
+
+            parts = parts.filter((value : string) => {return value.trim() !== ''});
+
+            return `.${parts.join('.')}`;
+
+        } else if(_.isArray(classList) && classList.length) {
+
+            let parts : string[] = (classList as any[]).filter((value) => {
+                return _.isString(value) ? value : '';
+            }).join(' ').split(' ');
+
+            parts = parts.map((value: string) => {
+                return _.isString(value) ? value.trim() : '';
+            });
+
+            parts = parts.filter((value: string) => {
+                return value.trim() !== ''
+            });
+
+            return `.${parts.join('.')}`;
+
+        }
+
+        return '';
+
     }
 }
 

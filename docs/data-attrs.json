@@ -1,0 +1,197 @@
+[
+  {
+    "name" : "data-lms-trigger",
+    "type": "number",
+    "default" : "",
+    "description" : "To make use of data-* attributes to load the modal, this attribute value must be set to 1, else the modal will not be triggered!"
+  },
+  {
+    "name": "data-lm-css-class",
+    "type": "string",
+    "default": "",
+    "description": "Pass additional css class names to the modal dialog. Multiple class names must be separated by space."
+  },
+  {
+    "name": "data-lm-auto-width",
+    "type": "number",
+    "default": "1",
+    "description": "By default the modal has auto width, means that it will fit to content's width. If you specifically pass the value of 0, then you can set a fixed width value."
+  },
+  {
+    "name": "data-lm-width-value",
+    "type": "number",
+    "default": "0",
+    "description": "A fixed width value. Only usable if `data-lm-auto-width` is not set or has a value of 0."
+  },
+  {
+    "name": "data-lm-width-unit",
+    "type": "string",
+    "default": "px",
+    "description": "Any valid css unit. This can be px,vw, em, rem, etc. If left empty px will become the unit."
+  },
+  {
+    "name": "data-lm-max-width-value",
+    "type": "number",
+    "default": "0",
+    "description": "A maximum width value. Ignored if empty or less than or equal to 0. The modal dialog's maximum width will not exceed this value and unit below."
+  },
+  {
+    "name": "data-lm-max-width-unit",
+    "type": "string",
+    "default": "px",
+    "description": "Same as width unit. Any valid css unit is usable."
+  },
+  {
+    "name": "data-lm-min-width-value",
+    "type": "number",
+    "default": "0",
+    "description": "A minimum width value. Can be greater than or equal to 0. The modal dialog's minimum width will be set to this value and unit below."
+  },
+  {
+    "name": "data-lm-min-width-unit",
+    "type": "string",
+    "default": "px",
+    "description": "Same as width unit. Any valid css unit is usable."
+  },
+
+  {
+    "name": "data-lm-auto-height",
+    "type": "number",
+    "default": "1",
+    "description": "By default the modal has auto height, means that it will fit to content's height. If you specifically pass the value of 0, then you can set a fixed height value."
+  },
+  {
+    "name": "data-lm-height-value",
+    "type": "number",
+    "default": "0",
+    "description": "A fixed height value. Only usable if `data-lm-auto-height` is not set or has a value of 0."
+  },
+  {
+    "name": "data-lm-height-unit",
+    "type": "string",
+    "default": "px",
+    "description": "Any valid css unit. This can be px,vh, em, rem, etc. If left empty px will become the unit."
+  },
+  {
+    "name": "data-lm-max-height-value",
+    "type": "number",
+    "default": "0",
+    "description": "A maximum height value. Ignored if empty or less than or equal to 0. The modal dialog's maximum height will not exceed this value and unit below."
+  },
+  {
+    "name": "data-lm-max-height-unit",
+    "type": "string",
+    "default": "px",
+    "description": "Same as height unit. Any valid css unit is usable."
+  },
+  {
+    "name": "data-lm-min-height-value",
+    "type": "number",
+    "default": "0",
+    "description": "A minimum height value. Can be greater than or equal to 0. The modal dialog's minimum height will be set to this value and unit below."
+  },
+  {
+    "name": "data-lm-min-height-unit",
+    "type": "string",
+    "default": "px",
+    "description": "Same as height unit. Any valid css unit is usable."
+  },
+
+  {
+    "name": "data-lm-on-show",
+    "type": "string",
+    "default": "",
+    "description": "A global function name, that is called right after modal is added to DOM. If the function not exist, it will be silently ignored, with a console log `Function named {funcName} could not be found!`"
+  },
+  {
+    "name": "data-lm-on-before-show",
+    "type": "string",
+    "default": "",
+    "description": "A global function name, that is called right before modal is added to DOM. If the function not exist, it will be silently ignored, with a console log `Function named {funcName} could not be found!`"
+  },
+  {
+    "name": "data-lm-on-hide",
+    "type": "string",
+    "default": "",
+    "description": "A global function name, that is called right after modal is removed from DOM. If the function not exist, it will be silently ignored, with a console log `Function named {funcName} could not be found!`"
+  },
+  {
+    "name": "data-lm-on-before-hide",
+    "type": "string",
+    "default": "",
+    "description": "A global function name, that is called right before modal is removed from DOM. If the function not exist, it will be silently ignored, with a console log `Function named {funcName} could not be found!`"
+  },
+
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  },
+  {
+    "name": "",
+    "type": "string",
+    "default": "",
+    "description": ""
+  }
+]

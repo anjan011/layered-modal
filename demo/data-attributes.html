@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Data Attributes</title>
+
+        <link rel="stylesheet" href="./dist/styles.min.css">
+
+        <style>
+            .bottom-border {
+                border-bottom-left-radius: 25px !important;
+                border-bottom-right-radius: 25px !important;
+                border-bottom: solid 5px #000 !important;
+            }
+        </style>
+
+        <script type="module">
+
+            import {ModalManager} from '/dist/bundle.min.esm.js';
+
+            document.addEventListener('DOMContentLoaded', function () {
+
+
+                let manager = new ModalManager({
+                    cssClass : {
+                        modalClose : 'modal-close btn-close',
+                        modalOk : 'ok--modal go-modal',
+                    }
+                });
+
+                document.getElementById('click-me').addEventListener('click',function() {
+                    manager.addModal({
+                        cssClass : {
+                            modalOk : 'test1 test2'
+                        },
+                        header : {
+                            enabled : true,
+                            title : 'Click me!'
+                        },
+                        footer : {
+                            enabled: true,
+                            mode : 'confirm',
+                            onOk : function() {
+                                this.hide();
+                            }
+                        }
+                    });
+                });
+
+            });
+
+
+        </script>
+
+    </head>
+    <body>
+
+        <a href="#" id="click-me">Open</a> <hr>
+
+        <a href="#"
+           id="openModalViaData"
+           class="btn btn-warning lm-btn-success"
+
+           data-lms-trigger="1"
+
+           data-lm-css-class="bottom-border"
+
+
+           data-lm-f-on-ok="__on_footer_ok"
+
+           data-lm-on-show="__on_show2"
+           data-lm-on-before-show="__on_before_show2"
+           data-lm-on-hide="__on_hide2"
+           data-lm-on-before-hide="__on_before_hide2"
+
+
+        ><span>Open Using Data Attributes</span></a>
+
+        <button
+                id="openModalViaData2"
+                style="display: none;"
+                class="btn btn-warning lm-btn-success"
+
+                data-lms-trigger="1"
+
+                data-lm-css-class=""
+
+                data-lm-auto-width="0"
+                data-lm-auto-height="0"
+
+                data-lm-width-value="500"
+
+                data-lm-max-width-value2="800"
+                data-lm-max-width-unit2="px"
+
+
+                data-lm-on-show2="__on_show"
+                data-lm-on-before-show2="__on_before_show"
+                data-lm-on-hide2="__on_hide"
+                data-lm-on-before-hide2="__on_before_hide"
+
+                data-lm-h-enabled="0"
+                data-lm-h-title="A video!"
+                data-lm-h-title-tag="h1"
+
+                data-lm-b-css-class="no-padding"
+                data-lm-b-content-type="image"
+                data-lm-b-function-name="__mc_content"
+                data-lm-b-function-args='{"name":"Justin","age":20}'
+                data-lm-b-content="<div>What the hell Mary! <span class='text-danger'>using html for content ...</span></div>"
+                data-lm-b-template-id="modal-content-1234"
+                data-lm-b-video-url="https://www.youtube.com/watch?v=ShJw2I8cgBE"
+                data-lm-b-aspect-ratio="1.77777777778"
+                data-lm-b-image-url="/assets/svg/1600x900.svg"
+
+
+                data-lm-footer-enabled="0"
+                data-lm-footer-mode="confirm"
+                data-lm-footer-template-id="footer-12"
+                data-lm-footer-on-ok="__on_ok"
+
+        ><span>Open Using Data Attributes</span></button>
+
+        <script>
+
+
+            function __on_show() {
+                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Modal displayed ...`);
+            }
+
+            function __on_before_show() {
+
+                console.log('%c%s', 'color: red;background-color: red;color: #fff;font-size: 1.2em;', 'On before show called ...');
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `Modal ID : ${this.getId()}`);
+
+                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Modal element should be null, since it is not added yet: `, document.getElementById(this.getId()));
+
+            }
+
+            function __on_hide() {
+                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Modal removed ...`);
+            }
+
+            function __on_before_hide() {
+
+                console.log('%c%s', 'color: red;background-color: red;color: #fff;font-size: 1.2em;', 'On before hide called ...');
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `Modal ID : ${this.getId()}`);
+
+                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Modal element should NOT be null, since it is not removed yet: `, document.getElementById(this.getId()));
+
+
+            }
+
+            function __on_footer_ok() {
+
+                this.hide();
+
+            }
+        </script>
+
+    </body>
+</html>

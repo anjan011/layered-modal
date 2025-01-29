@@ -40,6 +40,8 @@ export class DomUtils {
         if (typeof (window as any)[funcName] === "function") {
             (window as any)[funcName].apply(context, [functionArgs]);
 
+        } else {
+            console.log(`Function named ${funcName} could not be found!`);
         }
     }
 

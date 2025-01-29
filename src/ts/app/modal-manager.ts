@@ -382,6 +382,7 @@ export default class ModalManager {
         document.addEventListener("click",  (event) => {
 
 
+            event.preventDefault();
 
             if(!event.target) {
                 return;
@@ -405,7 +406,9 @@ export default class ModalManager {
                     if(t.disabled) {
                         return;
                     }
-                } else if(t.classList.contains('disabled')) {
+                }
+
+                if(t.classList.contains('disabled')) {
                     return;
                 }
 
@@ -458,7 +461,15 @@ export default class ModalManager {
                     }
                 };
 
-                // region [Modal width and height]
+                // region [Modal widths]
+
+                let autoWidth = true;
+
+                if(attrs.hasOwnProperty('lm-auto-width')) {
+                    autoWidth = _.objValueAsIntFlag(attrs,'lm-auto-width',1) > 0;
+                }
+
+                modalParams.autoWidth = autoWidth;
 
                 let width: Partial<Dimension> = {};
 
@@ -480,6 +491,29 @@ export default class ModalManager {
 
                 }
 
+                let minWidth: Partial<Dimension> = {};
+
+                if (attrs.hasOwnProperty('lm-min-width-value')) {
+                    minWidth.value = _.objValueAsFloat(attrs, 'lm-min-width-value', 0);
+                    minWidth.unit = _.objValueAsString(attrs, 'lm-min-width-unit', 'px');
+
+                    modalParams.minWidth = minWidth as Dimension;
+
+                }
+
+                // endregion
+
+                // region [Modal heights]
+
+                let autoHeight = true;
+
+                if (attrs.hasOwnProperty('lm-auto-height')) {
+                    autoHeight = _.objValueAsIntFlag(attrs, 'lm-auto-height', 1) > 0;
+                }
+
+                modalParams.autoHeight = autoHeight;
+
+
                 let height: Partial<Dimension> = {};
 
                 if (attrs.hasOwnProperty('lm-height-value')) {
@@ -492,10 +526,20 @@ export default class ModalManager {
                 let maxHeight: Partial<Dimension> = {};
 
                 if (attrs.hasOwnProperty('lm-max-height-value')) {
-                    maxHeight.value = _.objValueAsFloat(attrs, 'lm-max-height-value',100);
+                    maxHeight.value = _.objValueAsFloat(attrs, 'lm-max-height-value', 100);
                     maxHeight.unit = _.objValueAsString(attrs, 'lm-max-height-unit', '%');
 
                     modalParams.maxHeight = maxHeight as Dimension;
+                }
+
+                let minHeight: Partial<Dimension> = {};
+
+                if (attrs.hasOwnProperty('lm-min-height-value')) {
+                    minHeight.value = _.objValueAsFloat(attrs, 'lm-min-height-value', 0);
+                    minHeight.unit = _.objValueAsString(attrs, 'lm-min-height-unit', 'px');
+
+                    modalParams.minHeight = minHeight as Dimension;
+
                 }
 
                 // endregion
@@ -503,19 +547,19 @@ export default class ModalManager {
                 // region [Footer]
 
                 let footer : any = {
-                    enabled: _.objValueAsIntFlag(attrs, 'lm-footer-enabled', 1),
-                    mode: _.objValueAsString(attrs, 'lm-footer-mode', 'confirm'),
+                    enabled: _.objValueAsIntFlag(attrs, 'lm-f-enabled', 1),
+                    mode: _.objValueAsString(attrs, 'lm-f-mode', 'confirm'),
                 };
 
                 if(footer.mode === 'custom') {
 
-                    let templateId = _.objValueAsString(attrs, 'lm-footer-template-id');
+                    let templateId = _.objValueAsString(attrs, 'lm-f-template-id');
 
                     footer.content = this.getContentFromTemplateElement(templateId);
 
                 } else if(footer.mode === 'confirm') {
 
-                    footer.onOk = _.objValueAsString(attrs, 'lm-footer-on-ok');
+                    footer.onOk = _.objValueAsString(attrs, 'lm-f-on-ok');
 
                 }
 
@@ -525,6 +569,15 @@ export default class ModalManager {
 
                 // region [On Show and on hide ...]
 
+                if (attrs.hasOwnProperty('lm-on-before-show')) {
+                    let lmOnBeforeShow = _.objValueAsString(attrs, 'lm-on-before-show');
+
+
+                    if (lmOnBeforeShow) {
+                        modalParams.onBeforeShow = lmOnBeforeShow;
+                    }
+                }
+
                 if(attrs.hasOwnProperty('lm-on-show')) {
                     let lmOnShow = _.objValueAsString(attrs,'lm-on-show');
 
@@ -532,6 +585,15 @@ export default class ModalManager {
 
                     if(lmOnShow) {
                         modalParams.onShow = lmOnShow;
+                    }
+                }
+
+                if (attrs.hasOwnProperty('lm-on-before-hide')) {
+                    let lmOnBeforeHide = _.objValueAsString(attrs, 'lm-on-before-hide');
+
+
+                    if (lmOnBeforeHide) {
+                        modalParams.onBeforeHide = lmOnBeforeHide;
                     }
                 }
 
@@ -552,6 +614,10 @@ export default class ModalManager {
                 }
 
                 // endregion
+
+                console.log(attrs);
+
+                console.log(modalParams.width);
 
                 this.addModal(modalParams);
 
