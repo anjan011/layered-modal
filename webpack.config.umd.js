@@ -1,5 +1,4 @@
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
-
 import path from "path";
 import {fileURLToPath} from "url";
 
@@ -9,15 +8,14 @@ const __dirname = path.dirname(__filename);
 export default {
     entry: './src/ts/index.ts',
     output: {
-        filename: 'bundle.min.esm.js',
+        filename: 'bundle.min.umd.js', // Updated filename for UMD
         path: path.resolve(__dirname, 'dist'),
-        module: true,
-        library : {
-            type : 'module',
-        }
-    },
-    experiments: {
-        outputModule: true
+        library: {
+            name: 'LayeredModalSystem', // Replace 'MyLibrary' with your library name
+            type: 'umd', // Set the library type to UMD
+            umdNamedDefine: true, // Use named define for AMD modules
+        },
+        globalObject: 'this', // Ensure compatibility with Node.js and browser
     },
     resolve: {
         extensions: ['.ts', '.js', '.tsx'],
@@ -59,11 +57,10 @@ export default {
         liveReload: true,
         devMiddleware: {
             writeToDisk: (filePath) => {
-                return filePath.endsWith('bundle.min.esm.js') ||
+                return filePath.endsWith('bundle.min.umd.js') || // Updated filename for UMD
                     filePath.endsWith('styles.min.css');
             },
         },
-
     },
     optimization: {
         usedExports: true,

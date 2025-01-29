@@ -26,6 +26,13 @@
   "scripts": {
     "build": "webpack",
     "build:production": "webpack --mode production",
+
+    "build:umd": "webpack --config webpack.config.umd.js",
+    "build:umd:production": "webpack --config webpack.config.umd.js --mode production",
+
+    "build:all" : "npm run build && npm run build:umd",
+    "build:all:production" : "npm run build:production && npm run build:umd:production",
+
     "test": "jest",
     "watch": "webpack --watch",
     "serve": "npx webpack serve",

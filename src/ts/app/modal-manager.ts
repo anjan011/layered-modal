@@ -193,8 +193,6 @@ export default class ModalManager {
 
         }
 
-        console.log(params.cssClass);
-
         /**
          * Transition duration ...
          */
@@ -554,10 +552,6 @@ export default class ModalManager {
                 }
 
                 // endregion
-
-                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', 'Attrs ...',attrs);
-
-                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', 'Modal Params',modalParams);
 
                 this.addModal(modalParams);
 

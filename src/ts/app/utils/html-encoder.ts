@@ -8,7 +8,7 @@ export default class HtmlEncoder {
         const ignoreSet = new Set(ignoreChars); // Use a Set for O(1) lookups
 
         // Map of replacements
-        const replaceMap = {
+        const replaceMap : Record<string, string> = {
             '&': '&amp;',
             '<': '&lt;',
             '>': '&gt;',
@@ -22,13 +22,13 @@ export default class HtmlEncoder {
 
         // Process string in one pass
         for (let i = 0; i < strArray.length; i++) {
-            let char = strArray[i];
+            let char : string = strArray[i];
 
             if (ignoreSet.has(char) || !replaceMap[char]) {
                 continue; // Skip ignored characters or those not in replaceMap
             }
 
-            strArray[i] = replaceMap[char]; // Replace directly
+            strArray[i] = replaceMap[char as string] as string; // Replace directly
         }
 
         return strArray.join(""); // Convert back to string
