@@ -430,11 +430,12 @@ export default class ModalManager {
                 let modalParams : Partial<ModalParams> = {
                     id : _.objValueAsString(attrs,'lm-id'),
                     zIndex : _.objValueAsInt(attrs,'lm-z-index',1),
-
+                    transitionDuration : _.objValueAsInt(attrs,'lm-transition-duration'),
                     header : {
                         enabled : _.objValueAsIntFlag(attrs,'lm-h-enabled',1) > 0,
                         title : _.objValueAsString(attrs, 'lm-h-title', 'Modal Title'),
                         titleTag : _.objValueAsString(attrs, 'lm-h-title-tag', 'h2'),
+                        cssClass : _.objValueAsString(attrs, 'lm-h-css-class', ''),
                     },
                     cssClass : {
                         modal : _.objValueAsString(attrs,'lm-css-class'),
@@ -555,7 +556,13 @@ export default class ModalManager {
 
                     let templateId = _.objValueAsString(attrs, 'lm-f-template-id');
 
-                    footer.content = this.getContentFromTemplateElement(templateId);
+                    if(templateId !== '') {
+                        footer.content = this.getContentFromTemplateElement(templateId);
+                    } else {
+                        footer.content = _.objValueAsString(attrs,'lm-f-content');
+                    }
+
+
 
                 } else if(footer.mode === 'confirm') {
 

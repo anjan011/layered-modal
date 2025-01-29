@@ -317,6 +317,7 @@ export default class Modal {
         // region [Css Classes ...]
 
         let classList = [
+            'd-flex',
             body.cssClass
         ];
 
@@ -541,16 +542,16 @@ export default class Modal {
         }
 
         if (footer?.mode === 'custom') {
-            return `<div class="layered-modal-footer ${footer.cssClass}" style="${footer.inlineStyles}">${footer.content}</div>`;
+            return `<div class="layered-modal-footer d-flex jc-center ai-center ${footer.cssClass}" style="${footer.inlineStyles}">${footer.content}</div>`;
         } else if (footer?.mode === 'alert') {
 
-            return `<div class="layered-modal-footer d-flex fd-row jc-center gap-2 ${footer.cssClass}" style="${footer.inlineStyles}">
+            return `<div class="layered-modal-footer d-flex fd-row jc-center ai-center gap-2 ${footer.cssClass}" style="${footer.inlineStyles}">
     ${this.generateFooterButtonMarkup(footer.closeButton)}
 </div>`;
 
         } else if (footer?.mode === 'confirm') {
 
-            return `<div class="layered-modal-footer d-flex fd-row jc-between gap-2 ${footer.cssClass}" style="${footer.inlineStyles}">
+            return `<div class="layered-modal-footer d-flex fd-row jc-between ai-center gap-2 ${footer.cssClass}" style="${footer.inlineStyles}">
     ${this.generateFooterButtonMarkup(footer.closeButton)}
     ${this.generateFooterButtonMarkup(footer.okButton)}
 </div>`;
@@ -1205,15 +1206,11 @@ export default class Modal {
 
         let okCssSelector = _.cssClassListToSelector(_this.#params.cssClass?.modalOk as string);
 
-        console.log(okCssSelector);
-
         if (!okCssSelector) {
             return;
         }
 
         if (_.isFunction(this.#params.footer?.onOk)) {
-
-
 
             backDrop
                 .querySelectorAll(okCssSelector)

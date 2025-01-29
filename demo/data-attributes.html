@@ -4,13 +4,21 @@
         <meta charset="UTF-8">
         <title>Data Attributes</title>
 
+        <link rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+
         <link rel="stylesheet" href="./dist/styles.min.css">
 
         <style>
             .bottom-border {
-                border-bottom-left-radius: 25px !important;
-                border-bottom-right-radius: 25px !important;
                 border-bottom: solid 5px #000 !important;
+
+            }
+
+            .top-border {
+                border-top: solid 5px #000 !important;
             }
         </style>
 
@@ -18,34 +26,7 @@
 
             import {ModalManager} from '/dist/bundle.min.esm.js';
 
-            document.addEventListener('DOMContentLoaded', function () {
-
-
-                let manager = new ModalManager({
-                    cssClass : {
-                        modalClose : 'modal-close btn-close',
-                        modalOk : 'ok--modal go-modal',
-                    }
-                });
-
-                document.getElementById('click-me').addEventListener('click',function() {
-                    manager.addModal({
-                        cssClass : {
-                            modalOk : 'test1 test2'
-                        },
-                        header : {
-                            enabled : true,
-                            title : 'Click me!'
-                        },
-                        footer : {
-                            enabled: true,
-                            mode : 'confirm',
-                            onOk : function() {
-                                this.hide();
-                            }
-                        }
-                    });
-                });
+            const manager = new ModalManager({
 
             });
 
@@ -55,74 +36,78 @@
     </head>
     <body>
 
-        <a href="#" id="click-me">Open</a> <hr>
-
         <a href="#"
            id="openModalViaData"
            class="btn btn-warning lm-btn-success"
 
            data-lms-trigger="1"
 
-           data-lm-css-class="bottom-border"
+           data-lm-css-class="bottom-border "
+
+           data-lm-transition-duration="200"
+
+           data-lm-auto-width="0"
+           data-lm-auto-height="0"
+
+           data-lm-max-width-value="70"
+           data-lm-max-width-unit="vw"
+
+           data-lm-width-value="800"
+           data-lm-width-unit="px"
+
+           data-lm-h-enabled="0"
+           data-lm-h-title="A new modal ...."
+           data-lm-h-title-tag="h2"
+           data-lm-h-css-class="bg-warning top-border"
+
+           data-lm-b-css-class="no-padding bg-info jc-center"
+           data-lm-b-content-type="youtube-video"
+           data-lm-b-function-name="__mc_content"
+           data-lm-b-function-args='{"name":"Justin","age":20, "what": null}'
+           data-lm-b-content="<div>What the hell Mary! <span class='text-danger'>using html for content ...</span></div>"
+           data-lm-b-template-id="modal-content-1234"
+           data-lm-b-video-url="https://www.youtube.com/watch?v=ShJw2I8cgBE"
+           data-lm-b-aspect-ratio="1.77777777778"
+           data-lm-b-image-url="/assets/svg/1600x900.svg"
 
 
-           data-lm-f-on-ok="__on_footer_ok"
-
-           data-lm-on-show="__on_show2"
-           data-lm-on-before-show="__on_before_show2"
-           data-lm-on-hide="__on_hide2"
-           data-lm-on-before-hide="__on_before_hide2"
+           data-lm-f-enabled="0"
+           data-lm-f-mode="custom"
+           data-lm-f-template-id="footer-12"
+           data-lm-f-on-ok="__on_ok"
+           data-lm-f-content="What is this?"
 
 
         ><span>Open Using Data Attributes</span></a>
 
-        <button
-                id="openModalViaData2"
-                style="display: none;"
-                class="btn btn-warning lm-btn-success"
+        <template id="modal-content-1234">
 
-                data-lms-trigger="1"
+            <p class="text-primary">Deleniti nullam dui consectetuer eros mollitia, qui eu voluptas euismod assumenda facilisi est class
+                tempus.</p>
 
-                data-lm-css-class=""
+            <p class="text-success">Molestie gravida aspernatur recusandae tempus quod orci sollicitudin ratione diam, varius luctus.
+                Consectetuer? Primis molestias.</p>
 
-                data-lm-auto-width="0"
-                data-lm-auto-height="0"
+            <p class="text-warning">Maiores sint? Ab asperiores voluptatem diamlorem sem? Quis ultricies varius, litora iure laboris lacinia
+                commodi.</p>
 
-                data-lm-width-value="500"
+            <p class="text-danger">Vestibulum facilis quidem tellus justo, cumque congue laudantium voluptatum nostra, perferendis quisquam!
+                Inventore qui, necessitatibus.</p>
 
-                data-lm-max-width-value2="800"
-                data-lm-max-width-unit2="px"
+        </template>
 
-
-                data-lm-on-show2="__on_show"
-                data-lm-on-before-show2="__on_before_show"
-                data-lm-on-hide2="__on_hide"
-                data-lm-on-before-hide2="__on_before_hide"
-
-                data-lm-h-enabled="0"
-                data-lm-h-title="A video!"
-                data-lm-h-title-tag="h1"
-
-                data-lm-b-css-class="no-padding"
-                data-lm-b-content-type="image"
-                data-lm-b-function-name="__mc_content"
-                data-lm-b-function-args='{"name":"Justin","age":20}'
-                data-lm-b-content="<div>What the hell Mary! <span class='text-danger'>using html for content ...</span></div>"
-                data-lm-b-template-id="modal-content-1234"
-                data-lm-b-video-url="https://www.youtube.com/watch?v=ShJw2I8cgBE"
-                data-lm-b-aspect-ratio="1.77777777778"
-                data-lm-b-image-url="/assets/svg/1600x900.svg"
-
-
-                data-lm-footer-enabled="0"
-                data-lm-footer-mode="confirm"
-                data-lm-footer-template-id="footer-12"
-                data-lm-footer-on-ok="__on_ok"
-
-        ><span>Open Using Data Attributes</span></button>
+        <template id="footer-12">
+            This is a template? <strong class="text-danger">What? Why? When? How?</strong>
+        </template>
 
         <script>
 
+
+            function __mc_content(params) {
+
+                return JSON.stringify(params);
+
+            }
 
             function __on_show() {
                 console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Modal displayed ...`);
