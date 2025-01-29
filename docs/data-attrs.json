@@ -234,5 +234,41 @@
     "type": "string | null",
     "default": "",
     "description": "For content type `image`. Pass in the image url here."
+  },
+  {
+    "name" : "data-lm-b-ajax-url",
+    "type" : "string",
+    "default" : "",
+    "description": "Ajax URL when content type is `ajax`. This is a required field. Can be any absolute or relative url. If the url is originating from different domain, you many need to configure CORS headers for it."
+  },
+  {
+    "name" : "data-lm-b-ajax-method",
+    "type" : "string",
+    "default": "get",
+    "description": ""
+  },
+  {
+    "name": "data-lm-b-ajax-content-data-type",
+    "type": "string",
+    "default": "html",
+    "description": "Expected content data type. Either html or json."
+  },
+  {
+    "name": "data-lm-b-ajax-data",
+    "type": "string",
+    "default": "",
+    "description": "AJAX request data as URL encoded data string compatible with `application/x-www-form-urlencoded`. You can set request data for any method here. For GET method it will turn into query params."
+  },
+  {
+    "name": "data-lm-b-ajax-transform-json",
+    "type": "string | null",
+    "default": "",
+    "description": "A global function name that acts as JSON data transformer. This function is responsible for transforming JSON data to html markup. This is required if content data type is ajax."
+  },
+  {
+    "name": "data-lm-b-ajax-transform-html",
+    "type": "string | null",
+    "default": "",
+    "description": "An optional global function name that acts as HTML content transformer. This function is responsible for transforming HTML data before it can be used as modal content."
   }
 ]

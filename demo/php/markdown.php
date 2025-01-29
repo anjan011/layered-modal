@@ -38,7 +38,7 @@
         return $markdown;
     }
 
-    $json_path = $_SERVER['DOCUMENT_ROOT'].'/docs/manager-options.json';
+    $json_path = $_SERVER['DOCUMENT_ROOT'].'/docs/data-attrs.json';
 
     if(!file_exists($json_path)) {
         exit("File not found: $json_path");

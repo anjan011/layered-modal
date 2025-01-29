@@ -36,6 +36,8 @@
     </head>
     <body>
 
+        <form enctype="application/x-www-form-urlencoded"></form>
+
         <a href="#"
            id="openModalViaData"
            class="btn btn-warning lm-btn-success"
@@ -60,8 +62,9 @@
            data-lm-h-title-tag="h2"
            data-lm-h-css-class="bg-warning top-border"
 
-           data-lm-b-css-class="no-padding bg-info jc-center"
-           data-lm-b-content-type="youtube-video"
+           data-lm-b-css-class="no-padding bg-info jc-start"
+
+           data-lm-b-content-type="ajax"
            data-lm-b-function-name="__mc_content"
            data-lm-b-function-args='{"name":"Justin","age":20, "what": null}'
            data-lm-b-content="<div>What the hell Mary! <span class='text-danger'>using html for content ...</span></div>"
@@ -69,6 +72,13 @@
            data-lm-b-video-url="https://www.youtube.com/watch?v=ShJw2I8cgBE"
            data-lm-b-aspect-ratio="1.77777777778"
            data-lm-b-image-url="/assets/svg/1600x900.svg"
+
+           data-lm-b-ajax-url="http://127.0.0.1:9000/demo/php/ajax-login-form.php"
+           data-lm-b-ajax-method="post"
+           data-lm-b-ajax-content-data-type="html"
+           data-lm-b-ajax-data="name=Anjan&age=42&email=anjan011@gmail.com"
+           data-lm-b-ajax-transform-json="transformJson"
+           data-lm-b-ajax-transform-html="transformHtml"
 
 
            data-lm-f-enabled="0"
@@ -142,6 +152,17 @@
 
                 this.hide();
 
+            }
+
+            function transformJson(json) {
+                return JSON.stringify(json);
+            }
+
+            function transformHtml(html) {
+
+                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Called? ????`);
+
+                return  '@@@@@@@@@@@@@' + html + html;
             }
         </script>
 

@@ -1,3 +1,7 @@
+interface ParsedObject {
+    [key: string]: any;
+}
+
 const _ = {
 
     has (obj : any, key : any) : boolean {
@@ -506,6 +510,63 @@ const _ = {
 
         return '';
 
+    },
+
+    /**
+     * Converts a url encoded data string to FormData object
+     *
+     * @param urlEncodedString
+     */
+
+    urlEncodedToFormData(urlEncodedString : string) : FormData {
+        const formData = new FormData();
+        const params = new URLSearchParams(urlEncodedString);
+
+        for (const [key, value] of params) {
+            formData.append(key, value);
+        }
+
+        return formData;
+    },
+
+    parseUrlEncoded: function (data: string): ParsedObject {
+        const params = new URLSearchParams(data);
+        const obj: ParsedObject = {};
+
+        params.forEach((value, key) => {
+            _.setNestedValue(obj, key, value);
+        });
+
+        return obj;
+    },
+
+    setNestedValue: function (obj: ParsedObject, key: string, value: string): void {
+        const keys = key.replace(/\]/g, "").split(/\[/); // Convert `profile[nick]` → ['profile', 'nick']
+        let ref: ParsedObject = obj;
+
+        for (let i = 0; i < keys.length; i++) {
+            let k: string = keys[i];
+
+            // If key ends with `[]`, treat it as an array
+            if (k.endsWith("[]")) {
+                k = k.slice(0, -2);
+                ref[k] = ref[k] || [];
+                ref[k].push(_.autoConvert(value));
+                return;
+            }
+
+            // If last key, assign the value
+            if (i === keys.length - 1) {
+                ref[k] = _.autoConvert(value);
+            } else {
+                ref[k] = ref[k] || {};
+                ref = ref[k];
+            }
+        }
+    },
+
+    autoConvert: function (value: string): string | number {
+        return !isNaN(Number(value)) && value.trim() !== "" ? Number(value) : value;
     }
 }
 

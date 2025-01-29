@@ -1,5 +1,5 @@
 import Modal from './modal';
-import {Dimension, Position} from "./interfaces/common";
+import {AjaxParams, Dimension, Position} from "./interfaces/common";
 import {DomUtils} from "./utils/dom";
 import _ from "./utils/mixins";
 import {ModalParams, ModalXButton} from "./interfaces/modal";
@@ -8,7 +8,7 @@ import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 
 interface LayeredModalManagerParams {
 
-    xButton : Partial<ModalXButton>
+    xButton: Partial<ModalXButton>
     zIndex: number;
     baseShiftDistance?: Partial<Position>;
     cssClass?: Partial<CssClassNames>;
@@ -105,8 +105,8 @@ export default class ModalManager {
          * X Button ...
          */
 
-        if(params.hasOwnProperty('xButton')) {
-            this.#params.xButton = _.objValueAsObject(params,'xButton');
+        if (params.hasOwnProperty('xButton')) {
+            this.#params.xButton = _.objValueAsObject(params, 'xButton');
         }
     }
 
@@ -116,7 +116,7 @@ export default class ModalManager {
      * @param params
      */
 
-    addModal(params: any) : Modal {
+    addModal(params: any): Modal {
 
         if (!_.isPlainObject(params)) {
             params = {};
@@ -166,9 +166,9 @@ export default class ModalManager {
          * Hide X button?
          */
 
-        if(!params.hasOwnProperty('xButton')) {
+        if (!params.hasOwnProperty('xButton')) {
 
-            if(this.#params.hasOwnProperty('xButton')) {
+            if (this.#params.hasOwnProperty('xButton')) {
                 params.xButton = _.objValueAsObject(this.#params, 'xButton');
             }
 
@@ -186,7 +186,7 @@ export default class ModalManager {
             params.cssClass = _.joinObjectPropertiesAsString(
                 params.cssClass as Record<string, any>,
                 this.#params.cssClass as Record<string, any>,
-                ['modal','modalOk','modalClose'],
+                ['modal', 'modalOk', 'modalClose'],
                 ' ',
                 true
             );
@@ -217,16 +217,15 @@ export default class ModalManager {
 
         newModal.setManager(this);
 
-        if(params.delayInMilliSeconds !== undefined && params.delayInMilliSeconds > 0) {
+        if (params.delayInMilliSeconds !== undefined && params.delayInMilliSeconds > 0) {
 
             let ts = setTimeout(() => {
                 newModal.show();
-            },params.delayInMilliSeconds);
+            }, params.delayInMilliSeconds);
 
         } else {
             newModal.show();
         }
-
 
 
         this.#stack.push(newModal);
@@ -379,12 +378,12 @@ export default class ModalManager {
 
     bindTriggerClickUsingDataAttributes() {
 
-        document.addEventListener("click",  (event) => {
+        document.addEventListener("click", (event) => {
 
 
             event.preventDefault();
 
-            if(!event.target) {
+            if (!event.target) {
                 return;
             }
 
@@ -402,63 +401,61 @@ export default class ModalManager {
                  * skip as well ..
                  */
 
-                if(t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {
-                    if(t.disabled) {
+                if (t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {
+                    if (t.disabled) {
                         return;
                     }
                 }
 
-                if(t.classList.contains('disabled')) {
+                if (t.classList.contains('disabled')) {
                     return;
                 }
 
                 let attrs = DomUtils.getDataAttributes(t as HTMLElement);
 
-                if(_.objValueAsIntFlag(attrs,'lms-trigger',0) !== 1) {
+                if (_.objValueAsIntFlag(attrs, 'lms-trigger', 0) !== 1) {
                     return;
                 }
 
                 let contentType = _.objValueAsString(attrs, 'lm-b-content-type');
 
-                if(!ModalParameterParser.isValidBodyContentType(contentType)) {
+                if (!ModalParameterParser.isValidBodyContentType(contentType)) {
                     contentType = 'html';
                 }
 
 
-
-
-                let modalParams : Partial<ModalParams> = {
-                    id : _.objValueAsString(attrs,'lm-id'),
-                    zIndex : _.objValueAsInt(attrs,'lm-z-index',1),
-                    transitionDuration : _.objValueAsInt(attrs,'lm-transition-duration'),
-                    header : {
-                        enabled : _.objValueAsIntFlag(attrs,'lm-h-enabled',1) > 0,
-                        title : _.objValueAsString(attrs, 'lm-h-title', 'Modal Title'),
-                        titleTag : _.objValueAsString(attrs, 'lm-h-title-tag', 'h2'),
-                        cssClass : _.objValueAsString(attrs, 'lm-h-css-class', ''),
+                let modalParams: Partial<ModalParams> = {
+                    id: _.objValueAsString(attrs, 'lm-id'),
+                    zIndex: _.objValueAsInt(attrs, 'lm-z-index', 1),
+                    transitionDuration: _.objValueAsInt(attrs, 'lm-transition-duration'),
+                    header: {
+                        enabled: _.objValueAsIntFlag(attrs, 'lm-h-enabled', 1) > 0,
+                        title: _.objValueAsString(attrs, 'lm-h-title', 'Modal Title'),
+                        titleTag: _.objValueAsString(attrs, 'lm-h-title-tag', 'h2'),
+                        cssClass: _.objValueAsString(attrs, 'lm-h-css-class', ''),
                     },
-                    cssClass : {
-                        modal : _.objValueAsString(attrs,'lm-css-class'),
+                    cssClass: {
+                        modal: _.objValueAsString(attrs, 'lm-css-class'),
                     },
-                    body : {
-                        contentType : contentType as any,
-                        content : _.objValueAsString(attrs, 'lm-b-content'),
-                        functionName : _.objValueAsString(attrs, 'lm-b-function-name'),
-                        functionArguments : _.objValueAsString(attrs, 'lm-b-function-args'),
-                        templateId : _.objValueAsString(attrs, 'lm-b-template-id'),
-                        videoUrl : _.objValueAsString(attrs,'lm-b-video-url'),
-                        imageParams : {
+                    body: {
+                        contentType: contentType as any,
+                        content: _.objValueAsString(attrs, 'lm-b-content'),
+                        functionName: _.objValueAsString(attrs, 'lm-b-function-name'),
+                        functionArguments: _.objValueAsString(attrs, 'lm-b-function-args'),
+                        templateId: _.objValueAsString(attrs, 'lm-b-template-id'),
+                        videoUrl: _.objValueAsString(attrs, 'lm-b-video-url'),
+                        imageParams: {
                             url: _.objValueAsString(attrs, 'lm-b-image-url'),
                             title: _.objValueAsString(attrs, 'lm-b-image-title'),
                             alt: _.objValueAsString(attrs, 'lm-b-image-alt'),
                             cssClass: _.objValueAsString(attrs, 'lm-b-image-css-class'),
                             inlineStyles: _.objValueAsString(attrs, 'lm-b-image-inline-styles'),
-                            caption : _.objValueAsString(attrs,'lm-b-image-caption'),
-                            captionTemplate : _.objValueAsString(attrs,'lm-b-image-caption-template'),
-                            captionCssClass : _.objValueAsString(attrs,'lm-b-image-caption-css-class'),
+                            caption: _.objValueAsString(attrs, 'lm-b-image-caption'),
+                            captionTemplate: _.objValueAsString(attrs, 'lm-b-image-caption-template'),
+                            captionCssClass: _.objValueAsString(attrs, 'lm-b-image-caption-css-class'),
                         },
-                        cssClass : _.objValueAsString(attrs,'lm-b-css-class'),
-                        aspectRatio : _.objValueAsFloat(attrs,'lm-b-aspect-ratio'),
+                        cssClass: _.objValueAsString(attrs, 'lm-b-css-class'),
+                        aspectRatio: _.objValueAsFloat(attrs, 'lm-b-aspect-ratio'),
                     }
                 };
 
@@ -466,8 +463,8 @@ export default class ModalManager {
 
                 let autoWidth = true;
 
-                if(attrs.hasOwnProperty('lm-auto-width')) {
-                    autoWidth = _.objValueAsIntFlag(attrs,'lm-auto-width',1) > 0;
+                if (attrs.hasOwnProperty('lm-auto-width')) {
+                    autoWidth = _.objValueAsIntFlag(attrs, 'lm-auto-width', 1) > 0;
                 }
 
                 modalParams.autoWidth = autoWidth;
@@ -485,7 +482,7 @@ export default class ModalManager {
                 let maxWidth: Partial<Dimension> = {};
 
                 if (attrs.hasOwnProperty('lm-max-width-value')) {
-                    maxWidth.value = _.objValueAsFloat(attrs, 'lm-max-width-value',100);
+                    maxWidth.value = _.objValueAsFloat(attrs, 'lm-max-width-value', 100);
                     maxWidth.unit = _.objValueAsString(attrs, 'lm-max-width-unit', '%');
 
                     modalParams.maxWidth = maxWidth as Dimension;
@@ -547,24 +544,23 @@ export default class ModalManager {
 
                 // region [Footer]
 
-                let footer : any = {
+                let footer: any = {
                     enabled: _.objValueAsIntFlag(attrs, 'lm-f-enabled', 1),
                     mode: _.objValueAsString(attrs, 'lm-f-mode', 'confirm'),
                 };
 
-                if(footer.mode === 'custom') {
+                if (footer.mode === 'custom') {
 
                     let templateId = _.objValueAsString(attrs, 'lm-f-template-id');
 
-                    if(templateId !== '') {
+                    if (templateId !== '') {
                         footer.content = this.getContentFromTemplateElement(templateId);
                     } else {
-                        footer.content = _.objValueAsString(attrs,'lm-f-content');
+                        footer.content = _.objValueAsString(attrs, 'lm-f-content');
                     }
 
 
-
-                } else if(footer.mode === 'confirm') {
+                } else if (footer.mode === 'confirm') {
 
                     footer.onOk = _.objValueAsString(attrs, 'lm-f-on-ok');
 
@@ -585,12 +581,11 @@ export default class ModalManager {
                     }
                 }
 
-                if(attrs.hasOwnProperty('lm-on-show')) {
-                    let lmOnShow = _.objValueAsString(attrs,'lm-on-show');
+                if (attrs.hasOwnProperty('lm-on-show')) {
+                    let lmOnShow = _.objValueAsString(attrs, 'lm-on-show');
 
 
-
-                    if(lmOnShow) {
+                    if (lmOnShow) {
                         modalParams.onShow = lmOnShow;
                     }
                 }
@@ -612,12 +607,62 @@ export default class ModalManager {
                     }
                 }
 
-                if(attrs.hasOwnProperty('lm-auto-width')) {
-                    modalParams.autoWidth = _.objValueAsIntFlag(attrs,'lm-auto-width',0) > 0;
+                if (attrs.hasOwnProperty('lm-auto-width')) {
+                    modalParams.autoWidth = _.objValueAsIntFlag(attrs, 'lm-auto-width', 0) > 0;
                 }
 
                 if (attrs.hasOwnProperty('lm-auto-height')) {
                     modalParams.autoHeight = _.objValueAsIntFlag(attrs, 'lm-auto-height', 0) > 0;
+                }
+
+                // endregion
+
+                // region [Ajax ...]
+
+                let ajax: Partial<AjaxParams> = {
+                    url: _.objValueAsString(attrs, 'lm-b-ajax-url'),
+                    method: _.objValueAsString(attrs, 'lm-b-ajax-method'),
+                    timeoutMs: _.objValueAsInt(attrs, 'lm-b-ajax-timeout', 30000)
+                };
+
+                if (!ajax.timeoutMs || ajax.timeoutMs < 1000) {
+                    ajax.timeoutMs = 1000;
+                }
+
+                let contentDataType = _.objValueAsString(attrs, 'lm-b-ajax-content-data-type', 'html');
+
+                if (ModalParameterParser.isValidAjaxContentDataType(contentDataType)) {
+                    ajax.contentDataType = contentDataType;
+                } else {
+                    ajax.contentDataType = 'html';
+                }
+
+                ajax.data = _.parseUrlEncoded(_.objValueAsString(attrs, 'lm-b-ajax-data'));
+
+
+
+                if (attrs.hasOwnProperty('lm-b-ajax-transform-json')) {
+
+                    let functionName : any = _.objValueAsString(attrs, 'lm-b-ajax-transform-json');
+
+                    if(typeof window !== "undefined" && typeof window[functionName] === 'function') {
+                        ajax.transformJson = window[functionName] as Function;
+                    }
+
+                }
+
+                if (attrs.hasOwnProperty('lm-b-ajax-transform-html')) {
+
+                    let functionName: any = _.objValueAsString(attrs, 'lm-b-ajax-transform-html');
+
+                    if (typeof window !== "undefined" && typeof window[functionName] === 'function') {
+                        ajax.transformHtml = window[functionName] as Function;
+                    }
+
+                }
+
+                if (modalParams.body) {
+                    modalParams.body.ajaxParams = ajax as AjaxParams;
                 }
 
                 // endregion
@@ -633,7 +678,7 @@ export default class ModalManager {
 
     }
 
-    getContentFromTemplateElement(templateId : string) : string {
+    getContentFromTemplateElement(templateId: string): string {
 
         if (!templateId) {
             return 'Template element id is required';
@@ -659,9 +704,9 @@ export default class ModalManager {
      * Gets latest modal that is displayed
      */
 
-    getLatestModal() : Modal | null {
+    getLatestModal(): Modal | null {
 
-        if(this.#stack.length) {
+        if (this.#stack.length) {
             return this.#stack[this.#stack.length - 1];
         }
 
