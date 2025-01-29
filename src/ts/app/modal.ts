@@ -64,8 +64,6 @@ export default class Modal {
     constructor(params: Partial<ModalParams> = {}) {
 
         this.#params = ModalParameterParser.parse(params);
-
-        console.log(this.#params);
     }
 
 
@@ -239,9 +237,6 @@ export default class Modal {
                 CssRulesGenerator.generateDimensionCss(this.#params.minHeight, 'min-height')
             );
         }
-
-        /*console.log('Generated inline css ....');
-        console.log(modalInlineCss.join(''));*/
 
         // endregion
 
