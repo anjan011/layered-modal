@@ -667,10 +667,6 @@ export default class ModalManager {
 
                 // endregion
 
-                console.log(attrs);
-
-                console.log(modalParams.width);
-
                 this.addModal(modalParams);
 
             }

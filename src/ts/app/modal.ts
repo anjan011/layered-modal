@@ -64,8 +64,6 @@ export default class Modal {
     constructor(params: Partial<ModalParams> = {}) {
 
         this.#params = ModalParameterParser.parse(params);
-
-        console.log(JSON.stringify(this.#params, null, 4));
     }
 
 
