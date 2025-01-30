@@ -11,9 +11,28 @@ other. If you are looking for a single popup, you are still covered, with plenty
 5. Different footer mode: including alert, confirm and custom. Which lets you easily turn your modal into an alert
    dialog, confirm dialog or place your own custom content in the footer.
 
-# installation
+# Installation
 
-About installation ...
+### Include the styles
+
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/layered-modal@latest/dist/styles.min.css">
+```
+
+### Then import the script - 
+
+#### UMD version
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/layered-modal@latest/dist/bundle.min.umd.js"></script>
+```
+
+#### ESM version
+
+```html
+<script src="https://cdn.jsdelivr.net/npm/layered-modal@latest/dist/bundle.min.esm.js"></script>
+```
+
 
 # Usage
 

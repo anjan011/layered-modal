@@ -1,0 +1,16 @@
+# Ignore everything except necessary files
+__old/
+demo/
+node_modules/
+src/
+dist/bundle.dev.*.js
+tests/
+docs/
+examples/
+markdown/
+webpack.config.js
+.gitignore
+.eslintrc.js
+*.log
+git-sync.sh
+merge-markdown.js

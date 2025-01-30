@@ -1,3 +1,6 @@
+interface ParsedObject {
+    [key: string]: any;
+}
 declare const _: {
     has(obj: any, key: any): boolean;
     isFunction(value: any): boolean;
@@ -34,5 +37,10 @@ declare const _: {
     encodeHTML(html: string): string;
     buildQueryParams(obj: Record<string, any>, prefix?: string): string;
     appendQueryParams(url: string, params: Record<string, any>): string;
+    cssClassListToSelector(classList: string | string[]): string;
+    urlEncodedToFormData(urlEncodedString: string): FormData;
+    parseUrlEncoded: (data: string) => ParsedObject;
+    setNestedValue: (obj: ParsedObject, key: string, value: string) => void;
+    autoConvert: (value: string) => string | number;
 };
 export default _;

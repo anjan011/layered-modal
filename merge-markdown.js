@@ -54,7 +54,7 @@ const files = [
     },
     {
         file: "markdown/setup.md",
-        skipChars: skipChars,
+        skipChars: [...skipChars, '<', '>'],
     },
     {
         file: "markdown/usage.md",

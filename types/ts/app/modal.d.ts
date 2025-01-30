@@ -8,7 +8,7 @@ export default class Modal {
     getParams(): Partial<ModalParams>;
     constructor(params?: Partial<ModalParams>);
     getId(): string;
-    geBackDropId(): string;
+    getBackDropId(): string;
     getModalId(): string;
     getModalHeaderId(): string;
     generateMarginShift(): string;
@@ -23,6 +23,8 @@ export default class Modal {
     show(): void;
     setBodyContent(contentType: string | undefined, content: string): void;
     loadHtmlInModalViaFetch(): Promise<void>;
+    handleOnBeforeShow(): void;
+    handleOnBeforeHide(): void;
     ajaxScriptsAndStylesParsers(html: string): string;
     cleanUpAjaxScriptsAndStyles(): void;
     generateFooterButtonMarkup(button: Partial<ButtonParams>): string;

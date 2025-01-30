@@ -32,7 +32,7 @@ export interface ModalFooterParams {
     enabled: boolean;
     content?: string;
     mode: string;
-    onOk?: any;
+    onOk?: Function | string | null;
     cssClass: string;
     inlineStyles: string;
     okButton: Partial<ButtonParams>;
@@ -62,7 +62,9 @@ export interface ModalParams {
     transitionDuration?: number;
     cssClass?: ModalCssClassNames;
     onShow?: Function | string | null;
+    onBeforeShow?: Function | string | null;
     onHide?: Function | string | null;
+    onBeforeHide?: Function | string | null;
     secondaryBackDrop?: boolean;
     stackIndex: number;
     draggable: boolean;

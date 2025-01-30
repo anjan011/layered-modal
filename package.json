@@ -1,9 +1,29 @@
 {
+  "name": "layered-modal",
+  "version": "1.0.2",
+  "changelog": "See CHANGELOG.md for details.",
+  "description": "A lightweight, flexible, and stackable modal dialog system that allows multiple modals to be layered over each other. Provides full control over modal instances, enabling seamless manipulation of dialogs based on the currently visible modal content.",
+  "main": "dist/bundle.min.umd.js",
+  "module": "dist/bundle.min.esm.js",
+  "browser": "dist/bundle.min.umd.js",
+  "types": "types/ts/index.d.ts",
+  "files": [
+    "dist/styles.min.css",
+    "dist/bundle.min.esm.js",
+    "dist/bundle.min.umd.js",
+    "types/**/*.d.ts",
+    "CHANGELOG.md"
+  ],
+  "keywords": [
+    "modal",
+    "library",
+    "ui",
+    "stacked"
+  ],
+  "author": "Anjan Bhowmik",
+  "license": "MIT",
   "dependencies": {
-    "escape-html": "^1.0.3",
-    "glob": "^11.0.1",
-    "he": "^1.2.0",
-    "sanitize-html": "^2.14.0"
+    "glob": "^11.0.1"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
@@ -26,18 +46,16 @@
   "scripts": {
     "build": "webpack",
     "build:production": "webpack --mode production",
-
     "build:umd": "webpack --config webpack.config.umd.js",
     "build:umd:production": "webpack --config webpack.config.umd.js --mode production",
-
-    "build:all" : "npm run build && npm run build:umd",
-    "build:all:production" : "npm run build:production && npm run build:umd:production",
-
+    "build:all": "npm run build && npm run build:umd",
+    "build:all:production": "npm run build:production && npm run build:umd:production",
     "test": "jest",
     "watch": "webpack --watch",
     "serve": "npx webpack serve",
     "php:server": "php -S 127.0.0.1:9000 -t ./",
-    "build:readme": "node merge-markdown.js"
+    "build:readme": "node merge-markdown.js",
+    "prepublishOnly" : "npm run build:all:production"
   },
   "type": "module"
 }
