@@ -20,7 +20,7 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
-        <script src="./dist/bundle.min.umd.js"></script>
+        <script src="./dist/bundle.dev.min.umd.js"></script>
 
         <link rel="stylesheet" href="/dist/styles.min.css">
 
@@ -63,7 +63,9 @@
 
         <script type="module">
 
-            import {ModalManager} from '/dist/bundle.min.esm.js'
+            import {ModalManager} from '/dist/bundle.dev.min.esm.js'
+
+            window.ModalManager = ModalManager;
 
             const manager = new ModalManager({
                 /*cssClass : {

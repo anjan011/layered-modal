@@ -1,6 +1,6 @@
 {
   "name": "layered-modal",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "changelog": "See CHANGELOG.md for details.",
   "description": "A lightweight, flexible, and stackable modal dialog system that allows multiple modals to be layered over each other. Provides full control over modal instances, enabling seamless manipulation of dialogs based on the currently visible modal content.",
   "main": "dist/bundle.min.umd.js",
@@ -52,7 +52,7 @@
     "build:all:production": "npm run build:production && npm run build:umd:production",
     "test": "jest",
     "watch": "webpack --watch",
-    "serve": "npx webpack serve",
+    "serve": "npx webpack serve --mode development",
     "php:server": "php -S 127.0.0.1:9000 -t ./",
     "build:readme": "node merge-markdown.js",
     "prepublishOnly" : "npm run build:all:production"

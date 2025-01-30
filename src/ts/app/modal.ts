@@ -206,7 +206,7 @@ export default class Modal {
 
         if (this.#params.maxWidth) {
 
-            if(_.objValueAsFloat(this.#params.maxWidth as object,'value') > 0) {
+            if (_.objValueAsFloat(this.#params.maxWidth as object, 'value') > 0) {
                 modalInlineCss.push(
                     CssRulesGenerator.generateDimensionCss(this.#params.maxWidth, 'max-width')
                 );
@@ -235,7 +235,7 @@ export default class Modal {
         }
 
         if (this.#params.maxHeight) {
-            if (_.objValueAsFloat(this.#params.maxHeight as object,'value') > 0) {
+            if (_.objValueAsFloat(this.#params.maxHeight as object, 'value') > 0) {
                 modalInlineCss.push(
                     CssRulesGenerator.generateDimensionCss(this.#params.maxHeight, 'max-height')
                 );
@@ -300,6 +300,12 @@ export default class Modal {
         return `<span class="x-btn ${btn.cssClass} ${this.#params.cssClass?.modalClose}" ${btn.inlineStyles ? `style="${btn.inlineStyles}"` : ''}>${btn.content}</span>`;
     }
 
+    #hasContentError : boolean = false;
+
+    hasContentError() : boolean {
+        return this.#hasContentError;
+    }
+
     /**
      * Generates markup for body ...
      */
@@ -356,134 +362,193 @@ export default class Modal {
 
         let content = '';
 
-        if (body.contentType === 'html') {
-            content = body.content as string;
-        } else if (body.contentType === 'iframe') {
-            content = body.iframeCode as string;
+        try {
 
-            if (!DomUtils.isValidIframe(content)) {
-                content = 'Invalid iframe code';
-            }
 
-        } else if (body.contentType === 'function') {
+            if (body.contentType === 'html') {
+                content = (body.content as string).trim();
+            } else if (body.contentType === 'iframe') {
+                content = body.iframeCode as string;
 
-            let returnValue = null;
-
-            if (typeof body.functionName === 'string') {
-                returnValue = DomUtils.getFunctionResult(body.functionName, body.functionArguments);
-            } else if (typeof body.functionName === 'function') {
-
-                returnValue = body.functionName.apply(null, [body.functionArguments]);
-
-            }
-
-            if (typeof returnValue !== 'string') {
-                throw new Error(`${body.functionName} return value must be a string data type`);
-            }
-
-            content = returnValue;
-
-        } else if (body.contentType === 'template') {
-
-            let templateId = _.objValueAsString(body, 'templateId');
-
-            if (templateId === '') {
-                content = 'Template element id is required';
-            } else {
-
-                let templateElement = document.getElementById(templateId);
-
-                if (templateElement === null || !(templateElement instanceof HTMLTemplateElement)) {
-
-                    content = `Template element not found by ID: ${templateId}`;
-
-                } else {
-                    content = templateElement.innerHTML;
+                if (!DomUtils.isValidIframe(content)) {
+                    throw new Error('Invalid iframe code');
                 }
 
-            }
+            } else if (body.contentType === 'function') {
 
-        } else if (body.contentType === 'image') {
+                let returnValue = null;
 
-            if (body.imageParams !== undefined) {
+                if (typeof body.functionName === 'string') {
+                    returnValue = DomUtils.getFunctionResult(body.functionName, body.functionArguments);
+                } else if (typeof body.functionName === 'function') {
 
-                let imgParams = body.imageParams;
+                    returnValue = body.functionName.apply(null, [body.functionArguments]);
 
-                let imageUrl = imgParams.url.trim();
+                } else {
+                    throw new Error(`body.functionName must be a function or a valid function name`);
+                }
 
-                if (!imageUrl) {
-                    content = 'Image url cannot be empty';
+                if (typeof returnValue !== 'string') {
+                    throw new Error(`${body.functionName} return value must be a string data type`);
+                }
+
+                content = returnValue;
+
+            } else if (body.contentType === 'template') {
+
+                let templateId = _.objValueAsString(body, 'templateId');
+
+                if (templateId === '') {
+                    throw new Error('Template element id is required')
                 } else {
 
-                    let imgAttrs: any = {
-                        class: 'lm-single-image',
-                        src: imageUrl,
-                    };
+                    let templateElement = document.getElementById(templateId);
 
-                    if (imgParams.title) {
-                        imgAttrs.title = imgParams.title;
+                    if (!templateElement || !(templateElement instanceof HTMLTemplateElement)) {
+                        throw new Error(`Template element not found by ID: ${templateId}`);
+
+                    } else {
+                        content = templateElement.innerHTML;
                     }
 
-                    if (imgParams.alt) {
-                        imgAttrs.alt = imgParams.alt;
-                    }
+                }
 
-                    if (imgParams.cssClass) {
-                        imgAttrs.class += ` ${imgParams.cssClass}`;
-                    }
+            } else if (body.contentType === 'image') {
 
-                    if (imgParams.inlineStyles) {
-                        imgAttrs.style = imgParams.inlineStyles;
-                    }
+                if (body.imageParams !== undefined) {
 
-                    let captionText = '';
-                    let captionMarkup = '';
+                    let imgParams = body.imageParams;
 
+                    let imageUrl = imgParams.url.trim();
 
-                    if (imgParams.captionTemplate) {
+                    if (!imageUrl) {
+                        throw new Error('Image url cannot be empty');
+                    } else {
 
-                        let captionTemplate = document.getElementById(imgParams.captionTemplate);
+                        let imgAttrs: any = {
+                            class: 'lm-single-image',
+                            src: imageUrl,
+                        };
 
-                        if (captionTemplate) {
-                            captionText = captionTemplate.innerHTML;
-                        } else {
-                            captionText = `Caption template not found with id: ${captionTemplate}`;
+                        if (imgParams.title) {
+                            imgAttrs.title = imgParams.title;
                         }
 
-                    } else if (imgParams.caption) {
-                        captionText = imgParams.caption;
+                        if (imgParams.alt) {
+                            imgAttrs.alt = imgParams.alt;
+                        }
+
+                        if (imgParams.cssClass) {
+                            imgAttrs.class += ` ${imgParams.cssClass}`;
+                        }
+
+                        if (imgParams.inlineStyles) {
+                            imgAttrs.style = imgParams.inlineStyles;
+                        }
+
+                        let captionText = '';
+                        let captionMarkup = '';
+
+
+                        if (imgParams.captionTemplate) {
+
+                            let captionTemplate = document.getElementById(imgParams.captionTemplate);
+
+                            if (captionTemplate) {
+                                captionText = captionTemplate.innerHTML;
+                            } else {
+                                throw new Error(`Caption template not found with id: ${captionTemplate}`);
+                            }
+
+                        } else if (imgParams.caption) {
+                            captionText = imgParams.caption;
+                        }
+
+                        if (captionText) {
+                            captionMarkup = `<div class="lm-image-caption ${imgParams.captionCssClass}">${captionText}</div>`;
+                        }
+
+
+                        content = `<img ${this.#attrGenerator.generateAttributes(imgAttrs)} />${captionMarkup}`;
+
                     }
 
-                    if (captionText) {
-                        captionMarkup = `<div class="lm-image-caption ${imgParams.captionCssClass}">${captionText}</div>`;
-                    }
-
-
-                    content = `<img ${this.#attrGenerator.generateAttributes(imgAttrs)} />${captionMarkup}`;
-
+                } else {
+                    throw new Error(`Image url not provided`);
                 }
 
+
+            } else if (body.contentType === 'ajax') {
+                content = 'Loading ajax content ...';
+            } else if (body.contentType === 'youtube-video') {
+
+                let embedCode = EmbedCodeGenerator.fromYouTubeVideo(body.videoUrl ?? '');
+
+                if (!embedCode) {
+                    throw new Error(`Invalid youtube video url: ${body.videoUrl}`);
+                } else {
+                    content = embedCode;
+                }
             } else {
-                content = 'Image url not provided';
+
+                throw new Error(`Unsupported content type: ${body.contentType}`);
+
             }
 
+        } catch (e : any) {
 
-        } else if (body.contentType === 'ajax') {
-            content = 'Ajax type ...';
-        } else if (body.contentType === 'youtube-video') {
+            this.#hasContentError = true;
 
-            let embedCode = EmbedCodeGenerator.fromYouTubeVideo(body.videoUrl ?? '');
+            content = `<span class="text-error">${(e as Error).message}</span>`;
 
-            if (!embedCode) {
-                content = "Invalid youtube video url";
-            } else {
-                content = embedCode;
-            }
         }
 
         if (content === '') {
-            content = 'Modal content not found';
+
+            this.#hasContentError = true;
+
+            content = `<span class="text-error">Modal content not found</span>`;
         }
+
+        /**
+         * Only if the content generation did not encounter any errors,
+         * then look for content transformer ...
+         */
+
+        // region [Apply transformer if available]
+
+        if (!this.hasContentError() && typeof body.transformer !== "undefined") {
+
+            let transformer = body.transformer as Function | string;
+
+            if (_.isFunction(transformer)) {
+                content = (transformer as Function).apply(this, [content]) as string;
+            } else if (_.isString(transformer)) {
+
+                if (typeof window !== "undefined") {
+
+                    let transformerFunc = _.objValue(window, transformer as string);
+
+                    if (typeof transformerFunc === 'function') {
+                        content = transformerFunc.apply(this, [content]);
+                    } else {
+                        content = `Content transformer method ${transformer} not found!`;
+                    }
+
+                } else {
+
+                    content = `Content transformer function name only supported in browser!`;
+
+                }
+
+            } else {
+                content = `Content transformer is not a valid function or function name!`;
+            }
+
+        }
+
+        // endregion
+
 
         return `<div ${bodyAttrs}>${content}</div>`;
 
@@ -1173,7 +1238,7 @@ export default class Modal {
 
             let closeSelector = _.cssClassListToSelector(closeClass as string);
 
-            if(!closeSelector) {
+            if (!closeSelector) {
                 return;
             }
 

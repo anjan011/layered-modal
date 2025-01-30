@@ -32,7 +32,6 @@ export default class ModalManager {
 
     constructor(params: Partial<LayeredModalManagerParams> = {}) {
 
-
         /**
          * Pares and prepare params ...
          */

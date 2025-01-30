@@ -591,8 +591,6 @@ export default class ModalParameterParser {
 
         if (ModalParameterParser.isValidBodyContentType(contentType)) {
             body.contentType = contentType;
-        } else {
-            body.contentType = 'html';
         }
 
         if (body.contentType === 'html') {

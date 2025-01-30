@@ -18,7 +18,7 @@ export interface ModalHeaderParams {
 export interface ModalBodyParams {
     noPadding?: boolean;
     aspectRatio?: number;
-    contentType?: "html" | "iframe" | "function" | "ajax" | "image" | "youtube-video" | "template",
+    contentType?: string,
     content?: string,
     iframeCode?: string,
     functionName?: Function | string,
@@ -30,6 +30,7 @@ export interface ModalBodyParams {
     videoUrl?: string,
     maxHeight?: Dimension,
     templateId?: string;
+    transformer?: Function | string | null;
 }
 
 export interface ModalFooterParams {

@@ -329,8 +329,6 @@
 
     }
 
-
-
 }
 
 .layered-modal-header {
@@ -361,6 +359,11 @@
         flex: 1;
 
     }
+
+    .text-error {
+        color: red;
+    }
+
 
     &.no-padding {
         padding: 0 !important;
