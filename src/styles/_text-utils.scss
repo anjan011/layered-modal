@@ -1,0 +1,39 @@
+%text-utils {
+
+    /**
+    *   Text colors ...
+    */
+
+    $colors: (
+            "red": #ff0000,
+            "orange": #ffa500,
+            "blue": #0000ff
+    );
+
+
+    @each $name, $value in $colors {
+        .color-#{$name} {
+            color: $value;
+        }
+    }
+
+    /**
+    *   Text alignments ...
+    */
+
+    $text-alignments: (
+            "center": center,
+            "left": left,
+            "right": right,
+            "justify" : justify
+    );
+
+
+    @each $name, $value in $text-alignments {
+        .ta-#{$name} {
+            text-align: $value;
+        }
+    }
+
+}
+

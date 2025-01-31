@@ -226,8 +226,8 @@ export default class ModalParameterParser {
 
             let maxHeight: Partial<Dimension> = _.objValueAsObject(params, 'maxHeight');
 
-            maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 100);
-            maxHeight.unit = _.objValueAsString(maxHeight, 'unit', '%');
+            maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 90);
+            maxHeight.unit = _.objValueAsString(maxHeight, 'unit', 'vh');
 
         }
 
@@ -309,8 +309,8 @@ export default class ModalParameterParser {
 
             let maxWidth: Partial<Dimension> = _.objValueAsObject(params, 'maxWidth');
 
-            maxWidth.value = _.objValueAsFloat(maxWidth, 'value', 100);
-            maxWidth.unit = _.objValueAsString(maxWidth, 'unit', '%');
+            maxWidth.value = _.objValueAsFloat(maxWidth, 'value', 90);
+            maxWidth.unit = _.objValueAsString(maxWidth, 'unit', 'vw');
 
         }
 
@@ -428,7 +428,7 @@ export default class ModalParameterParser {
         }
 
         if (footer.mode === 'custom') {
-            footer.content = _.objValueAsString(footer, 'content', `<div class="text-center"><button type="button" class="lm-btn lm-btn-error ${params.cssClass?.modalClose}">Close</button></div>`);
+            footer.content = _.objValueAsString(footer, 'content', `<div class="ta-center"><button type="button" class="lm-btn lm-btn-error ${params.cssClass?.modalClose}">Close</button></div>`);
         }
 
         footer.onOk = _.objValue(footer, 'onOk');
@@ -536,6 +536,10 @@ export default class ModalParameterParser {
          * Css class ...
          */
 
+        if (!body.hasOwnProperty('cssClass')) {
+            body.cssClass = 'ai-start jc-start';
+        }
+
         body.cssClass = _.objValueAsString(body, 'cssClass');
 
         if (body.cssClass.indexOf('layered-modal-body') === -1) {
@@ -565,12 +569,17 @@ export default class ModalParameterParser {
 
         }
 
-
         /**
          * Should remove all padding form body container?
          */
 
         body.noPadding = _.objValueAsBool(body, 'noPadding', false);
+
+        /**
+         * Css classes ...
+         */
+
+
 
         /**
          * Aspect ratio, you can set this to maintain a specific
@@ -586,6 +595,10 @@ export default class ModalParameterParser {
         /**
          * Content type and content data ...
          */
+
+        if(!body.hasOwnProperty('contentType')) {
+            body.contentType = 'html';
+        }
 
         let contentType = _.objValueAsString(body, 'contentType');
 

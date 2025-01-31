@@ -24,6 +24,8 @@ interface CssClassNames {
 
 export default class ModalManager {
 
+    static instance : ModalManager;
+
     #params: Partial<LayeredModalManagerParams> = {
         zIndex: 1
     };
@@ -120,6 +122,42 @@ export default class ModalManager {
         if (!_.isPlainObject(params)) {
             params = {};
         }
+
+        // region [Filter stack for same ID check ...]
+
+        if(params.hasOwnProperty('id')) {
+
+            let filtered = this.#stack.filter((modal) => {
+
+                return modal.getId() === params.id;
+
+            });
+
+            if(filtered.length) {
+
+                return this.addModal({
+                    header : {
+                        enabled : true,
+                        title : 'Error',
+                        cssClass : 'color-red'
+                    },
+                    body : {
+                        contentType : 'html',
+                        cssClass : 'color-red',
+                        content : `<div class="text-center">Cannot add multiple modals with same ID.<br>There is already a modal with ID <kbd>${params.id}</kbd> in stack!</div>`
+                    },
+                    footer : {
+                        enabled : true,
+                        mode : 'alert'
+                    }
+                });
+
+            }
+
+        }
+
+
+        // endregion
 
         // Set zIndex based on stack
         params.zIndex = (this.#params.zIndex ? this.#params.zIndex : 1)

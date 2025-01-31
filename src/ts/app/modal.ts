@@ -499,7 +499,7 @@ export default class Modal {
 
             this.#hasContentError = true;
 
-            content = `<span class="text-error">${(e as Error).message}</span>`;
+            content = `<span class="color-red">${(e as Error).message}</span>`;
 
         }
 
@@ -507,7 +507,7 @@ export default class Modal {
 
             this.#hasContentError = true;
 
-            content = `<span class="text-error">Modal content not found</span>`;
+            content = `<span class="color-red text-center">It seems like modal content is not properly set!<br>Current content type: <kbd>${body.contentType}</kbd></span>`;
         }
 
         /**

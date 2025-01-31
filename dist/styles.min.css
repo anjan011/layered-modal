@@ -5,6 +5,12 @@
 /*!*******************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/styles/main.scss (1) ***!
   \*******************************************************************************************************************/
+/**
+    Use 'Roboto Serif' font
+ */
+/**
+    AJAX loader animation styles ...
+ */
 .loader {
   width: 100px;
   height: 100px;
@@ -22,6 +28,9 @@
     transform: rotate(360deg);
   }
 }
+/**
+    Modal backdrop styles ...
+ */
 .layered-modal-backdrop {
   font-family: "Roboto Serif", serif;
   font-size: 24px;
@@ -84,17 +93,43 @@
   justify-content: end;
 }
 
+/**
+    Extendable: text utils ...
+ */
 .layered-modal {
-  background: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
-  box-sizing: border-box;
-  opacity: 0;
-  transition-property: opacity;
-  transition-timing-function: ease;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  /**
+  *   Text colors ...
+  */
+  /**
+  *   Text alignments ...
+  */
+}
+.layered-modal .color-red {
+  color: #ff0000;
+}
+.layered-modal .color-orange {
+  color: #ffa500;
+}
+.layered-modal .color-blue {
+  color: #0000ff;
+}
+.layered-modal .ta-center {
+  text-align: center;
+}
+.layered-modal .ta-left {
+  text-align: left;
+}
+.layered-modal .ta-right {
+  text-align: right;
+}
+.layered-modal .ta-justify {
+  text-align: justify;
+}
+
+/**
+    Extendable : Buttons css classes ...
+ */
+.layered-modal {
   /* General Button Styles */
   /* Default (Neutral) Button */
   /* Success (Green) Button */
@@ -102,46 +137,6 @@
   /* Error (Red) Button */
   /* Info (Blue) Button */
   /* Disabled Button State */
-}
-@media screen and (max-width: 1023px) {
-  .layered-modal {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    max-width: 95% !important;
-  }
-  .layered-modal .layered-modal-body {
-    width: 100% !important;
-  }
-}
-.layered-modal.no-user-select {
-  user-select: none;
-}
-.layered-modal > .x-btn {
-  font-family: monospace;
-  display: flex;
-  width: 40px;
-  height: 40px;
-  background-color: red;
-  color: #fff;
-  justify-content: center;
-  align-items: center;
-  font-size: 24px;
-  border: solid 5px #000;
-  border-radius: 50%;
-  user-select: none;
-  cursor: pointer;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 1;
-  transform: translateX(40%) translateY(-40%);
-}
-.layered-modal > .x-btn:hover {
-  box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.5);
-  transition-duration: 100ms;
-}
-.layered-modal.stacked > .x-btn {
-  display: none !important;
 }
 .layered-modal .lm-btn {
   display: inline-block;
@@ -241,9 +236,10 @@
   opacity: 0.6;
   pointer-events: none;
 }
-.layered-modal .text-center {
-  text-align: center;
-}
+
+/**
+    Extendable: Flex display related classes ...
+ */
 .layered-modal .d-flex {
   display: flex !important;
 }
@@ -289,8 +285,65 @@
 .layered-modal .d-flex.gap-3 {
   gap: 1rem;
 }
+
+/**
+    Extendable: No-flex display related classes ...
+ */
 .layered-modal .d-block {
   display: block !important;
+}
+
+.layered-modal {
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  opacity: 0;
+  transition-property: opacity;
+  transition-timing-function: ease;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+@media screen and (max-width: 1023px) {
+  .layered-modal {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 95% !important;
+  }
+  .layered-modal .layered-modal-body {
+    width: 100% !important;
+  }
+}
+.layered-modal.no-user-select {
+  user-select: none;
+}
+.layered-modal > .x-btn {
+  font-family: monospace;
+  display: flex;
+  width: 40px;
+  height: 40px;
+  background-color: red;
+  color: #fff;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  border: solid 5px #000;
+  border-radius: 50%;
+  user-select: none;
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1;
+  transform: translateX(40%) translateY(-40%);
+}
+.layered-modal > .x-btn:hover {
+  box-shadow: 0 0 10px 5px rgba(255, 0, 0, 0.5);
+  transition-duration: 100ms;
+}
+.layered-modal.stacked > .x-btn {
+  display: none !important;
 }
 .layered-modal .full-width {
   width: 100%;
@@ -298,6 +351,12 @@
 .layered-modal.lm-draggable .lm-drag-handle {
   user-select: none;
   cursor: move;
+}
+.layered-modal .no-padding {
+  padding: 0 !important;
+}
+.layered-modal .no-margin {
+  margin: 0 !important;
 }
 
 .layered-modal-header {
@@ -307,6 +366,7 @@
 }
 .layered-modal-header h1, .layered-modal-header h2, .layered-modal-header h3, .layered-modal-header h4, .layered-modal-header h5, .layered-modal-header h6 {
   margin: 0;
+  color: inherit;
 }
 
 .layered-modal-body {
@@ -325,12 +385,6 @@
   height: 100% !important;
   display: block;
   flex: 1;
-}
-.layered-modal-body .text-error {
-  color: red;
-}
-.layered-modal-body.no-padding {
-  padding: 0 !important;
 }
 .layered-modal-body .lm-single-image {
   max-width: 100%;

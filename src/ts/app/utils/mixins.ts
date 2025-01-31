@@ -20,6 +20,12 @@ const _ = {
         return Array.isArray(value);
     },
 
+    isNumber(value: any): boolean {
+
+        return typeof value === 'number';
+
+    },
+
     isNumberOrString(value: any): boolean {
 
         return typeof value === 'string' || typeof value === 'number';
@@ -68,7 +74,7 @@ const _ = {
      * @return {Object}
      */
 
-    asObject: function (v: any, d: object): object {
+    asObject: function (v: any, d: object = {}): object {
 
         if (!this.isPlainObject(d)) {
             d = {};
@@ -85,7 +91,7 @@ const _ = {
      * @returns {*}
      */
 
-    asString: function (v: any, d: string): string {
+    asString: function (v: any, d: string = ''): string {
 
         if (this.isUndefined(d) || this.isNull(d)) {
             d = '';
@@ -421,6 +427,11 @@ const _ = {
 
             return v.toString(16);
         });
+    },
+
+    isValidGUID(guid: string): boolean {
+        const guidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+        return guidRegex.test(guid);
     },
 
     objValueAsMethod: function (o: any, k: string, d: unknown = null): unknown {

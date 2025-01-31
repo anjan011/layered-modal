@@ -1,0 +1,57 @@
+@use "sass:map";
+
+.layered-modal-backdrop {
+    font-family: 'Roboto Serif', serif;
+    font-size: 24px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    overflow: scroll;
+    flex-direction: column;
+
+
+    &.secondary {
+        background: rgba(0, 0, 0, 0.25);
+    }
+
+    *:not(.icon,.fa,.fa-solid,.fas,h1, h2, h3, h4, h5, h6) {
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    * {
+        h1, h2, h3, h4, h5, h6 {
+            font-family: initial;
+        }
+    }
+
+    $positions: (
+            (name : 'top-left', ai : start, jc: start),
+            (name : 'top-center', ai : center, jc: start),
+            (name : 'top-right', ai : end, jc: start),
+            (name : 'middle-left', ai : start, jc: center),
+            (name : 'middle-center', ai : center, jc: center),
+            (name : 'middle-right', ai : end, jc: center),
+            (name : 'bottom-left', ai : start, jc: end),
+            (name : 'bottom-center', ai : center, jc: end),
+            (name : 'bottom-right', ai : end, jc: end),
+    );
+
+    // Looping through the nested list
+    @each $entry in $positions {
+        $name: map.get($entry, name);
+        $ai: map.get($entry, ai);
+        $jc: map.get($entry, jc);
+
+        &.#{$name} {
+            align-items: $ai;
+            justify-content: $jc;
+        }
+    }
+}
