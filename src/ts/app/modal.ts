@@ -300,9 +300,9 @@ export default class Modal {
         return `<span class="x-btn ${btn.cssClass} ${this.#params.cssClass?.modalClose}" ${btn.inlineStyles ? `style="${btn.inlineStyles}"` : ''}>${btn.content}</span>`;
     }
 
-    #hasContentError : boolean = false;
+    #hasContentError: boolean = false;
 
-    hasContentError() : boolean {
+    hasContentError(): boolean {
         return this.#hasContentError;
     }
 
@@ -357,7 +357,8 @@ export default class Modal {
 
         let bodyAttrs = this.#attrGenerator.generateAttributes({
             class: classList,
-            style: styles
+            style: styles,
+            'data-content-type' : body.contentType,
         });
 
         let content = '';
@@ -452,12 +453,12 @@ export default class Modal {
 
                         if (imgParams.captionTemplate) {
 
-                            let captionTemplate = document.getElementById(imgParams.captionTemplate);
+                            let captionTemplateElement = document.getElementById(imgParams.captionTemplate);
 
-                            if (captionTemplate) {
-                                captionText = captionTemplate.innerHTML;
+                            if (captionTemplateElement) {
+                                captionText = captionTemplateElement.innerHTML;
                             } else {
-                                throw new Error(`Caption template not found with id: ${captionTemplate}`);
+                                throw new Error(`Caption template not found with id: ${imgParams.captionTemplate}`);
                             }
 
                         } else if (imgParams.caption) {
@@ -495,7 +496,7 @@ export default class Modal {
 
             }
 
-        } catch (e : any) {
+        } catch (e: any) {
 
             this.#hasContentError = true;
 
@@ -515,6 +516,8 @@ export default class Modal {
          * then look for content transformer ...
          */
 
+        console.log(body);
+
         // region [Apply transformer if available]
 
         if (!this.hasContentError() && typeof body.transformer !== "undefined") {
@@ -523,17 +526,24 @@ export default class Modal {
 
             if (_.isFunction(transformer)) {
                 content = (transformer as Function).apply(this, [content]) as string;
-            } else if (_.isString(transformer)) {
+            } else if (typeof transformer === 'string') {
 
                 if (typeof window !== "undefined") {
 
-                    let transformerFunc = _.objValue(window, transformer as string);
+                    let _window = window as Record<any, any>;
 
-                    if (typeof transformerFunc === 'function') {
-                        content = transformerFunc.apply(this, [content]);
-                    } else {
-                        content = `Content transformer method ${transformer} not found!`;
+
+                    if(_window.hasOwnProperty(transformer)) {
+
+                        if (typeof _window[transformer] === 'function') {
+                            content = _window[transformer].apply(this, [content]);
+                        } else {
+                            content = `Content transformer method ${transformer} not found!`;
+                        }
+
                     }
+
+
 
                 } else {
 
@@ -604,6 +614,31 @@ export default class Modal {
             return '';
         }
 
+        /**
+         * If we have a valid template id, we will try loading it's
+         * content as custom content.
+         */
+
+        if (footer.templateId) {
+            let templateId = _.objValueAsString(footer, 'templateId');
+
+            let templateElement = document.getElementById(templateId);
+
+            if (!(templateElement instanceof HTMLTemplateElement)) {
+                return `<div class="layered-modal-footer d-flex jc-center ai-center color-red ${footer.cssClass}" style="${footer.inlineStyles}"><span>A template element with id <kbd>${templateId}</kbd> not found!</span></div>`;
+            } else {
+
+                footer.content = templateElement.innerHTML;
+                footer.mode = 'custom';
+
+                if (!footer.content || footer.content.trim() === '') {
+                    return `<div class="layered-modal-footer d-flex jc-center ai-center color-red ${footer.cssClass}" style="${footer.inlineStyles}"><span>The footer template has no content</span></div>`;
+                }
+
+            }
+        }
+
+
         if (footer?.mode === 'custom') {
             return `<div class="layered-modal-footer d-flex jc-center ai-center ${footer.cssClass}" style="${footer.inlineStyles}">${footer.content}</div>`;
         } else if (footer?.mode === 'alert') {
@@ -618,7 +653,6 @@ export default class Modal {
     ${this.generateFooterButtonMarkup(footer.closeButton)}
     ${this.generateFooterButtonMarkup(footer.okButton)}
 </div>`;
-
         }
 
 
@@ -1265,6 +1299,10 @@ export default class Modal {
             return;
         }
 
+        if (!this.#params.footer) {
+            return;
+        }
+
         let _this = this;
 
         let okCssSelector = _.cssClassListToSelector(_this.#params.cssClass?.modalOk as string);
@@ -1284,16 +1322,20 @@ export default class Modal {
                 });
         } else if (_.isString(_this.#params.footer?.onOk)) {
 
-            let functionName = _this.#params.footer?.onOk;
+            let functionName = _this.#params.footer?.onOk as string;
 
-            backDrop
-                .querySelectorAll(okCssSelector)
-                .forEach(function (item) {
-                    item.addEventListener('click', () => {
+            if (functionName.trim() !== '') {
+                backDrop
+                    .querySelectorAll(okCssSelector)
+                    .forEach(function (item) {
+                        item.addEventListener('click', () => {
 
-                        DomUtils.executeFunction(functionName as string, '', _this);
+                            DomUtils.executeFunction(functionName.trim(), '', _this);
+                        });
                     });
-                });
+            }
+
+
         }
 
     }

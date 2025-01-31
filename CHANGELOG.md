@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.4] - 2025-01-30
+
+### Fixed
+
+- Existing modal ID check in `ModalManager` stack
+
 ## [1.0.3] - 2025-01-30
 
 ### Fixed

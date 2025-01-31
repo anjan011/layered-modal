@@ -406,6 +406,11 @@
   backdrop-filter: blur(5px); /* Adds a subtle blur effect */
   transition: opacity 0.3s ease-in-out;
 }
+@media screen and (max-width: 767px) {
+  .layered-modal-body .lm-image-caption {
+    position: static;
+  }
+}
 .layered-modal-body p:last-child {
   margin-bottom: 0;
 }
@@ -418,4 +423,10 @@
 
 .no-overflow {
   overflow: hidden !important;
+}
+
+@media screen and (max-width: 767px) {
+  .layered-modal-body[data-content-type=image] {
+    gap: 0;
+  }
 }

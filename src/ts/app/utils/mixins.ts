@@ -578,6 +578,40 @@ const _ = {
 
     autoConvert: function (value: string): string | number {
         return !isNaN(Number(value)) && value.trim() !== "" ? Number(value) : value;
+    },
+
+    /**
+     * Is valid global function ...
+     *
+     * @param name
+     */
+
+    ifGlobalFunctionExists(name : Function | string | null | undefined ) : boolean {
+
+        if(name === null || name === undefined) {
+            return false;
+        }
+
+        if(typeof name === 'function') {
+            return true;
+        }
+
+        name = name.trim();
+
+        if(name === '') {
+            return false;
+        }
+
+        if(typeof window === "undefined") {
+            return false;
+        }
+
+        if(typeof window[name as any] === "undefined") {
+            return false;
+        }
+
+        return typeof window[name as any] === 'function';
+
     }
 }
 

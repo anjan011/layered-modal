@@ -1,8 +1,8 @@
 import Modal from './modal';
-import {AjaxParams, Dimension, Position} from "./interfaces/common";
+import {AjaxParams, ButtonParams, Dimension, Position} from "./interfaces/common";
 import {DomUtils} from "./utils/dom";
 import _ from "./utils/mixins";
-import {ModalParams, ModalXButton} from "./interfaces/modal";
+import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams, ModalXButton} from "./interfaces/modal";
 import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 
 
@@ -111,6 +111,114 @@ export default class ModalManager {
         }
     }
 
+    checkCallbacks(params : Partial<ModalParams>) : Modal | null {
+
+        let callbacks = [
+            {
+                name : 'onShow',
+                callback : params.onShow
+            },
+            {
+                name: 'onBeforeShow',
+                callback: params.onBeforeShow
+            },
+            {
+                name: 'onHide',
+                callback: params.onHide
+            },
+            {
+                name: 'onBeforeHide',
+                callback: params.onBeforeHide
+            },
+            {
+                name: 'footer.onOk',
+                callback: params.footer?.onOk
+            },
+        ];
+
+        for(let i = 0; i < callbacks.length; i++) {
+
+            let item = callbacks[i];
+
+            if (item["callback"]) {
+                if (!_.ifGlobalFunctionExists(item["callback"])) {
+
+                    return this.errorModal({
+                        body: {
+                            content: `<div class="text-center">${item.name} callback function not found. ${typeof item["callback"] === 'string' ? `<br>Is the callback function name <kbd>${item["callback"]}</kbd> correct?` : ''}</div>`
+                        }
+                    });
+
+                }
+            }
+
+        }
+
+
+
+        return null;
+    }
+
+    /**
+     * Display an error modal ...
+     *
+     * @param params
+     */
+
+    errorModal(params : Partial<ModalParams>) : Modal {
+
+        if(!params.header) {
+            params.header = {
+                enabled : true,
+                title : 'Error',
+                cssClass : 'color-red'
+            } as ModalHeaderParams;
+        } else {
+
+            if(!params.header.cssClass) {
+                params.header.cssClass = 'color-red';
+            }
+
+        }
+
+        if (!params.footer) {
+            params.footer = {
+                enabled: true,
+                mode: 'alert'
+            } as ModalFooterParams;
+        }
+
+        if(!params.body) {
+            params.body = {
+                contentType : 'html',
+                cssClass : 'color-red ai-center jc-center'
+            } as ModalBodyParams;
+        } else {
+
+            if(!params.body.cssClass) {
+                params.body.cssClass = 'color-red ai-center jc-center';
+            }
+
+        }
+
+        if(!params.minHeight) {
+            params.minHeight = {
+                value : 200,
+                unit : 'px'
+            } as Dimension;
+        }
+
+        if (!params.minWidth) {
+            params.minWidth = {
+                value: 600,
+                unit: 'px'
+            } as Dimension;
+        }
+
+        return this.addModal(params);
+
+    }
+
     /**
      * Add a modal to layer ...
      *
@@ -156,6 +264,16 @@ export default class ModalManager {
 
         }
 
+
+        // endregion
+
+        // region [Check callbacks ...]
+
+        let callBackCheck = this.checkCallbacks(params as Partial<ModalParams>);
+
+        if(callBackCheck instanceof Modal) {
+            return callBackCheck;
+        }
 
         // endregion
 
@@ -466,10 +584,11 @@ export default class ModalManager {
                     zIndex: _.objValueAsInt(attrs, 'lm-z-index', 1),
                     transitionDuration: _.objValueAsInt(attrs, 'lm-transition-duration'),
                     header: {
-                        enabled: _.objValueAsIntFlag(attrs, 'lm-h-enabled', 1) > 0,
+                        enabled: _.objValueAsIntFlag(attrs, 'lm-h-enabled', 0) > 0,
                         title: _.objValueAsString(attrs, 'lm-h-title', 'Modal Title'),
                         titleTag: _.objValueAsString(attrs, 'lm-h-title-tag', 'h2'),
                         cssClass: _.objValueAsString(attrs, 'lm-h-css-class', ''),
+                        inlineStyles: _.objValueAsString(attrs, 'lm-h-inline-styles', ''),
                     },
                     cssClass: {
                         modal: _.objValueAsString(attrs, 'lm-css-class'),
@@ -493,8 +612,11 @@ export default class ModalManager {
                         },
                         cssClass: _.objValueAsString(attrs, 'lm-b-css-class'),
                         aspectRatio: _.objValueAsFloat(attrs, 'lm-b-aspect-ratio'),
+                        transformer: _.objValueAsString(attrs, 'lm-b-transformer'),
                     }
                 };
+
+                console.log(modalParams.body);
 
                 // region [Modal widths]
 
@@ -582,8 +704,8 @@ export default class ModalManager {
                 // region [Footer]
 
                 let footer: any = {
-                    enabled: _.objValueAsIntFlag(attrs, 'lm-f-enabled', 1),
-                    mode: _.objValueAsString(attrs, 'lm-f-mode', 'confirm'),
+                    enabled: _.objValueAsIntFlag(attrs, 'lm-f-enabled', 0),
+                    mode: _.objValueAsString(attrs, 'lm-f-mode', 'alert'),
                 };
 
                 if (footer.mode === 'custom') {
@@ -602,6 +724,75 @@ export default class ModalManager {
                     footer.onOk = _.objValueAsString(attrs, 'lm-f-on-ok');
 
                 }
+
+                footer.cssClass = _.objValueAsString(attrs, 'lm-f-css-class');
+                footer.inlineStyles = _.objValueAsString(attrs, 'lm-f-inline-styles');
+                footer.templateId = _.objValueAsString(attrs, 'lm-f-template-id');
+
+                // region [Ok Button ...]
+
+                if (!footer.okButton) {
+                    footer.okButton = {
+                        text: 'Ok'
+                    } as Partial<ButtonParams>;
+                }
+
+                let okBtn = footer.okButton;
+
+                if (attrs.hasOwnProperty('lm-f-ok-btn-text')) {
+                    okBtn.text = _.objValueAsString(attrs, 'lm-f-ok-btn-text');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-ok-btn-css-class')) {
+                    okBtn.cssClass = _.objValueAsString(attrs, 'lm-f-ok-btn-css-class');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-ok-btn-inline-styles')) {
+                    okBtn.inlineStyles = _.objValueAsString(attrs, 'lm-f-ok-btn-inline-styles');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-ok-btn-icon-class')) {
+                    okBtn.iconClass = _.objValueAsString(attrs, 'lm-f-ok-btn-icon-class');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-ok-btn-icon-position')) {
+                    okBtn.iconPosition = _.objValueAsString(attrs, 'lm-f-ok-btn-icon-position','left');
+                }
+
+                // endregion
+
+                // region [Close Button ...]
+
+                if (!footer.closeButton) {
+                    footer.closeButton = {
+                        text: 'Close'
+                    } as Partial<ButtonParams>;
+                }
+
+                let closeBtn = footer.closeButton;
+
+                if (attrs.hasOwnProperty('lm-f-close-btn-text')) {
+                    closeBtn.text = _.objValueAsString(attrs, 'lm-f-close-btn-text');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-close-btn-css-class')) {
+                    closeBtn.cssClass = _.objValueAsString(attrs, 'lm-f-close-btn-css-class');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-close-btn-inline-styles')) {
+                    closeBtn.inlineStyles = _.objValueAsString(attrs, 'lm-f-close-btn-inline-styles');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-close-btn-icon-class')) {
+                    closeBtn.iconClass = _.objValueAsString(attrs, 'lm-f-close-btn-icon-class');
+                }
+
+                if (attrs.hasOwnProperty('lm-f-close-btn-icon-position')) {
+                    closeBtn.iconPosition = _.objValueAsString(attrs, 'lm-f-close-btn-icon-position', 'left');
+                }
+
+                // endregion
+
 
                 modalParams.footer = footer;
 

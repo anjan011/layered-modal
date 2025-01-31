@@ -43,7 +43,6 @@
 @use "other-display";
 
 
-
 .layered-modal {
     background: white;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 4px 10px rgba(0, 0, 0, 0.2);
@@ -157,6 +156,8 @@
     overflow: scroll;
     position: relative;
 
+
+
     iframe {
         width: 100% !important;
         height: 100% !important;
@@ -164,8 +165,6 @@
         flex: 1;
 
     }
-
-
 
 
     .lm-single-image {
@@ -188,6 +187,10 @@
         padding: 10px;
         backdrop-filter: blur(5px); /* Adds a subtle blur effect */
         transition: opacity 0.3s ease-in-out;
+
+        @media screen and (max-width: 767px) {
+            position: static;
+        }
     }
 
     p:last-child {
@@ -203,4 +206,10 @@
 
 .no-overflow {
     overflow: hidden !important;
+}
+
+@media screen and (max-width: 767px) {
+    .layered-modal-body[data-content-type=image] {
+        gap: 0;
+    }
 }

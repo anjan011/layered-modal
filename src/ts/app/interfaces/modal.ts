@@ -42,6 +42,7 @@ export interface ModalFooterParams {
     inlineStyles: string;
     okButton: Partial<ButtonParams>;
     closeButton : Partial<ButtonParams>;
+    templateId? : string;
 }
 
 export interface ModalXButton {

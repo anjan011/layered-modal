@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <title>AJAX JSON Example</title>
 
 
@@ -30,6 +31,10 @@
             td {
                 line-height: 2em;
             }
+
+            .thick-border {
+                border: solid 10px #333 !important;
+            }
         </style>
 
     </head>
@@ -44,21 +49,28 @@
                         In this example we will load a sample JSON dataset from <kbd>https://jsonplaceholder.typicode.com/users</kbd> as a table inside a modal and display additional info as stacked modals.
                     </div>
 
-                    <div>
+                    <div class="mb-3">
                         <button id="modal-trigger" type="button" class="btn btn-success">Click to Load DATA</button>
                     </div>
+
+                    <div id="button-container">
+
+                    </div>
+
                 </div>
             </div>
         </div>
 
         <script type="module">
             //import {ModalManager} from "https://cdn.jsdelivr.net/npm/layered-modal@latest/dist/bundle.min.esm.js";
-            import {ModalManager} from "/dist/bundle.dev.min.esm.js";
+            import {ModalManager, DataAttrGenerator} from "/dist/bundle.dev.min.esm.js";
+
 
             window.ModalManager = ModalManager;
+            window.DataAttrGenerator = DataAttrGenerator;
         </script>
 
-        <script src="users-json-transformer.js"></script>
+        <script src="transformer.js"></script>
 
         <script>
             document.addEventListener('DOMContentLoaded', function () {
@@ -75,7 +87,7 @@
 
                 btn.addEventListener('click', () => {
 
-                    let transformer = new UsersJsonTransformer();
+                    let transformer = new Transformer();
 
                     manager.addModal({
                         header: {
@@ -210,6 +222,154 @@
                 }
 
             });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+
+                let attrs = DataAttrGenerator.generateString({
+                    transitionDuration: 100,
+                    cssClass: 'awesome-modal thick-border',
+                    autoWidth2 : false,
+                    autoHeight2 : false,
+                    /*width : {
+                        value : 90,
+                        unit : 'vw'
+                    },
+                    */
+                    minWidth : {
+                        value : 70,
+                        unit : 'vw'
+                    },
+                    /*maxWidth: {
+                        value: 95,
+                        unit: 'vw'
+                    },*/
+                    /*height : {
+                        value : 80,
+                        unit : 'vh'
+                    },
+                    minHeight: {
+                        value: 40,
+                        unit: 'vh'
+                    },
+
+                    maxHeight: {
+                        value: 95,
+                        unit: 'vh'
+                    },*/
+                    onShow : '___on_show',
+                    onBeforeShow : '___on_before_show',
+                    onHide : '___on_hide',
+                    onBeforeHide : '___on_before_hide',
+                    header : {
+                        enabled :false,
+                        title: 'What is a title?',
+                        titleTag2 : 'h4',
+                        cssClass2 : 'color-orange',
+                        inlineStyles2 : 'text-decoration: underline;'
+                    },
+                    footer : {
+                        enabled : false,
+                        mode : 'confirm',
+                        onOk : '___on_footer_ok',
+                        content : 'What is this content',
+                        cssClass : 'bg-warning',
+                        inlineStyles : 'padding: 50px;',
+                        templateId2 : 'footer-template-1234',
+                        okButton : {
+                            text : 'Ok, lets go!',
+                            cssClass : 'thick-border',
+                            inlineStyles : 'padding: 20px;',
+                            iconClass : 'fa fa-fw fa-search',
+                            iconPosition : 'right'
+                        },
+                        closeButton: {
+                            text: 'Close,  Quick!',
+                            cssClass: 'thick-border',
+                            inlineStyles: 'padding: 20px;',
+                            iconClass: 'fa fa-fw fa-close',
+                            iconPosition: 'left'
+                        }
+                    },
+                    body : {
+                        cssClass : 'ai-center jc-center no-padding',
+                        contentType : 'image',
+                        videoUrl : 'https://youtu.be/_1rjo2l17kI?si=DLmaXXXbzpZWuLGW',
+                        templateId : 'body-content-1234',
+                        imageParams : {
+                            url : '/demo/assets/svg/1200x600.svg',
+                            title : 'Image 1200 ...',
+                            alt : 'Alt 1200 x 600 ?',
+                            cssClass : '',
+                            inlineStyles : '',
+                            caption : 'Normal caption',
+                            captionTemplate : 'caption-template-1234',
+                            captionCssClass : 'bg-warning'
+                        },
+                        aspectRatio2 : 2,
+                        //transformer : '__transform_body'
+                    }
+                });
+
+                console.log(attrs);
+
+                document.getElementById('button-container').innerHTML = `<button type="button" class="btn btn-warning" ${attrs}>Open Via Attrs</button>`;
+
+            });
+
+            function ___on_show() {
+                console.groupCollapsed(`Attr mode onShow ...`);
+
+                console.log(arguments)
+                console.log(this);
+                console.groupEnd();
+            }
+
+            function ___on_hide() {
+                console.groupCollapsed(`Attr mode onHide ...`);
+
+                console.log(arguments)
+                console.log(this);
+                console.groupEnd();
+            }
+
+            function ___on_before_show() {
+                console.groupCollapsed(`Attr mode onBeforeShow ...`);
+
+                console.log(arguments)
+                console.log(this);
+                console.groupEnd();
+            }
+
+            function ___on_before_hide() {
+                console.groupCollapsed(`Attr mode onBeforeHide ...`);
+
+                console.log(arguments)
+                console.log(this);
+                console.groupEnd();
+            }
+
+            function ___on_footer_ok() {
+                console.groupCollapsed(`Attr mode footer.onOk ...`);
+
+                console.log(arguments)
+                console.log(this);
+                console.groupEnd();
+            }
+        </script>
+
+        <template id="footer-template-1234">Hmm? Whats that?</template>
+        <template id="body-content-1234">THis is body? Hmm? Whats that?</template>
+        <template id="caption-template-1234">Serene night @ 2025 <a href="#">Richard Neilson</a></template>
+
+
+        <script>
+            function __transform_body(content) {
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `__transform_body called`);
+                return `${content} -- <h3>Hoomm???</h3>`;
+            }
         </script>
 
     </body>

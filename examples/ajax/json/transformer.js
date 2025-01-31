@@ -1,4 +1,4 @@
-class UsersJsonTransformer {
+class Transformer {
 
     transform(json) {
 
