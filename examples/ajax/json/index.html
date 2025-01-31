@@ -63,11 +63,12 @@
 
         <script type="module">
             //import {ModalManager} from "https://cdn.jsdelivr.net/npm/layered-modal@latest/dist/bundle.min.esm.js";
-            import {ModalManager, DataAttrGenerator} from "/dist/bundle.dev.min.esm.js";
+            import {ModalManager, ModalParam2DataAttrs} from "/dist/bundle.dev.min.esm.js";
+
 
 
             window.ModalManager = ModalManager;
-            window.DataAttrGenerator = DataAttrGenerator;
+            window.ModalParam2DataAttrs = ModalParam2DataAttrs;
         </script>
 
         <script src="transformer.js"></script>
@@ -201,9 +202,22 @@
                             },
                             body: {
                                 cssClass: 'ai-start',
-                                contentType: 'template',
+                                contentType: 'image',
                                 templateId: e.target.getAttribute('data-template'),
-                                transformer: AddressInfoTransformer.transform
+                                transformer: AddressInfoTransformer.transform,
+                                ajaxParams:  {
+                                    url : 'http://127.0.0.1:9000/demo/php/ajax-json.php',
+                                    method: 'post',
+                                    data : {
+                                        name : 'Anjan'
+                                    },
+                                    contentDataType: 'json',
+                                    transformerJson : '__json_transformer',
+                                    header : {
+                                        'Custom' : 'ABCD',
+                                        'Test' : 1234
+                                    }
+                                }
                             },
                             maxWidth: {
                                 value: 90,
@@ -225,9 +239,13 @@
         </script>
 
         <script>
+
+
             document.addEventListener('DOMContentLoaded', function () {
 
-                let attrs = DataAttrGenerator.generateString({
+                let generator = new ModalParam2DataAttrs();
+
+                let attrs = generator.generateString({
                     transitionDuration: 100,
                     cssClass: 'awesome-modal thick-border',
                     autoWidth2 : false,
@@ -258,18 +276,18 @@
                         value: 95,
                         unit: 'vh'
                     },*/
-                    onShow : '___on_show',
+                    /*onShow : '___on_show',
                     onBeforeShow : '___on_before_show',
                     onHide : '___on_hide',
-                    onBeforeHide : '___on_before_hide',
-                    header : {
+                    onBeforeHide : '___on_before_hide',*/
+                    /*header : {
                         enabled :false,
                         title: 'What is a title?',
                         titleTag2 : 'h4',
                         cssClass2 : 'color-orange',
                         inlineStyles2 : 'text-decoration: underline;'
-                    },
-                    footer : {
+                    },*/
+                    /*footer : {
                         enabled : false,
                         mode : 'confirm',
                         onOk : '___on_footer_ok',
@@ -291,10 +309,10 @@
                             iconClass: 'fa fa-fw fa-close',
                             iconPosition: 'left'
                         }
-                    },
+                    },*/
                     body : {
                         cssClass : 'ai-center jc-center no-padding',
-                        contentType : 'image',
+                        contentType : 'ajax',
                         videoUrl : 'https://youtu.be/_1rjo2l17kI?si=DLmaXXXbzpZWuLGW',
                         templateId : 'body-content-1234',
                         imageParams : {
@@ -308,6 +326,20 @@
                             captionCssClass : 'bg-warning'
                         },
                         aspectRatio2 : 2,
+                        ajaxParams: {
+                            url: 'http://127.0.0.1:9000/demo/php/ajax-json.php',
+                            method: 'post',
+                            data: {
+                                name: 'Anjan'
+                            },
+                            contentDataType: 'html',
+                            transformJson: '__json_transformer',
+                            transformHtml: '__html_transformer',
+                            headers: {
+                                'Custom': 'ABCD',
+                                'Test': 1234
+                            }
+                        }
                         //transformer : '__transform_body'
                     }
                 });
@@ -366,6 +398,18 @@
 
         <script>
             function __transform_body(content) {
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `__transform_body called`);
+                return `${content} -- <h3>Hoomm???</h3>`;
+            }
+
+            function __json_transformer(content) {
+
+                console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `__transform_body called`);
+                return `${content} -- <h3>Hoomm???</h3>`;
+            }
+
+            function __html_transformer(content) {
 
                 console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `__transform_body called`);
                 return `${content} -- <h3>Hoomm???</h3>`;

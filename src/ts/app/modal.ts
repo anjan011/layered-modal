@@ -516,8 +516,6 @@ export default class Modal {
          * then look for content transformer ...
          */
 
-        console.log(body);
-
         // region [Apply transformer if available]
 
         if (!this.hasContentError() && typeof body.transformer !== "undefined") {

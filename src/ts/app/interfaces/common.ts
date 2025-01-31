@@ -13,9 +13,9 @@ export interface Dimension {
 export interface AjaxParams {
     url: string,
     method: string,
-    header?: object,
-    transformHtml?: Function | null,
-    transformJson?: Function | null,
+    headers?: object,
+    transformHtml?: Function | string | null,
+    transformJson?: Function | string | null,
     contentDataType?: "html" | "json",
     timeoutMs: number,
     data: FormData | object | null,
@@ -35,8 +35,8 @@ export interface ImageParams {
 
 export interface ButtonParams {
     cssClass?: string;
-    text? : string;
-    iconClass? :string;
-    iconPosition? : string;
-    inlineStyles? : string;
+    text?: string;
+    iconClass?: string;
+    iconPosition?: string;
+    inlineStyles?: string;
 }

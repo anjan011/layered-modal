@@ -60,4 +60,26 @@ export class DomUtils {
     }
 
 
+    static getContentFromTemplateElement(templateId: string): string {
+
+        if (!templateId) {
+            return 'Template element id is required';
+        } else {
+
+            let elem = document.getElementById(templateId);
+
+            if (!elem) {
+                return `No template tag found with id: ${templateId}`;
+            } else if (!(elem instanceof HTMLTemplateElement)) {
+
+                return `Element found with id ${templateId} is not a <template> element`;
+
+            } else {
+                return elem.innerHTML;
+            }
+
+        }
+
+    }
+
 }

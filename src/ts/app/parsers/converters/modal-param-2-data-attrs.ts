@@ -1,18 +1,31 @@
-import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams} from "./interfaces/modal";
-import _ from './utils/mixins';
-import {HtmlAttributeGenerator} from "./generators/html-attribute-generator";
+import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams} from "./../../interfaces/modal";
+import _ from './../../utils/mixins';
+import {HtmlAttributeGenerator} from "../../generators/html-attribute-generator";
+import HtmlEncoder from "./../../utils/html-encoder";
 
-export default class DataAttrGenerator {
+export default class ModalParam2DataAttrs {
 
-    static generateString(params: Partial<ModalParams>): string {
+    /**
+     * Generates the HTML attribute string from the generated object ...
+     *
+     * @param params
+     */
+
+    generateString(params: Partial<ModalParams>): string {
 
         let attrGen = new HtmlAttributeGenerator();
 
-        return attrGen.generateAttributes(DataAttrGenerator.generateObject(params));
+        return attrGen.generateAttributes(this.generateObject(params));
 
     }
 
-    static generateObject(params: Partial<ModalParams>): object {
+    /**
+     * Generate an object containing from modal params.
+     *
+     * @param params
+     */
+
+    generateObject(params: Partial<ModalParams>): Record<string, string> {
 
         let attrs: Record<any, any> = {
             'data-lms-trigger': 1,
@@ -23,7 +36,7 @@ export default class DataAttrGenerator {
          */
 
         if (params.transitionDuration) {
-            attrs['data-lm-transition-duration'] = params.transitionDuration;
+            this.generateAttrIfExists(attrs, params, 'transitionDuration', 'data-lm-transition-duration');
         }
 
         /**
@@ -31,7 +44,7 @@ export default class DataAttrGenerator {
          */
 
         if (params.cssClass) {
-            attrs['data-lm-css-class'] = params.cssClass;
+            this.generateAttrIfExists(attrs, params, 'cssClass', 'data-lm-css-class');
         }
 
         /**
@@ -139,7 +152,7 @@ export default class DataAttrGenerator {
 
         if (params.hasOwnProperty('header')) {
 
-            DataAttrGenerator.generateBodyAttrs(params.header as Partial<ModalHeaderParams>, attrs);
+            this.generateHeaderAttrs(params.header as Partial<ModalHeaderParams>, attrs);
 
         }
 
@@ -149,7 +162,7 @@ export default class DataAttrGenerator {
 
         if (params.hasOwnProperty('footer')) {
 
-            DataAttrGenerator.generateBodyAttrs(params.footer as Partial<ModalFooterParams>,attrs);
+            this.generateFooterAttrs(params.footer as Partial<ModalFooterParams>, attrs);
 
         }
 
@@ -159,18 +172,27 @@ export default class DataAttrGenerator {
 
         if (params.hasOwnProperty('body')) {
 
-            DataAttrGenerator.generateBodyAttrs(params.body as Partial<ModalBodyParams>, attrs);
+            this.generateBodyAttrs(params.body as Partial<ModalBodyParams>, attrs);
         }
+
+        console.log(attrs);
 
         return attrs;
 
     }
 
-    static generateHeaderAttrs(header: Partial<ModalHeaderParams>, attrs: Record<any, any>) {
+    /**
+     * Header attrs ...
+     *
+     * @param header
+     * @param attrs
+     */
+
+    generateHeaderAttrs(header: Partial<ModalHeaderParams>, attrs: Record<any, any>) {
 
         attrs['data-lm-h-enabled'] = header.enabled ? 1 : 0;
 
-        if(!header.enabled) {
+        if (!header.enabled) {
             return;
         }
 
@@ -182,11 +204,18 @@ export default class DataAttrGenerator {
 
     }
 
-    static generateFooterAttrs(footer: Partial<ModalFooterParams>, attrs: Record<any, any>) {
+    /**
+     * Footer attrs ...
+     *
+     * @param footer
+     * @param attrs
+     */
+
+    generateFooterAttrs(footer: Partial<ModalFooterParams>, attrs: Record<any, any>) {
 
         attrs['data-lm-f-enabled'] = footer.enabled ? 1 : 0;
 
-        if(!footer.enabled) {
+        if (!footer.enabled) {
             return;
         }
 
@@ -275,36 +304,80 @@ export default class DataAttrGenerator {
      * @param attrs
      */
 
-    static generateBodyAttrs(body : Partial<ModalBodyParams>, attrs : Record<any, any>) {
+    generateBodyAttrs(body: Partial<ModalBodyParams>, attrs: Record<any, any>) {
 
-        attrs['data-lm-b-content-type'] = _.objValueAsString(body,'contentType','html');
-        attrs['data-lm-b-css-class'] = _.objValueAsString(body,'cssClass');
+        attrs['data-lm-b-content-type'] = _.objValueAsString(body, 'contentType', 'html');
+        attrs['data-lm-b-css-class'] = _.objValueAsString(body, 'cssClass');
 
-        if(body.contentType === 'html') {
+        if (body.contentType === 'html') {
+
             attrs['data-lm-b-content'] = _.objValueAsString(body, 'content');
+
         } else if (body.contentType === 'template') {
 
-            attrs['data-lm-b-template-id'] = _.objValueAsString(body, 'templateId');
-        } else if(body.contentType === 'image') {
+            this.generateAttrIfExists(attrs, body, 'templateId', 'data-lm-b-template-id');
 
-            if(body.imageParams) {
+        } else if (body.contentType === 'image') {
+
+            if (body.imageParams) {
 
                 let ip = body.imageParams;
 
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'url','data-lm-b-image-url');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'title','data-lm-b-image-title');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'alt','data-lm-b-image-alt');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'cssClass','data-lm-b-image-css-class');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'inlineStyles','data-lm-b-image-inline-styles');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'caption','data-lm-b-image-caption');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'captionTemplate','data-lm-b-image-caption-template');
-                DataAttrGenerator.generateAttrIfExists(attrs,ip,'captionCssClass','data-lm-b-image-caption-css-class');
+                this.generateAttrIfExists(attrs, ip, 'url', 'data-lm-b-image-url');
+                this.generateAttrIfExists(attrs, ip, 'title', 'data-lm-b-image-title');
+                this.generateAttrIfExists(attrs, ip, 'alt', 'data-lm-b-image-alt');
+                this.generateAttrIfExists(attrs, ip, 'cssClass', 'data-lm-b-image-css-class');
+                this.generateAttrIfExists(attrs, ip, 'inlineStyles', 'data-lm-b-image-inline-styles');
+                this.generateAttrIfExists(attrs, ip, 'caption', 'data-lm-b-image-caption');
+                this.generateAttrIfExists(attrs, ip, 'captionTemplate', 'data-lm-b-image-caption-template');
+                this.generateAttrIfExists(attrs, ip, 'captionCssClass', 'data-lm-b-image-caption-css-class');
 
             }
 
         } else if (body.contentType === 'youtube-video') {
 
-            DataAttrGenerator.generateAttrIfExists(attrs, body, 'videoUrl', 'data-lm-b-video-url');
+            this.generateAttrIfExists(attrs, body, 'videoUrl', 'data-lm-b-video-url');
+
+        } else if(body.contentType === 'ajax') {
+
+            if(body.ajaxParams) {
+
+                let ajax = body.ajaxParams;
+
+                let url = ajax.url.trim();
+
+                if(url !== '') {
+
+                    attrs['data-lm-b-ajax-url'] = url;
+
+                    this.generateAttrIfExists(attrs, ajax, 'contentDataType', 'data-lm-b-ajax-content-data-type');
+                    this.generateAttrIfExists(attrs, ajax, 'method', 'data-lm-b-ajax-method');
+
+                    if(typeof ajax.data !== "undefined" && ajax.data !== null) {
+                        attrs['data-lm-b-ajax-data'] = _.unicodeB64Encode(JSON.stringify(ajax.data));
+                    }
+
+                    this.generateAttrIfExists(attrs, ajax, 'decodeParams', 'data-lm-b-decode-params');
+
+                    if (typeof ajax.headers !== "undefined" && ajax.headers !== null) {
+                        attrs['data-lm-b-ajax-headers'] = _.unicodeB64Encode(JSON.stringify(ajax.headers));
+                    }
+
+                    this.generateAttrIfExists(attrs, ajax, 'timeoutMs', 'data-lm-b-ajax-timeout-ms');
+
+                    if(typeof ajax.transformJson === 'string') {
+                        this.generateAttrIfExists(attrs, ajax, 'transformJson', 'data-lm-b-ajax-transform-json');
+                    }
+
+                    if (typeof ajax.transformHtml === 'string') {
+                        this.generateAttrIfExists(attrs, ajax, 'transformHtml', 'data-lm-b-ajax-transform-html');
+                    }
+                }
+
+
+
+            }
+
 
         }
 
@@ -312,27 +385,27 @@ export default class DataAttrGenerator {
          * Aspect ration ...
          */
 
-        DataAttrGenerator.generateAttrIfExists(attrs, body, 'aspectRatio', 'data-lm-b-aspect-ratio');
+        this.generateAttrIfExists(attrs, body, 'aspectRatio', 'data-lm-b-aspect-ratio');
 
         /**
          * Transformer ...
          */
 
-        if(typeof body.transformer === 'string') {
-            DataAttrGenerator.generateAttrIfExists(attrs, body, 'transformer', 'data-lm-b-transformer');
+        if (typeof body.transformer === 'string') {
+            this.generateAttrIfExists(attrs, body, 'transformer', 'data-lm-b-transformer');
         }
 
-
+        console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', 'generateBodyAttrs() called ...');
 
     }
 
-    static generateAttrIfExists(attrs : Record<any, any>,sourceObj : Record<any, any>,key: string,attrName : string) {
+    generateAttrIfExists(attrs: Record<any, any>, sourceObj: Record<any, any>, key: string, attrName: string) {
 
-        if(!sourceObj.hasOwnProperty(key)) {
+        if (!sourceObj.hasOwnProperty(key)) {
             return;
         }
 
-        attrs[attrName] = _.objValueAsString(sourceObj,key);
+        attrs[attrName] = _.objValueAsString(sourceObj, key);
 
     }
 

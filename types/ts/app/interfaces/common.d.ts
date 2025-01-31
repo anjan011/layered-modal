@@ -11,7 +11,7 @@ export interface Dimension {
 export interface AjaxParams {
     url: string;
     method: string;
-    header?: object;
+    headers?: object;
     transformHtml?: Function | null;
     transformJson?: Function | null;
     contentDataType?: "html" | "json";

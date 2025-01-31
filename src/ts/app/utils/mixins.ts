@@ -4,7 +4,7 @@ interface ParsedObject {
 
 const _ = {
 
-    has (obj : any, key : any) : boolean {
+    has(obj: any, key: any): boolean {
         return obj != null && Object.prototype.hasOwnProperty.call(obj, key);
     },
 
@@ -16,7 +16,7 @@ const _ = {
         return typeof value === 'string';
     },
 
-    isArray(value : any) : boolean {
+    isArray(value: any): boolean {
         return Array.isArray(value);
     },
 
@@ -200,7 +200,7 @@ const _ = {
      * @param d
      */
 
-    objOwnValue: function (o: any, k: string, d: any= undefined): any {
+    objOwnValue: function (o: any, k: string, d: any = undefined): any {
         return this.isPlainObject(o) && this.has(o, k) ? o[k] : d;
     },
 
@@ -370,7 +370,7 @@ const _ = {
 
     },
 
-    isNull(value : any) : boolean {
+    isNull(value: any): boolean {
         return value === null;
     },
 
@@ -379,7 +379,7 @@ const _ = {
     },
 
 
-    functions(obj : any) : string[] {
+    functions(obj: any): string[] {
         let names = [];
 
         for (let key in obj) {
@@ -403,11 +403,11 @@ const _ = {
 
     },
 
-    isObject(value : any) : boolean {
-      return value !== null && (typeof value === 'object') && !Array.isArray(value);
+    isObject(value: any): boolean {
+        return value !== null && (typeof value === 'object') && !Array.isArray(value);
     },
 
-    allKeys(obj : any) {
+    allKeys(obj: any) {
         if (!_.isObject(obj)) return []; // Ensure obj is an object
         let keys = [];
         for (let key in obj) keys.push(key); // Loop through all properties (including inherited)
@@ -489,21 +489,25 @@ const _ = {
         return urlObj.toString();
     },
 
-    cssClassListToSelector(classList : string | string[]) : string {
+    cssClassListToSelector(classList: string | string[]): string {
 
-        if(typeof classList === 'string' && classList.trim() !== '') {
+        if (typeof classList === 'string' && classList.trim() !== '') {
 
             let parts: string[] = classList.split(' ');
 
-            parts = parts.map((value: string) => {return value.trim()});
+            parts = parts.map((value: string) => {
+                return value.trim()
+            });
 
-            parts = parts.filter((value : string) => {return value.trim() !== ''});
+            parts = parts.filter((value: string) => {
+                return value.trim() !== ''
+            });
 
             return `.${parts.join('.')}`;
 
-        } else if(_.isArray(classList) && classList.length) {
+        } else if (_.isArray(classList) && classList.length) {
 
-            let parts : string[] = (classList as any[]).filter((value) => {
+            let parts: string[] = (classList as any[]).filter((value) => {
                 return _.isString(value) ? value : '';
             }).join(' ').split(' ');
 
@@ -529,7 +533,7 @@ const _ = {
      * @param urlEncodedString
      */
 
-    urlEncodedToFormData(urlEncodedString : string) : FormData {
+    urlEncodedToFormData(urlEncodedString: string): FormData {
         const formData = new FormData();
         const params = new URLSearchParams(urlEncodedString);
 
@@ -586,31 +590,55 @@ const _ = {
      * @param name
      */
 
-    ifGlobalFunctionExists(name : Function | string | null | undefined ) : boolean {
+    ifGlobalFunctionExists(name: Function | string | null | undefined): boolean {
 
-        if(name === null || name === undefined) {
+        if (name === null || name === undefined) {
             return false;
         }
 
-        if(typeof name === 'function') {
+        if (typeof name === 'function') {
             return true;
         }
 
         name = name.trim();
 
-        if(name === '') {
+        if (name === '') {
             return false;
         }
 
-        if(typeof window === "undefined") {
+        if (typeof window === "undefined") {
             return false;
         }
 
-        if(typeof window[name as any] === "undefined") {
+        if (typeof window[name as any] === "undefined") {
             return false;
         }
 
         return typeof window[name as any] === 'function';
+
+    },
+
+    /**
+     * Decode base64 version of string encoded with unicodeEncode
+     * @param base64
+     */
+
+    unicodeB64Decode(base64: string): string {
+
+        return new TextDecoder().decode(Uint8Array.from(atob(base64), c => c.charCodeAt(0)));
+
+
+    },
+
+    /**
+     * Encodes unicode text to base 64 ...
+     *
+     * @param text
+     */
+
+    unicodeB64Encode(text : string) : string {
+
+        return btoa(new TextEncoder().encode(text).reduce((acc, byte) => acc + String.fromCharCode(byte), ""));
 
     }
 }

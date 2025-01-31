@@ -16,6 +16,9 @@
     $source = $_SERVER['REQUEST_METHOD'] === 'POST' ? $_POST : $_GET;
 
 
-    echo json_encode($source);
+    echo json_encode([
+        'source' => $source,
+        'headers' => headers_list()
+    ]);
 
     exit();
