@@ -7,6 +7,8 @@
 - Existing modal ID check in `ModalManager` stack
 - Added data-* attribute generator class from `ModalParams`
 - Some code refactoring
+- Added instance static property and addModal() and removeModal() static methods to `ModalManager`
+- Updated README.md accordingly
 
 ## [1.0.3] - 2025-01-30
 

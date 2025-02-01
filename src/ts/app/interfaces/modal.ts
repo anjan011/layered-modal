@@ -82,6 +82,7 @@ export interface ModalParams {
     xButton?: ModalXButton,
     delayInMilliSeconds?: number,
     backDrop?: BackDropParams;
+    disableEscKey?: boolean;
 }
 
 export interface BackDropParams {

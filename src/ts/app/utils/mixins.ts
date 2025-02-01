@@ -636,10 +636,34 @@ const _ = {
      * @param text
      */
 
-    unicodeB64Encode(text : string) : string {
+    unicodeB64Encode(text: string): string {
 
         return btoa(new TextEncoder().encode(text).reduce((acc, byte) => acc + String.fromCharCode(byte), ""));
 
+    },
+
+    deepMerge<T extends Record<string, any>>(obj1: T, obj2: T): T {
+
+        if (!obj1 || typeof obj1 !== "object") return obj2;
+        if (!obj2 || typeof obj2 !== "object") return obj1;
+
+        const result: any = {...obj1};
+
+        for (const key of Object.keys(obj2)) {
+            if (
+                obj2[key] &&
+                typeof obj2[key] === "object" &&
+                !Array.isArray(obj2[key]) &&
+                typeof obj1[key] === "object" &&
+                !Array.isArray(obj1[key])
+            ) {
+                result[key] = this.deepMerge(obj1[key], obj2[key]);
+            } else {
+                result[key] = obj2[key];
+            }
+        }
+
+        return result;
     }
 }
 

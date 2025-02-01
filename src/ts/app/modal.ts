@@ -690,6 +690,10 @@ export default class Modal {
         this.#params.body.content = content;
     }
 
+    /**
+     * Load content for modal via AJAX
+     */
+
     async loadHtmlInModalViaFetch() {
 
         if (!this.#params.body) {
@@ -1515,6 +1519,19 @@ export default class Modal {
 
         return styles.join('');
 
+    }
+
+    /**
+     * Is escape key disabled?
+     */
+
+    isEscKeyDisabled(): boolean {
+
+        if(typeof this.#params.disableEscKey === "undefined") {
+            return false;
+        }
+
+        return  this.#params.disableEscKey;
     }
 
 }

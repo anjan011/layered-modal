@@ -74,6 +74,14 @@ export default class ModalParam2DataAttrs {
         let attrs = this.#attrs;
 
         /**
+         * ID
+         */
+
+        if(!_.isValidGUID(params.id as string) && params.id) {
+            this.#attrs['data-lm-id'] = params.id;
+        }
+
+        /**
          * Transition Duration ...
          */
 
@@ -216,8 +224,6 @@ export default class ModalParam2DataAttrs {
 
             this.generateBodyAttrs();
         }
-
-        console.log(attrs);
 
         return attrs;
 

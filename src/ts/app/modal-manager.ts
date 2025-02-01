@@ -7,7 +7,7 @@ import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 import DataAttrs2ModalParam from "./parsers/converters/data-attrs-2-modal-param";
 
 
-interface LayeredModalManagerParams {
+interface ModalManagerParams {
 
     xButton: Partial<ModalXButton>
     zIndex: number;
@@ -25,15 +25,15 @@ interface CssClassNames {
 
 export default class ModalManager {
 
-    static instance : ModalManager;
+    static instance: ModalManager;
 
-    #params: Partial<LayeredModalManagerParams> = {
+    #params: Partial<ModalManagerParams> = {
         zIndex: 1
     };
 
     #stack: Array<Modal> = [];
 
-    constructor(params: Partial<LayeredModalManagerParams> = {}) {
+    constructor(params: Partial<ModalManagerParams> = {}) {
 
         /**
          * Pares and prepare params ...
@@ -47,6 +47,11 @@ export default class ModalManager {
 
         this.bindEvents();
 
+    }
+
+    setParameters(params: Partial<ModalManagerParams>) {
+
+        this.#params = _.deepMerge(this.#params, params) as Partial<ModalManagerParams>;
 
     }
 
@@ -56,7 +61,7 @@ export default class ModalManager {
      * @param params
      */
 
-    prepareParams(params: Partial<LayeredModalManagerParams>) {
+    prepareParams(params: Partial<ModalManagerParams>) {
 
         /**
          * z-index ...
@@ -112,12 +117,12 @@ export default class ModalManager {
         }
     }
 
-    checkCallbacks(params : Partial<ModalParams>) : Modal | null {
+    checkCallbacks(params: Partial<ModalParams>): Modal | null {
 
         let callbacks = [
             {
-                name : 'onShow',
-                callback : params.onShow
+                name: 'onShow',
+                callback: params.onShow
             },
             {
                 name: 'onBeforeShow',
@@ -137,7 +142,7 @@ export default class ModalManager {
             },
         ];
 
-        for(let i = 0; i < callbacks.length; i++) {
+        for (let i = 0; i < callbacks.length; i++) {
 
             let item = callbacks[i];
 
@@ -156,7 +161,6 @@ export default class ModalManager {
         }
 
 
-
         return null;
     }
 
@@ -166,17 +170,17 @@ export default class ModalManager {
      * @param params
      */
 
-    errorModal(params : Partial<ModalParams>) : Modal {
+    errorModal(params: Partial<ModalParams>): Modal {
 
-        if(!params.header) {
+        if (!params.header) {
             params.header = {
-                enabled : true,
-                title : 'Error',
-                cssClass : 'color-red'
+                enabled: true,
+                title: 'Error',
+                cssClass: 'color-red'
             } as ModalHeaderParams;
         } else {
 
-            if(!params.header.cssClass) {
+            if (!params.header.cssClass) {
                 params.header.cssClass = 'color-red';
             }
 
@@ -189,23 +193,23 @@ export default class ModalManager {
             } as ModalFooterParams;
         }
 
-        if(!params.body) {
+        if (!params.body) {
             params.body = {
-                contentType : 'html',
-                cssClass : 'color-red ai-center jc-center'
+                contentType: 'html',
+                cssClass: 'color-red ai-center jc-center'
             } as ModalBodyParams;
         } else {
 
-            if(!params.body.cssClass) {
+            if (!params.body.cssClass) {
                 params.body.cssClass = 'color-red ai-center jc-center';
             }
 
         }
 
-        if(!params.minHeight) {
+        if (!params.minHeight) {
             params.minHeight = {
-                value : 200,
-                unit : 'px'
+                value: 200,
+                unit: 'px'
             } as Dimension;
         }
 
@@ -234,7 +238,7 @@ export default class ModalManager {
 
         // region [Filter stack for same ID check ...]
 
-        if(params.hasOwnProperty('id')) {
+        if (params.hasOwnProperty('id')) {
 
             let filtered = this.#stack.filter((modal) => {
 
@@ -242,22 +246,22 @@ export default class ModalManager {
 
             });
 
-            if(filtered.length) {
+            if (filtered.length) {
 
                 return this.addModal({
-                    header : {
-                        enabled : true,
-                        title : 'Error',
-                        cssClass : 'color-red'
+                    header: {
+                        enabled: true,
+                        title: 'Error',
+                        cssClass: 'color-red'
                     },
-                    body : {
-                        contentType : 'html',
-                        cssClass : 'color-red',
-                        content : `<div class="text-center">Cannot add multiple modals with same ID.<br>There is already a modal with ID <kbd>${params.id}</kbd> in stack!</div>`
+                    body: {
+                        contentType: 'html',
+                        cssClass: 'color-red',
+                        content: `<div class="text-center">Cannot add multiple modals with same ID.<br>There is already a modal with ID <kbd>${params.id}</kbd> in stack!</div>`
                     },
-                    footer : {
-                        enabled : true,
-                        mode : 'alert'
+                    footer: {
+                        enabled: true,
+                        mode: 'alert'
                     }
                 });
 
@@ -272,7 +276,7 @@ export default class ModalManager {
 
         let callBackCheck = this.checkCallbacks(params as Partial<ModalParams>);
 
-        if(callBackCheck instanceof Modal) {
+        if (callBackCheck instanceof Modal) {
             return callBackCheck;
         }
 
@@ -376,13 +380,13 @@ export default class ModalManager {
         if (params.delayInMilliSeconds !== undefined && params.delayInMilliSeconds > 0) {
 
             let ts = setTimeout(() => {
+                clearTimeout(ts);
                 newModal.show();
             }, params.delayInMilliSeconds);
 
         } else {
             newModal.show();
         }
-
 
         this.#stack.push(newModal);
 
@@ -466,18 +470,34 @@ export default class ModalManager {
 
     }
 
+    /**
+     * Handle escape key press ...
+     *
+     * @param event
+     */
+
     handleEscapeKey(event: any) {
 
         let _this = this;
 
         if (event.key === 'Escape' || event.keyCode === 27) {
 
-            _this.removeModal();
+            if (!_this.getLatestModal()?.isEscKeyDisabled()) {
+                _this.removeModal();
+            }
+
 
         }
 
 
     }
+
+    /**
+     * Throttle events, specially keyboard key up/down events ...
+     *
+     * @param func
+     * @param limit
+     */
 
     throttle(func: any, limit: any): any {
 
@@ -492,6 +512,11 @@ export default class ModalManager {
             }
         };
     }
+
+    /**
+     * Adjust css classes for stacked modals. So that other than topmost
+     * one, rest of the modals will get a stacked css class.
+     */
 
     adjustStackCssClassForModals() {
 
@@ -551,10 +576,7 @@ export default class ModalManager {
 
                 /**
                  * if a button element or input element with button type
-                 * has disabled attr set, we skip click action ...
-                 *
-                 * Additionally, if the element has a disabled class, we
-                 * skip as well ..
+                 * has disabled attr set, we skip click action.
                  */
 
                 if (t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {
@@ -562,6 +584,11 @@ export default class ModalManager {
                         return;
                     }
                 }
+
+                /**
+                 * Additionally, if the element has a disabled class, we
+                 * skip as well.
+                 */
 
                 if (t.classList.contains('disabled')) {
                     return;
@@ -583,7 +610,6 @@ export default class ModalManager {
     }
 
 
-
     /**
      * Gets latest modal that is displayed
      */
@@ -596,5 +622,23 @@ export default class ModalManager {
 
         return null;
 
+    }
+
+    /**
+     * Static version of add modal ...
+     * @param params
+     */
+
+    static addModal(params: Partial<ModalParams>): Modal {
+        return ModalManager.instance.addModal(params);
+    }
+
+    /**
+     * Static version of remove modal
+     * @param callback
+     */
+
+    static removeModal(callback: Function | null) {
+        ModalManager.instance.removeModal(callback);
     }
 }

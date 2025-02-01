@@ -198,6 +198,20 @@ export default class ModalParameterParser {
 
         }
 
+        /**
+         * Disable escape key press?
+         */
+
+        if(params.hasOwnProperty('disableEscKey')) {
+
+            params.disableEscKey = _.objValueAsBool(params,'disableEscKey',false);
+
+
+        } else {
+            params.disableEscKey = false;
+        }
+
+
 
         return params as ModalParams;
     }
