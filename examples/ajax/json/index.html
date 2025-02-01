@@ -243,26 +243,26 @@
 
             document.addEventListener('DOMContentLoaded', function () {
 
-                let generator = new ModalParam2DataAttrs();
 
-                let attrs = generator.generateString({
+
+                let modalParams = {
                     transitionDuration: 100,
                     cssClass: 'awesome-modal thick-border',
-                    autoWidth2 : false,
-                    autoHeight2 : false,
+                    autoWidth2: false,
+                    autoHeight2: false,
                     /*width : {
                         value : 90,
                         unit : 'vw'
                     },
                     */
-                    minWidth : {
-                        value : 70,
-                        unit : 'vw'
+                    minWidth: {
+                        value: 30,
+                        unit: 'vw'
                     },
-                    /*maxWidth: {
+                    maxWidth: {
                         value: 95,
                         unit: 'vw'
-                    },*/
+                    },
                     /*height : {
                         value : 80,
                         unit : 'vh'
@@ -271,11 +271,11 @@
                         value: 40,
                         unit: 'vh'
                     },
-
+*/
                     maxHeight: {
                         value: 95,
                         unit: 'vh'
-                    },*/
+                    },
                     /*onShow : '___on_show',
                     onBeforeShow : '___on_before_show',
                     onHide : '___on_hide',
@@ -310,29 +310,35 @@
                             iconPosition: 'left'
                         }
                     },*/
-                    body : {
-                        cssClass : 'ai-center jc-center no-padding',
-                        contentType : 'ajax',
-                        videoUrl : 'https://youtu.be/_1rjo2l17kI?si=DLmaXXXbzpZWuLGW',
-                        templateId : 'body-content-1234',
-                        imageParams : {
-                            url : '/demo/assets/svg/1200x600.svg',
-                            title : 'Image 1200 ...',
-                            alt : 'Alt 1200 x 600 ?',
-                            cssClass : '',
-                            inlineStyles : '',
-                            caption : 'Normal caption',
-                            captionTemplate : 'caption-template-1234',
-                            captionCssClass : 'bg-warning'
+                    body: {
+                        cssClass: 'no-padding',
+                        contentType: 'ajax',
+                        videoUrl: 'https://youtu.be/_1rjo2l17kI?si=DLmaXXXbzpZWuLGW',
+                        templateId: 'body-content-1234',
+                        imageParams: {
+                            url: '/demo/assets/svg/1200x600.svg',
+                            title: 'Image 1200 ...',
+                            alt: 'Alt 1200 x 600 ?',
+                            cssClass: '',
+                            inlineStyles: '',
+                            caption: 'Normal caption',
+                            captionTemplate: 'caption-template-1234',
+                            captionCssClass: 'bg-warning'
                         },
-                        aspectRatio2 : 2,
+                        aspectRatio2: 2,
                         ajaxParams: {
                             url: 'http://127.0.0.1:9000/demo/php/ajax-json.php',
                             method: 'post',
                             data: {
-                                name: 'Anjan'
+                                name: 'Anjan',
+                                age : 42,
+                                hobby : ['coding','reading','gaming'],
+                                profile : {
+                                    nick : 'anjan011',
+                                    url : 'https://anjan.xyz'
+                                }
                             },
-                            contentDataType: 'html',
+                            contentDataType: 'json',
                             transformJson: '__json_transformer',
                             transformHtml: '__html_transformer',
                             headers: {
@@ -342,7 +348,13 @@
                         }
                         //transformer : '__transform_body'
                     }
+                };
+
+                let generator = new ModalParam2DataAttrs({
+                    modalParams : modalParams
                 });
+
+                let attrs = generator.generateString();
 
                 console.log(attrs);
 
@@ -406,13 +418,13 @@
             function __json_transformer(content) {
 
                 console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `__transform_body called`);
-                return `${content} -- <h3>Hoomm???</h3>`;
+                return `<h2 class="color-orange">In JSON ...</h2> ${JSON.stringify(content)}`;
             }
 
             function __html_transformer(content) {
 
                 console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', `__transform_body called`);
-                return `${content} -- <h3>Hoomm???</h3>`;
+                return `<h2 class="color-red">In HTML ...</h2> ${content}`;
             }
         </script>
 

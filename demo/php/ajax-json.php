@@ -18,7 +18,7 @@
 
     echo json_encode([
         'source' => $source,
-        'headers' => headers_list()
+        'headers' => getallheaders()
     ]);
 
     exit();

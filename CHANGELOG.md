@@ -5,6 +5,8 @@
 ### Fixed
 
 - Existing modal ID check in `ModalManager` stack
+- Added data-* attribute generator class from `ModalParams`
+- Some code refactoring
 
 ## [1.0.3] - 2025-01-30
 

@@ -1,42 +1,84 @@
 import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams} from "./../../interfaces/modal";
 import _ from './../../utils/mixins';
 import {HtmlAttributeGenerator} from "../../generators/html-attribute-generator";
-import HtmlEncoder from "./../../utils/html-encoder";
 
 export default class ModalParam2DataAttrs {
 
     /**
-     * Generates the HTML attribute string from the generated object ...
+     * Attributes holder ...
+     *
+     * @private
+     */
+
+    #attrs : Record<string, any> = {
+        'data-lms-trigger' : '1'
+    };
+
+    /**
+     * Source modal params ...
+     *
+     * @private
+     */
+
+    #modalParams : Partial<ModalParams> = {};
+
+    /**
+     * Gets attributes ...
+     */
+
+    getAttrs() : Record<string, any> {
+        return this.#attrs;
+    }
+
+    /**
+     * Constructor ..
      *
      * @param params
      */
 
-    generateString(params: Partial<ModalParams>): string {
+    constructor(params: Record<any, any> = {}) {
+
+        this.#attrs = {
+            ...
+                _.objValueAsObject(params,'attrs') as Record<string, any>,
+            ...{
+                'data-lms-trigger' : 1
+            }};
+
+        this.#modalParams = _.objValueAsObject(params,'modalParams') as Partial<ModalParams>;
+
+    }
+
+    /**
+     * Generates the HTML attribute string from the generated object ...
+     *
+     */
+
+    generateString(): string {
 
         let attrGen = new HtmlAttributeGenerator();
 
-        return attrGen.generateAttributes(this.generateObject(params));
+        return attrGen.generateAttributes(this.generateObject(),'\n');
 
     }
 
     /**
      * Generate an object containing from modal params.
      *
-     * @param params
      */
 
-    generateObject(params: Partial<ModalParams>): Record<string, string> {
+    generateObject(): Record<string, string> {
 
-        let attrs: Record<any, any> = {
-            'data-lms-trigger': 1,
-        };
+        let params = this.#modalParams;
+
+        let attrs = this.#attrs;
 
         /**
          * Transition Duration ...
          */
 
         if (params.transitionDuration) {
-            this.generateAttrIfExists(attrs, params, 'transitionDuration', 'data-lm-transition-duration');
+            this.generateAttrIfExists(params, 'transitionDuration', 'data-lm-transition-duration');
         }
 
         /**
@@ -44,7 +86,7 @@ export default class ModalParam2DataAttrs {
          */
 
         if (params.cssClass) {
-            this.generateAttrIfExists(attrs, params, 'cssClass', 'data-lm-css-class');
+            this.generateAttrIfExists(params, 'cssClass', 'data-lm-css-class');
         }
 
         /**
@@ -162,7 +204,7 @@ export default class ModalParam2DataAttrs {
 
         if (params.hasOwnProperty('footer')) {
 
-            this.generateFooterAttrs(params.footer as Partial<ModalFooterParams>, attrs);
+            this.generateFooterAttrs();
 
         }
 
@@ -172,7 +214,7 @@ export default class ModalParam2DataAttrs {
 
         if (params.hasOwnProperty('body')) {
 
-            this.generateBodyAttrs(params.body as Partial<ModalBodyParams>, attrs);
+            this.generateBodyAttrs();
         }
 
         console.log(attrs);
@@ -190,49 +232,69 @@ export default class ModalParam2DataAttrs {
 
     generateHeaderAttrs(header: Partial<ModalHeaderParams>, attrs: Record<any, any>) {
 
-        attrs['data-lm-h-enabled'] = header.enabled ? 1 : 0;
+        this.#attrs['data-lm-h-enabled'] = header.enabled ? 1 : 0;
 
         if (!header.enabled) {
             return;
         }
 
-        attrs['data-lm-h-title'] = header.title;
-        attrs['data-lm-h-title-tag'] = header.titleTag;
-        attrs['data-lm-h-content'] = header.content;
-        attrs['data-lm-h-css-class'] = header.cssClass;
-        attrs['data-lm-h-inline-styles'] = header.inlineStyles;
+        this.generateAttrIfExists(header,'title','data-lm-h-title');
+        this.generateAttrIfExists(header,'titleTag','data-lm-h-title-tag');
+        this.generateAttrIfExists(header,'content','data-lm-h-content');
+        this.generateAttrIfExists(header,'cssClass','data-lm-h-css-class');
+        this.generateAttrIfExists(header,'inlineStyles','data-lm-h-inline-styles');
 
     }
 
     /**
      * Footer attrs ...
      *
-     * @param footer
-     * @param attrs
      */
 
-    generateFooterAttrs(footer: Partial<ModalFooterParams>, attrs: Record<any, any>) {
+    generateFooterAttrs() {
 
-        attrs['data-lm-f-enabled'] = footer.enabled ? 1 : 0;
+        /**
+         * If footer param is not set, we will assume that footer
+         * is disabled.
+         */
+
+        if(!this.#modalParams.hasOwnProperty('footer')) {
+
+            this.#attrs['data-lm-f-enabled'] = 0;
+
+            return;
+        }
+
+        let footer = this.#modalParams.footer as Partial<ModalFooterParams>;
+
+        /**
+         * Was footer manually disabled by passing false to enabled property?
+         */
+
+        this.#attrs['data-lm-f-enabled'] = footer.enabled ? 1 : 0;
+
+        /**
+         * If footer is disabled, skip entire process.
+         */
 
         if (!footer.enabled) {
             return;
         }
 
-        attrs['data-lm-f-mode'] = footer.mode;
-        attrs['data-lm-f-content'] = footer.content;
-        attrs['data-lm-f-css-class'] = footer.cssClass;
-        attrs['data-lm-f-inline-styles'] = footer.inlineStyles;
+        this.generateAttrIfExists(footer,'mode','data-lm-f-mode');
+        this.generateAttrIfExists(footer,'content','data-lm-f-content');
+        this.generateAttrIfExists(footer,'cssClass','data-lm-f-css-class');
+        this.generateAttrIfExists(footer,'inlineStyles','data-lm-f-inline-styles');
 
 
         if (footer.hasOwnProperty('onOk')) {
             if (typeof footer.onOk === 'string') {
-                attrs['data-lm-f-on-ok'] = footer.onOk;
+                this.generateAttrIfExists(footer,'onOk','data-lm-f-on-ok');
             }
         }
 
         if (footer.templateId) {
-            attrs['data-lm-f-template-id'] = footer.templateId;
+            this.generateAttrIfExists(footer,'templateId','data-lm-f-template-id');
         }
 
         // region [Ok Button]
@@ -241,25 +303,11 @@ export default class ModalParam2DataAttrs {
 
             let okBtn = footer.okButton;
 
-            if (okBtn.text) {
-                attrs['data-lm-f-ok-btn-text'] = footer.okButton.text;
-            }
-
-            if (okBtn.cssClass) {
-                attrs['data-lm-f-ok-btn-css-class'] = footer.okButton.cssClass;
-            }
-
-            if (okBtn.inlineStyles) {
-                attrs['data-lm-f-ok-btn-inline-styles'] = footer.okButton.inlineStyles;
-            }
-
-            if (okBtn.iconClass) {
-                attrs['data-lm-f-ok-btn-icon-class'] = footer.okButton.iconClass;
-            }
-
-            if (okBtn.iconPosition) {
-                attrs['data-lm-f-ok-btn-icon-position'] = footer.okButton.iconPosition;
-            }
+            this.generateAttrIfExists(okBtn,'text','data-lm-f-ok-btn-text');
+            this.generateAttrIfExists(okBtn,'cssClass','data-lm-f-ok-btn-css-class');
+            this.generateAttrIfExists(okBtn,'inlineStyles','data-lm-f-ok-btn-inline-styles');
+            this.generateAttrIfExists(okBtn,'iconClass','data-lm-f-ok-btn-icon-class');
+            this.generateAttrIfExists(okBtn,'iconPosition','data-lm-f-ok-btn-icon-position');
 
         }
 
@@ -271,25 +319,11 @@ export default class ModalParam2DataAttrs {
 
             let closeBtn = footer.closeButton;
 
-            if (closeBtn.text) {
-                attrs['data-lm-f-close-btn-text'] = closeBtn.text;
-            }
-
-            if (closeBtn.cssClass) {
-                attrs['data-lm-f-close-btn-css-class'] = closeBtn.cssClass;
-            }
-
-            if (closeBtn.inlineStyles) {
-                attrs['data-lm-f-close-btn-inline-styles'] = closeBtn.inlineStyles;
-            }
-
-            if (closeBtn.iconClass) {
-                attrs['data-lm-f-close-btn-icon-class'] = closeBtn.iconClass;
-            }
-
-            if (closeBtn.iconPosition) {
-                attrs['data-lm-f-close-btn-icon-position'] = closeBtn.iconPosition;
-            }
+            this.generateAttrIfExists(closeBtn, 'text', 'data-lm-f-close-btn-text');
+            this.generateAttrIfExists(closeBtn, 'cssClass', 'data-lm-f-close-btn-css-class');
+            this.generateAttrIfExists(closeBtn, 'inlineStyles', 'data-lm-f-close-btn-inline-styles');
+            this.generateAttrIfExists(closeBtn, 'iconClass', 'data-lm-f-close-btn-icon-class');
+            this.generateAttrIfExists(closeBtn, 'iconPosition', 'data-lm-f-close-btn-icon-position');
 
         }
 
@@ -300,22 +334,22 @@ export default class ModalParam2DataAttrs {
     /**
      * Generate body attribute ...
      *
-     * @param body
-     * @param attrs
      */
 
-    generateBodyAttrs(body: Partial<ModalBodyParams>, attrs: Record<any, any>) {
+    generateBodyAttrs() {
 
-        attrs['data-lm-b-content-type'] = _.objValueAsString(body, 'contentType', 'html');
-        attrs['data-lm-b-css-class'] = _.objValueAsString(body, 'cssClass');
+        let body = this.#modalParams.body as Partial<ModalBodyParams>;
+
+        this.generateAttrIfExists(body,'contentType','data-lm-b-content-type');
+        this.generateAttrIfExists(body,'cssClass','data-lm-b-css-class');
 
         if (body.contentType === 'html') {
 
-            attrs['data-lm-b-content'] = _.objValueAsString(body, 'content');
+            this.generateAttrIfExists(body,'content','data-lm-b-content');
 
         } else if (body.contentType === 'template') {
 
-            this.generateAttrIfExists(attrs, body, 'templateId', 'data-lm-b-template-id');
+            this.generateAttrIfExists(body, 'templateId', 'data-lm-b-template-id');
 
         } else if (body.contentType === 'image') {
 
@@ -323,20 +357,20 @@ export default class ModalParam2DataAttrs {
 
                 let ip = body.imageParams;
 
-                this.generateAttrIfExists(attrs, ip, 'url', 'data-lm-b-image-url');
-                this.generateAttrIfExists(attrs, ip, 'title', 'data-lm-b-image-title');
-                this.generateAttrIfExists(attrs, ip, 'alt', 'data-lm-b-image-alt');
-                this.generateAttrIfExists(attrs, ip, 'cssClass', 'data-lm-b-image-css-class');
-                this.generateAttrIfExists(attrs, ip, 'inlineStyles', 'data-lm-b-image-inline-styles');
-                this.generateAttrIfExists(attrs, ip, 'caption', 'data-lm-b-image-caption');
-                this.generateAttrIfExists(attrs, ip, 'captionTemplate', 'data-lm-b-image-caption-template');
-                this.generateAttrIfExists(attrs, ip, 'captionCssClass', 'data-lm-b-image-caption-css-class');
+                this.generateAttrIfExists(ip, 'url', 'data-lm-b-image-url');
+                this.generateAttrIfExists(ip, 'title', 'data-lm-b-image-title');
+                this.generateAttrIfExists(ip, 'alt', 'data-lm-b-image-alt');
+                this.generateAttrIfExists(ip, 'cssClass', 'data-lm-b-image-css-class');
+                this.generateAttrIfExists(ip, 'inlineStyles', 'data-lm-b-image-inline-styles');
+                this.generateAttrIfExists(ip, 'caption', 'data-lm-b-image-caption');
+                this.generateAttrIfExists(ip, 'captionTemplate', 'data-lm-b-image-caption-template');
+                this.generateAttrIfExists(ip, 'captionCssClass', 'data-lm-b-image-caption-css-class');
 
             }
 
         } else if (body.contentType === 'youtube-video') {
 
-            this.generateAttrIfExists(attrs, body, 'videoUrl', 'data-lm-b-video-url');
+            this.generateAttrIfExists(body, 'videoUrl', 'data-lm-b-video-url');
 
         } else if(body.contentType === 'ajax') {
 
@@ -348,30 +382,36 @@ export default class ModalParam2DataAttrs {
 
                 if(url !== '') {
 
-                    attrs['data-lm-b-ajax-url'] = url;
+                    this.generateAttrIfExists(ajax,'url','data-lm-b-ajax-url');
 
-                    this.generateAttrIfExists(attrs, ajax, 'contentDataType', 'data-lm-b-ajax-content-data-type');
-                    this.generateAttrIfExists(attrs, ajax, 'method', 'data-lm-b-ajax-method');
+                    this.generateAttrIfExists(ajax, 'contentDataType', 'data-lm-b-ajax-content-data-type');
+                    this.generateAttrIfExists(ajax, 'method', 'data-lm-b-ajax-method');
 
                     if(typeof ajax.data !== "undefined" && ajax.data !== null) {
-                        attrs['data-lm-b-ajax-data'] = _.unicodeB64Encode(JSON.stringify(ajax.data));
+                        this.#attrs['data-lm-b-ajax-data'] = _.unicodeB64Encode(JSON.stringify(ajax.data));
                     }
 
-                    this.generateAttrIfExists(attrs, ajax, 'decodeParams', 'data-lm-b-decode-params');
+                    this.generateAttrIfExists(ajax, 'decodeParams', 'data-lm-b-decode-params');
 
                     if (typeof ajax.headers !== "undefined" && ajax.headers !== null) {
-                        attrs['data-lm-b-ajax-headers'] = _.unicodeB64Encode(JSON.stringify(ajax.headers));
+                        this.#attrs['data-lm-b-ajax-headers'] = _.unicodeB64Encode(JSON.stringify(ajax.headers));
                     }
 
-                    this.generateAttrIfExists(attrs, ajax, 'timeoutMs', 'data-lm-b-ajax-timeout-ms');
+                    this.generateAttrIfExists(ajax, 'timeoutMs', 'data-lm-b-ajax-timeout-ms');
 
-                    if(typeof ajax.transformJson === 'string') {
-                        this.generateAttrIfExists(attrs, ajax, 'transformJson', 'data-lm-b-ajax-transform-json');
+                    if(ajax.contentDataType === 'json') {
+                        if (typeof ajax.transformJson === 'string') {
+                            this.generateAttrIfExists(ajax, 'transformJson', 'data-lm-b-ajax-transform-json');
+                        }
                     }
 
-                    if (typeof ajax.transformHtml === 'string') {
-                        this.generateAttrIfExists(attrs, ajax, 'transformHtml', 'data-lm-b-ajax-transform-html');
+                    if(ajax.contentDataType === 'html') {
+                        if (typeof ajax.transformHtml === 'string') {
+                            this.generateAttrIfExists(ajax, 'transformHtml', 'data-lm-b-ajax-transform-html');
+                        }
                     }
+
+
                 }
 
 
@@ -385,27 +425,25 @@ export default class ModalParam2DataAttrs {
          * Aspect ration ...
          */
 
-        this.generateAttrIfExists(attrs, body, 'aspectRatio', 'data-lm-b-aspect-ratio');
+        this.generateAttrIfExists(body, 'aspectRatio', 'data-lm-b-aspect-ratio');
 
         /**
          * Transformer ...
          */
 
         if (typeof body.transformer === 'string') {
-            this.generateAttrIfExists(attrs, body, 'transformer', 'data-lm-b-transformer');
+            this.generateAttrIfExists(body, 'transformer', 'data-lm-b-transformer');
         }
-
-        console.log('%c%s', 'color: red;background-color: yellow;font-size: 1.2em;', 'generateBodyAttrs() called ...');
 
     }
 
-    generateAttrIfExists(attrs: Record<any, any>, sourceObj: Record<any, any>, key: string, attrName: string) {
+    generateAttrIfExists(sourceObj: Record<any, any>, key: string, attrName: string) {
 
         if (!sourceObj.hasOwnProperty(key)) {
             return;
         }
 
-        attrs[attrName] = _.objValueAsString(sourceObj, key);
+        this.#attrs[attrName] = _.objValueAsString(sourceObj, key);
 
     }
 
