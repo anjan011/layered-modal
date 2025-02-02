@@ -1,3 +1,7 @@
+.flex {
+    flex: 1 !important;
+}
+
 .form-label {
     color: #495057; /* Darker gray for better contrast */
     font-weight: 600; /* Make labels bolder */

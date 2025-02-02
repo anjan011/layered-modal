@@ -17,6 +17,7 @@ export default class Modal {
     generateHtml(): string;
     generateModalMarkup(): string;
     generateXButtonMarkup(): string;
+    hasContentError(): boolean;
     generateBodyMarkup(): string;
     generateHeaderMarkup(): string;
     generateFooterMarkup(): string | undefined;
@@ -43,4 +44,5 @@ export default class Modal {
     adjustMargin(position: Position): void;
     setShiftingDistance(distance: Position, adjustMargins?: boolean): void;
     generateBackDropInlineStyles(backDrop?: Partial<BackDropParams>): string;
+    isEscKeyDisabled(): boolean;
 }

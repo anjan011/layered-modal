@@ -78,7 +78,7 @@ export default class ModalParam2DataAttrs {
          */
 
         if(!_.isValidGUID(params.id as string) && params.id) {
-            this.#attrs['data-lm-id'] = params.id;
+            this.#attrs['data-lm-id'] = _.sanitizeString(params.id);
         }
 
         /**

@@ -1,7 +1,7 @@
 import Modal from './modal';
 import { Position } from "./interfaces/common";
-import { ModalXButton } from "./interfaces/modal";
-interface LayeredModalManagerParams {
+import { ModalParams, ModalXButton } from "./interfaces/modal";
+interface ModalManagerParams {
     xButton: Partial<ModalXButton>;
     zIndex: number;
     baseShiftDistance?: Partial<Position>;
@@ -15,8 +15,12 @@ interface CssClassNames {
 }
 export default class ModalManager {
     #private;
-    constructor(params?: Partial<LayeredModalManagerParams>);
-    prepareParams(params: Partial<LayeredModalManagerParams>): void;
+    static instance: ModalManager;
+    constructor(params?: Partial<ModalManagerParams>);
+    setParameters(params: Partial<ModalManagerParams>): void;
+    prepareParams(params: Partial<ModalManagerParams>): void;
+    checkCallbacks(params: Partial<ModalParams>): Modal | null;
+    errorModal(params: Partial<ModalParams>): Modal;
     addModal(params: any): Modal;
     removeModal(callback?: Function | null): void;
     popStack(): Modal | null | undefined;
@@ -27,7 +31,8 @@ export default class ModalManager {
     throttle(func: any, limit: any): any;
     adjustStackCssClassForModals(): void;
     bindTriggerClickUsingDataAttributes(): void;
-    getContentFromTemplateElement(templateId: string): string;
     getLatestModal(): Modal | null;
+    static addModal(params: Partial<ModalParams>): Modal;
+    static removeModal(callback: Function | null): void;
 }
 export {};

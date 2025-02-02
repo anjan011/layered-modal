@@ -2,6 +2,8 @@ interface ParsedObject {
     [key: string]: any;
 }
 
+type CaseOption = 'lower' | 'upper' | 'none';
+
 const _ = {
 
     has(obj: any, key: any): boolean {
@@ -664,6 +666,33 @@ const _ = {
         }
 
         return result;
+    },
+
+
+
+    sanitizeString(input: string, replacer: string = '-', changeCase: CaseOption = 'lower'): string {
+        // Replace all non-word characters (\W) with the replacer
+        let sanitized = input.replace(/\W+/g, replacer);
+
+        // Trim leading and trailing replacer sequences
+        const regex = new RegExp(`^${replacer}+|${replacer}+$`, 'g');
+        sanitized = sanitized.replace(regex, '');
+
+        // Apply case transformation
+        switch (changeCase) {
+            case 'lower':
+                sanitized = sanitized.toLowerCase();
+                break;
+            case 'upper':
+                sanitized = sanitized.toUpperCase();
+                break;
+            case 'none':
+                break; // Do nothing
+            default:
+                throw new Error(`Invalid changeCase option: ${changeCase}`);
+        }
+
+        return sanitized;
     }
 }
 

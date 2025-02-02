@@ -15,7 +15,7 @@ export interface ModalHeaderParams {
 export interface ModalBodyParams {
     noPadding?: boolean;
     aspectRatio?: number;
-    contentType?: "html" | "iframe" | "function" | "ajax" | "image" | "youtube-video" | "template";
+    contentType?: string;
     content?: string;
     iframeCode?: string;
     functionName?: Function | string;
@@ -27,6 +27,7 @@ export interface ModalBodyParams {
     videoUrl?: string;
     maxHeight?: Dimension;
     templateId?: string;
+    transformer?: Function | string | null;
 }
 export interface ModalFooterParams {
     enabled: boolean;
@@ -37,6 +38,7 @@ export interface ModalFooterParams {
     inlineStyles: string;
     okButton: Partial<ButtonParams>;
     closeButton: Partial<ButtonParams>;
+    templateId?: string;
 }
 export interface ModalXButton {
     enabled: boolean;
@@ -74,6 +76,7 @@ export interface ModalParams {
     xButton?: ModalXButton;
     delayInMilliSeconds?: number;
     backDrop?: BackDropParams;
+    disableEscKey?: boolean;
 }
 export interface BackDropParams {
     bgColor?: string;

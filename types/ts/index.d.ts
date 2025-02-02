@@ -1,3 +1,6 @@
 import './../styles/main.scss';
-export { default as Modal } from './app/modal';
-export { default as ModalManager } from './app/modal-manager';
+import Modal from './app/modal';
+import ModalManager from './app/modal-manager';
+import ModalParam2DataAttrs from "./app/parsers/converters/modal-param-2-data-attrs";
+import FormSerializer from "./app/utils/form-serializer";
+export { ModalManager, Modal, ModalParam2DataAttrs, FormSerializer };

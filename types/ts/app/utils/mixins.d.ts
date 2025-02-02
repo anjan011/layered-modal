@@ -1,16 +1,18 @@
 interface ParsedObject {
     [key: string]: any;
 }
+type CaseOption = 'lower' | 'upper' | 'none';
 declare const _: {
     has(obj: any, key: any): boolean;
     isFunction(value: any): boolean;
     isString(value: any): boolean;
     isArray(value: any): boolean;
+    isNumber(value: any): boolean;
     isNumberOrString(value: any): boolean;
     joinObjectPropertiesAsString(first: Record<string, any>, second: Record<string, any>, properties: string[], separator?: string, trim?: boolean): object;
     isPlainObject: (o: any) => boolean;
-    asObject: (v: any, d: object) => object;
-    asString: (v: any, d: string) => string;
+    asObject: (v: any, d?: object) => object;
+    asString: (v: any, d?: string) => string;
     asInt: (v: any, d?: number) => number;
     asFloat: (v: any, d?: number) => number;
     asArray: (v: any, d: unknown[]) => unknown[];
@@ -31,6 +33,7 @@ declare const _: {
     isObject(value: any): boolean;
     allKeys(obj: any): string[];
     guid: () => string;
+    isValidGUID(guid: string): boolean;
     objValueAsMethod: (o: any, k: string, d?: unknown) => unknown;
     isAlphanumeric(value: any): boolean;
     ensureSemicolon(str: string): string;
@@ -42,5 +45,10 @@ declare const _: {
     parseUrlEncoded: (data: string) => ParsedObject;
     setNestedValue: (obj: ParsedObject, key: string, value: string) => void;
     autoConvert: (value: string) => string | number;
+    ifGlobalFunctionExists(name: Function | string | null | undefined): boolean;
+    unicodeB64Decode(base64: string): string;
+    unicodeB64Encode(text: string): string;
+    deepMerge<T extends Record<string, any>>(obj1: T, obj2: T): T;
+    sanitizeString(input: string, replacer?: string, changeCase?: CaseOption): string;
 };
 export default _;

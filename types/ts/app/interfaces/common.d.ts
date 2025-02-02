@@ -12,8 +12,8 @@ export interface AjaxParams {
     url: string;
     method: string;
     headers?: object;
-    transformHtml?: Function | null;
-    transformJson?: Function | null;
+    transformHtml?: Function | string | null;
+    transformJson?: Function | string | null;
     contentDataType?: "html" | "json";
     timeoutMs: number;
     data: FormData | object | null;
