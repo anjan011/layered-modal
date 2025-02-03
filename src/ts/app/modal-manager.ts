@@ -562,49 +562,47 @@ export default class ModalManager {
         document.addEventListener("click", (event) => {
 
 
+            let t = (event.target as Element)?.closest("[data-lms-trigger]");
+
+            if(!t) {
+                return;
+            }
+
             event.preventDefault();
 
             if (!event.target) {
                 return;
             }
 
-            let t = null;
+            /**
+             * if a button element or input element with button type
+             * has disabled attr set, we skip click action.
+             */
 
-            const target = event.target as Element;
-
-            if ((t = target.closest("[data-lms-trigger]"))) {
-
-                /**
-                 * if a button element or input element with button type
-                 * has disabled attr set, we skip click action.
-                 */
-
-                if (t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {
-                    if (t.disabled) {
-                        return;
-                    }
-                }
-
-                /**
-                 * Additionally, if the element has a disabled class, we
-                 * skip as well.
-                 */
-
-                if (t.classList.contains('disabled')) {
+            if (t instanceof HTMLButtonElement || t instanceof HTMLInputElement) {
+                if (t.disabled) {
                     return;
                 }
-
-                let attrs = DomUtils.getDataAttributes(t as HTMLElement);
-
-                if (_.objValueAsIntFlag(attrs, 'lms-trigger', 0) !== 1) {
-                    return;
-                }
-
-                let attr2param = new DataAttrs2ModalParam();
-
-                this.addModal(attr2param.generate(attrs) as ModalParams);
-
             }
+
+            /**
+             * Additionally, if the element has a disabled class, we
+             * skip as well.
+             */
+
+            if (t.classList.contains('disabled')) {
+                return;
+            }
+
+            let attrs = DomUtils.getDataAttributes(t as HTMLElement);
+
+            if (_.objValueAsIntFlag(attrs, 'lms-trigger', 0) !== 1) {
+                return;
+            }
+
+            let attr2param = new DataAttrs2ModalParam();
+
+            this.addModal(attr2param.generate(attrs) as ModalParams);
         });
 
     }

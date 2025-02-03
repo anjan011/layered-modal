@@ -9,15 +9,17 @@
     use Examples\AssetsManager\ExamplesAssetsManager;
     use Examples\Template\ThemeTemplateLoader;
 
-    require_once('config.php');
+    require_once('../config.php');
 
     $am = ExamplesAssetsManager::getInstance();
 
-    $am->setPageTitle('Examples Root');
+    $am->setPageTitle('Layered Modal Examples');
 
+    $sideBar = ThemeTemplateLoader::loadSideBar('layered-modal.php');
 
     ThemeTemplateLoader::load('header.php',[
-        'navHeader' => 'Examples'
+        'sideBar' => $sideBar,
+        'navHeader' => 'Layered Modal Examples'
     ]);
-    ThemeTemplateLoader::loadPage('index/index.php');
+    ThemeTemplateLoader::loadPage('layered-modal/index/index.php');
     ThemeTemplateLoader::load('footer.php');

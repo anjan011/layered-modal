@@ -1,10 +1,15 @@
 <?php
 
     /**
-     * @var \Examples\UiComponents\BootStrap53\SideBar $sideBar
+     * @var SideBar $sideBar
      */
 
-    $am = \Examples\AssetsManager\ExamplesAssetsManager::getInstance();
+    use Examples\AssetsManager\ExamplesAssetsManager;
+    use Examples\UiComponents\BootStrap53\SideBar;
+
+    $am = ExamplesAssetsManager::getInstance();
+
+    $sideBarSet = isset($sideBar) && ($sideBar instanceof SideBar);
 
 ?>
 <!doctype html>
@@ -14,11 +19,11 @@
     </head>
     <body>
 
-        <?= $sideBar->generateOffCanvas() ?>
+        <?= $sideBarSet ? $sideBar->generateOffCanvas() :'' ?>
 
         <div class="d-flex">
 
-            <?= $sideBar->generate()?>
+            <?= $sideBarSet ? $sideBar->generate() : ''?>
 
             <div class="container-fluid flex">
 
@@ -31,5 +36,5 @@
 
                     <h3 class="m-0"><?= $navHeader ?? 'Navigation'?></h3>
 
-                    <?= $sideBar->generateHamBurgerButton() ?>
+                    <?= $sideBarSet ? $sideBar->generateHamBurgerButton() :'' ?>
                 </div>

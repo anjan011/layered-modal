@@ -47,6 +47,18 @@
             ]);
             #endregion
 
+            #region [Prism Syntax Highlighter]
+
+            $this->addExtStyleSheet('prism-css',[
+                'url' => EXAMPLE_ROOT_URL . 'assets/libs/prism/prism.css'
+            ]);
+
+            $this->addExtFooterScript('prism-js', [
+                'url' => EXAMPLE_ROOT_URL . 'assets/libs/prism/prism.js'
+            ]);
+
+            #endregion
+
             #region [Layered Modal Lib]
 
             $this->addExtFooterScript('layered-modal',[

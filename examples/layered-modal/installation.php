@@ -9,15 +9,21 @@
     use Examples\AssetsManager\ExamplesAssetsManager;
     use Examples\Template\ThemeTemplateLoader;
 
-    require_once('config.php');
+    require_once('../config.php');
 
     $am = ExamplesAssetsManager::getInstance();
 
-    $am->setPageTitle('Examples Root');
+    /**
+     * Page title ...
+     */
 
+    $am->setPageTitle('Installation');
+
+    $sideBar = ThemeTemplateLoader::loadSideBar('layered-modal.php');
 
     ThemeTemplateLoader::load('header.php',[
-        'navHeader' => 'Examples'
+        'sideBar' => $sideBar,
+        'navHeader' => 'Installation'
     ]);
-    ThemeTemplateLoader::loadPage('index/index.php');
+    ThemeTemplateLoader::loadPage('layered-modal/installation/index.php');
     ThemeTemplateLoader::load('footer.php');
