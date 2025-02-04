@@ -24,18 +24,10 @@
 
         <link rel="stylesheet" href="/dist/styles.min.css">
 
-        <style>
-            .big-border {
-                border: solid 10px #333 !important;
-            }
 
-            .rounded {
-                border-radius: 20px !important;
-            }
-        </style>
 
     </head>
-    <body style="height: 1200px;">
+    <body>
 
         <div class="container mt-3">
             <div class="row">
@@ -45,80 +37,20 @@
                         ES6: Load via Ajax
                     </button>
 
-                    <button id="ajax-btn-umd" class="btn btn-success">
-                        UMD: Load via Ajax
-                    </button>
-
                 </div>
             </div>
         </div>
 
-        <script>
-            class JsonTransformer {
-                static transform(data) {
-                    return `Transformed Data: ${JSON.stringify(data)}`;
-                }
-            }
-        </script>
+
 
         <script type="module">
 
             import {ModalManager} from '/dist/bundle.dev.min.esm.js'
 
-            window.ModalManager = ModalManager;
-
-            const manager = new ModalManager({
-                /*cssClass : {
-                    modal : 'my-modal my-modal-black',
-                    modalOk : 'what-ok',
-                    modalClose : 'no-ok'
-                },*/
-                zIndex : 1000,
-                /*baseShiftDistance : {
-                    top : 300,
-                    left : 300
-                }*/
-
-                xButton: {
-                    content: 'Close  <i class="fa fa-fw fa-cogs"></i>',
-                    iconPosition: 'right',
-                    inlineStyles: 'width: auto !important;border-radius: 4px;padding: 8px 16px;'
-                },
-
-                backDrop: {
-                    bgColor: 'rgba(0,255,0,0.20)',
-                    opacity: 1
-                },
-            });
-
-            const managerUmd = new LayeredModalSystem.ModalManager({
-                /*cssClass : {
-                    modal : 'my-modal my-modal-black',
-                    modalOk : 'what-ok',
-                    modalClose : 'no-ok'
-                },*/
-                zIndex: 1000,
-                /*baseShiftDistance : {
-                    top : 300,
-                    left : 300
-                }*/
-
-                xButton: {
-                    content: 'Close  <i class="fa fa-fw fa-cogs"></i>',
-                    iconPosition: 'right',
-                    inlineStyles: 'width: auto !important;border-radius: 4px;padding: 8px 16px;'
-                },
-
-                backDrop: {
-                    bgColor: 'rgba(0,0,255,0.20)',
-                    opacity: 1
-                },
-            });
-
             document.addEventListener('DOMContentLoaded', function () {
 
                 let ajaxBtn = document.getElementById('ajax-btn');
-                let ajaxBtnUmd = document.getElementById('ajax-btn-umd');
+
 
                 if(ajaxBtn) {
 
@@ -133,23 +65,25 @@
 
 
 
-                        manager.addModal({
+                        ModalManager.addModal({
+                            closeOnOutsideMouseClick : false,
                             secondaryOverlay : true,
-                            /*cssClass : {
-                                modal : 'modal--wide modal--blue',
-                                modalOk : 'ok---1',
-                                modalClose : 'close---2'
-                            },*/
-                            zIndex : 4000,
                             transitionDuration : 100,
-                            draggable : true,
-                            dragHandle : 'dragHandle',
+                            position : 'center-center',
+                            maxWidth2 : {
+                                unit : '%',
+                                value : 90
+                            },
+                            maxHeight2: {
+                                unit: '%',
+                                value: 90
+                            },
                             backDrop : {
                                 bgColor : 'rgba(255,0,0,0.20)',
                                 opacity : 1
                             },
                             header : {
-                                enabled : false,
+                                enabled : true,
                                 title : 'Account login',
                                 cssClass : 'bg-primary text-white',
                                 inlineStyles: 'padding: 20px;',
@@ -164,7 +98,7 @@
 
                                     let randomPos = Math.ceil(Math.random() * 9) - 1;
 
-                                    manager.addModal({
+                                    ModalManager.addModal({
                                         header : {
                                             enabled : false
                                         },
@@ -198,18 +132,7 @@
                                     cssClass: 'text-success'*/
                                 }
                             },
-                            onShow : function() {
 
-                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Shown ...`);
-
-                                console.log('Latest Modal: ',manager.getLatestModal());
-
-                            },
-                            onHide() {
-                                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Hidden ...`);
-
-                                console.log('Latest Modal: ', manager.getLatestModal());
-                            },
                             xButton : {
                                 content : 'Close',
                                 iconClass : 'fa fa-cogs',
@@ -219,14 +142,13 @@
                             body : {
                                 inlineStyles : 'padding: 20px;',
                                 cssClass : 'bg-info',
-                                contentType : 'function',
-                                functionName : '__abraca_dabra',
-                                functionArguments : [1,2,3],
-                                content: `<div><button type="button" id="dragHandle2" href="#">Drag me</button></div>`,
+                                contentType : 'html',
+                                content : `<div><p>Nullam veniam, magna! Sit erat dictumst nibh porro, luctus aut leo cumque, quo nibh ut alias repellendus illum. Totam ultricies, exercitationem harum phasellus aspernatur penatibus incididunt congue dolor non esse, risus faucibus ad aliquet aliquid gravida.</p>
+</div>`,
                                 ajaxParams : {
                                     timeoutMs: 25000,
                                     decodeParams : true,
-                                    url : 'http://127.0.0.1:9999/?a=b',
+                                    url : 'http://127.0.0.1:9000/demo/php/ajax-json.php',
                                     method : 'get',
                                     headers : {
                                         'Custom-Header' : 'What?'
@@ -244,7 +166,6 @@
                                         }
                                     },
                                     contentDataType : 'html',
-                                    transformJson : JsonTransformer.transform
                                 },
 
                             },
@@ -274,166 +195,12 @@
 
                 }
 
-                if (ajaxBtnUmd) {
-
-                    ajaxBtnUmd.addEventListener('click', () => {
-
-                        let formData = new FormData();
-
-                        formData.append('dee[]', '??');
-                        formData.append('dee[]', '++');
-                        formData.append('dee[]', '--');
-                        formData.append('dee[]', '**');
-
-
-                        managerUmd.addModal({
-                            secondaryOverlay: true,
-                            /*cssClass : {
-                                modal : 'modal--wide modal--blue',
-                                modalOk : 'ok---1',
-                                modalClose : 'close---2'
-                            },*/
-                            zIndex: 4000,
-                            transitionDuration: 100,
-                            draggable: false,
-                            dragHandle: 'dragHandle',
-                            backDrop: {
-                                bgColor: 'rgba(0,0,255,0.20)',
-                                opacity: 1
-                            },
-                            header: {
-                                enabled: false,
-                                title: 'Account login UMD',
-                                cssClass: 'bg-primary text-white',
-                                inlineStyles: 'padding: 20px;',
-                                content: 'What content',
-                            },
-                            footer: {
-                                enabled: true,
-                                mode: 'confirm',
-                                onOk: function () {
-
-                                    let positions = ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'];
-
-                                    let randomPos = Math.ceil(Math.random() * 9) - 1;
-
-                                    manager.addModal({
-                                        header: {
-                                            enabled: false
-                                        },
-                                        footer: {
-                                            enabled: false
-                                        },
-                                        body: {
-                                            contentType: 'html',
-                                            content: `What is this content? Where did it come from?`
-                                        },
-                                        position: positions[randomPos],
-                                    });
-
-                                },
-                                inlineStyles: 'padding: 20px;',
-                                cssClass: 'bg-warning',
-                                okButton: {
-                                    text: 'Whats ok?',
-                                    iconClass: 'fa fa-fw fa-cogs',
-                                    cssClass: 'big-border rounded',
-                                    /*iconPosition : 'right',
-                                    inlineStyles : 'padding: 30px;font-size: 30px;',
-                                    cssClass : 'text-danger'*/
-                                },
-                                closeButton: {
-                                    text: 'Now close!',
-                                    iconClass: 'fa fa-fw fa-chevron-right',
-                                    cssClass: 'big-border rounded',
-                                    /*iconPosition: 'left',
-                                    inlineStyles: 'padding: 30px;font-size: 30px;margin-left: 50px;',
-                                    cssClass: 'text-success'*/
-                                }
-                            },
-                            onShow: function () {
-
-                                console.log('%c%s', 'background-color: green;color: #fff;font-size: 1.2em;padding: 1em;', `Shown ...`);
-
-                                console.log('Latest Modal: ', manager.getLatestModal());
-
-                            },
-                            onHide() {
-                                console.log('%c%s', 'background-color: red;color: #fff;font-size: 1.2em;padding: 1em;', `Hidden ...`);
-
-                                console.log('Latest Modal: ', manager.getLatestModal());
-                            },
-                            xButton: {
-                                content: 'Close',
-                                iconClass: 'fa fa-cogs',
-                                iconPosition: 'right',
-                                inlineStyles: 'width: auto !important;border-radius: 4px;padding: 8px 16px;'
-                            },
-                            body: {
-                                inlineStyles: 'padding: 20px;',
-                                cssClass: 'bg-info',
-                                contentType: 'function',
-                                functionName: '__abraca_dabra',
-                                functionArguments: [1, 2, 3],
-                                content: `<div><button type="button" id="dragHandle2" href="#">Drag me</button></div>`,
-                                ajaxParams: {
-                                    timeoutMs: 25000,
-                                    decodeParams: true,
-                                    url: 'http://127.0.0.1:9999/?a=b',
-                                    method: 'get',
-                                    headers: {
-                                        'Custom-Header': 'What?'
-                                    },
-                                    data: formData,
-                                    data2: {
-                                        keyword: 'Retro Games',
-                                        categories: [1, 2, 3],
-                                        other: {
-                                            a: 10,
-                                            b: 20,
-                                            c: {
-                                                d: 'booo!'
-                                            }
-                                        }
-                                    },
-                                    contentDataType: 'html',
-                                    transformJson: JsonTransformer.transform
-                                },
-
-                            },
-                            shiftDistance: {
-                                top: -300,
-                                left: -300,
-                            }
-                            /*maxWidth : {
-                                value : 60,
-                                unit : 'vw'
-                            },
-                            minWidth: {
-                                value: 500,
-                                unit: 'px'
-                            },
-                            maxHeight: {
-                                value: 90,
-                                unit: 'vh'
-                            },
-                            minHeight: {
-                                value: 300,
-                                unit: 'px'
-                            }*/
-                        });
-
-                    });
-
-                }
-
             });
         </script>
 
-        <script>
-            function __abraca_dabra(params) {
-                return `Here lies: ${JSON.stringify(params)}`;
-            }
-        </script>
+        <!--<div class="layered-modal-backdrop">
+            <div style="height: 1200px;">Woah!</div>
+        </div>-->
+
     </body>
 </html>

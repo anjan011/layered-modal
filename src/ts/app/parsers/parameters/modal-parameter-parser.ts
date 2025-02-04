@@ -211,6 +211,15 @@ export default class ModalParameterParser {
             params.disableEscKey = false;
         }
 
+        /**
+         * Close on mouse click outside modal?
+         */
+
+        if(!params.hasOwnProperty('closeOnOutsideMouseClick')) {
+            params.closeOnOutsideMouseClick = false;
+        } else {
+            params.closeOnOutsideMouseClick = _.objValueAsBool(params,'closeOnOutsideMouseClick',false);
+        }
 
 
         return params as ModalParams;
@@ -229,7 +238,9 @@ export default class ModalParameterParser {
          */
 
         if (params.hasOwnProperty('autoHeight')) {
-            params.autoHeight = _.objValueAsBool(params, 'autoHeight', false);
+            params.autoHeight = _.objValueAsBool(params, 'autoHeight', true);
+        } else {
+            params.autoHeight = true;
         }
 
         /**
@@ -243,6 +254,11 @@ export default class ModalParameterParser {
             maxHeight.value = _.objValueAsFloat(maxHeight, 'value', 90);
             maxHeight.unit = _.objValueAsString(maxHeight, 'unit', 'vh');
 
+        } else {
+            params.maxHeight = {
+                value: 90,
+                unit: 'vh'
+            } as Dimension;
         }
 
         /**
@@ -312,7 +328,9 @@ export default class ModalParameterParser {
          */
 
         if (params.hasOwnProperty('autoWidth')) {
-            params.autoWidth = _.objValueAsBool(params, 'autoWidth', false);
+            params.autoWidth = _.objValueAsBool(params, 'autoWidth', true);
+        } else {
+            params.autoWidth = true;
         }
 
         /**
@@ -326,6 +344,11 @@ export default class ModalParameterParser {
             maxWidth.value = _.objValueAsFloat(maxWidth, 'value', 90);
             maxWidth.unit = _.objValueAsString(maxWidth, 'unit', 'vw');
 
+        } else {
+            params.maxWidth = {
+                value : 90,
+                unit : 'vw'
+            } as Dimension;
         }
 
         /**

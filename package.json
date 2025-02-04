@@ -1,12 +1,16 @@
 {
   "name": "layered-modal",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "changelog": "See CHANGELOG.md for details.",
   "description": "A lightweight, flexible, and stackable modal dialog system that allows multiple modals to be layered over each other. Provides full control over modal instances, enabling seamless manipulation of dialogs based on the currently visible modal content.",
   "exports": {
     "import": "./dist/bundle.min.esm.js",
     "require": "./dist/bundle.min.umd.js",
-    "default": "./dist/bundle.min.umd.js"
+    "default": "./dist/bundle.min.umd.js",
+    "style": "./dist/styles.min.css",
+    "styles": {
+      "default": "./dist/styles.min.css"
+    }
   },
   "types": "types/ts/index.d.ts",
   "files": [

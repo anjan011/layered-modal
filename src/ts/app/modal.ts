@@ -64,6 +64,8 @@ export default class Modal {
     constructor(params: Partial<ModalParams> = {}) {
 
         this.#params = ModalParameterParser.parse(params);
+
+        console.log(this.#params.body?.ajaxParams);
     }
 
 
@@ -733,14 +735,14 @@ export default class Modal {
 
                         if (_.isPlainObject(ap.data)) {
                             url = _.appendQueryParams(url, ap.data);
+
                         } else if (ap.data instanceof FormData) {
 
                             const urlObject = new URL(url);
 
                             url = urlObject.search ?
                                 `${url}&${new URLSearchParams(ap.data as any).toString()}` :
-                                `${url}?${urlObject.toString()}`;
-
+                                `${urlObject.toString()}`;
                         }
 
                     }
@@ -1251,6 +1253,11 @@ export default class Modal {
 
         this.handleDragEvents();
 
+        /**
+         * Do we close modal on mouse click out side the modal window?
+         */
+
+        this.handleMouseClickOutsideModal();
 
     }
 
@@ -1532,6 +1539,22 @@ export default class Modal {
         }
 
         return  this.#params.disableEscKey;
+    }
+
+    handleMouseClickOutsideModal() {
+
+        if(!this.#params.closeOnOutsideMouseClick) {
+            return;
+        }
+
+        document.addEventListener("click", (event) => {
+            const modal = document.querySelector(".layered-modal");
+
+            if (modal && !modal.contains(event.target as any)) {
+                this.hide();
+            }
+        });
+
     }
 
 }

@@ -10,11 +10,11 @@
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     display: flex;
-    justify-content: flex-start;
+    justify-content: center;
     align-items: center;
-    overflow: scroll;
-    flex-direction: column;
-
+    overflow: auto;
+    flex-direction: row;
+    padding: 20px;
 
     &.secondary {
         background: rgba(0, 0, 0, 0.25);
@@ -33,13 +33,13 @@
 
     $positions: (
             (name : 'top-left', ai : start, jc: start),
-            (name : 'top-center', ai : center, jc: start),
-            (name : 'top-right', ai : end, jc: start),
-            (name : 'middle-left', ai : start, jc: center),
+            (name : 'top-center', ai : start, jc: center),
+            (name : 'top-right', ai : start, jc: end),
+            (name : 'middle-left', ai : center, jc: start),
             (name : 'middle-center', ai : center, jc: center),
-            (name : 'middle-right', ai : end, jc: center),
-            (name : 'bottom-left', ai : start, jc: end),
-            (name : 'bottom-center', ai : center, jc: end),
+            (name : 'middle-right', ai : center, jc: end),
+            (name : 'bottom-left', ai : end, jc: start),
+            (name : 'bottom-center', ai : end, jc: center),
             (name : 'bottom-right', ai : end, jc: end),
     );
 
@@ -50,8 +50,8 @@
         $jc: map.get($entry, jc);
 
         &.#{$name} {
-            align-items: $ai;
-            justify-content: $jc;
+            align-items: $ai !important;
+            justify-content: $jc !important;
         }
     }
 }

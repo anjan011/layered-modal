@@ -468,6 +468,8 @@ export default class ModalManager {
 
         this.bindTriggerClickUsingDataAttributes();
 
+
+
     }
 
     /**
@@ -606,6 +608,7 @@ export default class ModalManager {
         });
 
     }
+
 
 
     /**

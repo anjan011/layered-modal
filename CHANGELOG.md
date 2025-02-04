@@ -1,5 +1,26 @@
 # Changelog
 
+## [1.0.7] - 2025-02-04
+
+### Fixed
+
+- Added support for modal closing on mouse click outside the modal dialog
+- Backdrop and modal body overflow set to auto. It was adding some extra spacing with overflow
+  scroll.
+- Modal Parameter default value changes: autoWidth and autoHeight is set to true and maxWidth and maxHeight is set to 90vw and 90vh respectively.
+
+## [1.0.6] - 2025-02-03
+
+### Fixed
+
+- Some minor bug fixes
+
+## [1.0.5] - 2025-01-30
+
+### Fixed
+
+- Package export settings updated
+
 ## [1.0.4] - 2025-01-30
 
 ### Fixed
