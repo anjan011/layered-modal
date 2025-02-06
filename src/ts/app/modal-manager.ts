@@ -5,6 +5,7 @@ import _ from "./utils/mixins";
 import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams, ModalXButton} from "./interfaces/modal";
 import ModalParameterParser from "./parsers/parameters/modal-parameter-parser";
 import DataAttrs2ModalParam from "./parsers/converters/data-attrs-2-modal-param";
+import {FormSerializer} from "../../../types/ts";
 
 
 interface ModalManagerParams {
@@ -642,4 +643,8 @@ export default class ModalManager {
     static removeModal(callback: Function | null) {
         ModalManager.instance.removeModal(callback);
     }
+
+    /*static getFormSerializer(formId : string) : FormSerializer {
+        return new FormSerializer(formId);
+    }*/
 }

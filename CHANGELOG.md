@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.8] - 2025-02-06
+
+- Added support for `body.functionThis` so that a custom `this` value can be set when the function is called.
+
 ## [1.0.7] - 2025-02-04
 
 ### Fixed
@@ -8,6 +12,8 @@
 - Backdrop and modal body overflow set to auto. It was adding some extra spacing with overflow
   scroll.
 - Modal Parameter default value changes: autoWidth and autoHeight is set to true and maxWidth and maxHeight is set to 90vw and 90vh respectively.
+- For modal parameter width option, if the value <= 0, autoWidth is set to true. Same applied to 
+height.
 
 ## [1.0.6] - 2025-02-03
 

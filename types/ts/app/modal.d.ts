@@ -45,4 +45,5 @@ export default class Modal {
     setShiftingDistance(distance: Position, adjustMargins?: boolean): void;
     generateBackDropInlineStyles(backDrop?: Partial<BackDropParams>): string;
     isEscKeyDisabled(): boolean;
+    handleMouseClickOutsideModal(): void;
 }

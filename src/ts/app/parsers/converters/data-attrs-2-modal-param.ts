@@ -359,10 +359,6 @@ export default class DataAttrs2ModalParam {
 
         // endregion
 
-        console.clear();
-
-        console.log(ajax);
-
         return modalParams as ModalParams;
 
     }

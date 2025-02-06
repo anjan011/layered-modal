@@ -62,10 +62,7 @@ export default class Modal {
     }
 
     constructor(params: Partial<ModalParams> = {}) {
-
         this.#params = ModalParameterParser.parse(params);
-
-        console.log(this.#params.body?.ajaxParams);
     }
 
 
@@ -382,10 +379,10 @@ export default class Modal {
                 let returnValue = null;
 
                 if (typeof body.functionName === 'string') {
-                    returnValue = DomUtils.getFunctionResult(body.functionName, body.functionArguments);
+                    returnValue = DomUtils.getFunctionResult(body.functionName, body.functionArguments,body.functionThis);
                 } else if (typeof body.functionName === 'function') {
 
-                    returnValue = body.functionName.apply(null, [body.functionArguments]);
+                    returnValue = body.functionName.apply(body.functionThis, [body.functionArguments]);
 
                 } else {
                     throw new Error(`body.functionName must be a function or a valid function name`);

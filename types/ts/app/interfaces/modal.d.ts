@@ -77,6 +77,7 @@ export interface ModalParams {
     delayInMilliSeconds?: number;
     backDrop?: BackDropParams;
     disableEscKey?: boolean;
+    closeOnOutsideMouseClick?: boolean;
 }
 export interface BackDropParams {
     bgColor?: string;

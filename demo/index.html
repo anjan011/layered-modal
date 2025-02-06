@@ -20,8 +20,6 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
 
-        <script src="./dist/bundle.dev.min.umd.js"></script>
-
         <link rel="stylesheet" href="/dist/styles.min.css">
 
 
@@ -41,11 +39,43 @@
             </div>
         </div>
 
+        <script type="module">
+            import {ModalManager} from "/dist/bundle.dev.min.esm.js";
 
+            window.ModalManager = ModalManager;
+        </script>
+        <!--<script src="/dist/bundle.dev.min.umd.js"></script>-->
+
+        <script>
+            function globalFunc() {
+                console.log(this);
+
+                return 'Global function!';
+            }
+        </script>
 
         <script type="module">
 
-            import {ModalManager} from '/dist/bundle.dev.min.esm.js'
+            class Person {
+                name = '';
+
+                constructor(name) {
+                    this.name = name;
+                }
+
+                hello() {
+
+                    console.log(this);
+
+                    return `Hello ${this?.name}! Args: ${JSON.stringify(arguments)}!`;
+                }
+
+                static hello() {
+                    console.log(this);
+
+                    return 'Static!';
+                }
+            }
 
             document.addEventListener('DOMContentLoaded', function () {
 
@@ -56,139 +86,27 @@
 
                     ajaxBtn.addEventListener('click',() => {
 
-                        let formData = new FormData();
-
-                        formData.append('dee[]','??');
-                        formData.append('dee[]','++');
-                        formData.append('dee[]','--');
-                        formData.append('dee[]','**');
-
+                        let person = new Person('Anjan');
 
 
                         ModalManager.addModal({
                             closeOnOutsideMouseClick : false,
-                            secondaryOverlay : true,
                             transitionDuration : 100,
                             position : 'center-center',
-                            maxWidth2 : {
-                                unit : '%',
-                                value : 90
-                            },
-                            maxHeight2: {
-                                unit: '%',
-                                value: 90
-                            },
-                            backDrop : {
-                                bgColor : 'rgba(255,0,0,0.20)',
-                                opacity : 1
-                            },
-                            header : {
-                                enabled : true,
-                                title : 'Account login',
-                                cssClass : 'bg-primary text-white',
-                                inlineStyles: 'padding: 20px;',
-                                content : 'What content',
-                            },
-                            footer : {
-                                enabled : true,
-                                mode : 'confirm',
-                                onOk : function() {
 
-                                    let positions = ['top-left', 'top-center', 'top-right', 'middle-left', 'middle-center', 'middle-right', 'bottom-left', 'bottom-center', 'bottom-right'];
-
-                                    let randomPos = Math.ceil(Math.random() * 9) - 1;
-
-                                    ModalManager.addModal({
-                                        header : {
-                                            enabled : false
-                                        },
-                                        footer: {
-                                            enabled: false
-                                        },
-                                        body : {
-                                            contentType: 'html',
-                                            content: `What is this content? Where did it come from?`
-                                        },
-                                        position : positions[randomPos],
-                                    });
-
-                                },
-                                inlineStyles: 'padding: 20px;',
-                                cssClass : 'bg-warning',
-                                okButton : {
-                                    text : 'Whats ok?',
-                                    iconClass : 'fa fa-fw fa-cogs',
-                                    cssClass: 'big-border rounded',
-                                    /*iconPosition : 'right',
-                                    inlineStyles : 'padding: 30px;font-size: 30px;',
-                                    cssClass : 'text-danger'*/
-                                },
-                                closeButton: {
-                                    text: 'Now close!',
-                                    iconClass: 'fa fa-fw fa-chevron-right',
-                                    cssClass : 'big-border rounded',
-                                    /*iconPosition: 'left',
-                                    inlineStyles: 'padding: 30px;font-size: 30px;margin-left: 50px;',
-                                    cssClass: 'text-success'*/
-                                }
-                            },
-
-                            xButton : {
-                                content : 'Close',
-                                iconClass : 'fa fa-cogs',
-                                iconPosition : 'right',
-                                inlineStyles : 'width: auto !important;border-radius: 4px;padding: 8px 16px;'
-                            },
                             body : {
-                                inlineStyles : 'padding: 20px;',
-                                cssClass : 'bg-info',
-                                contentType : 'html',
-                                content : `<div><p>Nullam veniam, magna! Sit erat dictumst nibh porro, luctus aut leo cumque, quo nibh ut alias repellendus illum. Totam ultricies, exercitationem harum phasellus aspernatur penatibus incididunt congue dolor non esse, risus faucibus ad aliquet aliquid gravida.</p>
-</div>`,
-                                ajaxParams : {
-                                    timeoutMs: 25000,
-                                    decodeParams : true,
-                                    url : 'http://127.0.0.1:9000/demo/php/ajax-json.php',
-                                    method : 'get',
-                                    headers : {
-                                        'Custom-Header' : 'What?'
-                                    },
-                                    data : formData,
-                                    data2 : {
-                                        keyword : 'Retro Games',
-                                        categories : [1,2,3],
-                                        other : {
-                                            a : 10,
-                                            b : 20,
-                                            c : {
-                                                d : 'booo!'
-                                            }
-                                        }
-                                    },
-                                    contentDataType : 'html',
-                                },
+
+                                contentType : 'function',
+                                functionName : Person.hello,
+                                functionArguments : 'what?',
+                                functionThis : person,
 
                             },
                             shiftDistance : {
                                 top: -300,
                                 left : -300,
                             }
-                            /*maxWidth : {
-                                value : 60,
-                                unit : 'vw'
-                            },
-                            minWidth: {
-                                value: 500,
-                                unit: 'px'
-                            },
-                            maxHeight: {
-                                value: 90,
-                                unit: 'vh'
-                            },
-                            minHeight: {
-                                value: 300,
-                                unit: 'px'
-                            }*/
+
                         });
 
                     });

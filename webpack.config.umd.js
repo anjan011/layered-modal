@@ -15,7 +15,7 @@ export default (env,argv) => {
             filename: isProduction ? 'bundle.min.umd.js' : 'bundle.dev.min.umd.js', // Updated filename for UMD
             path: path.resolve(__dirname, 'dist'),
             library: {
-                name: 'LayeredModalSystem', // Replace 'MyLibrary' with your library name
+                //name: 'LayeredModalSystem', // Replace 'MyLibrary' with your library name
                 type: 'umd', // Set the library type to UMD
                 umdNamedDefine: true, // Use named define for AMD modules
             },

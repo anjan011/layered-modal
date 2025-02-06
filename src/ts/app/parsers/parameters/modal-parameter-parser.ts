@@ -291,23 +291,7 @@ export default class ModalParameterParser {
 
             h.value = _.objValueAsFloat(h, 'value', 0);
 
-            if (h.unit === 'px') {
-
-                if (h.value <= 0) {
-                    h.value = 100;
-                }
-
-            } else if (h.unit === 'vh') {
-
-                if (h.value <= 0) {
-                    h.value = 80;
-                }
-
-            } else {
-                if (h.value <= 0) {
-                    h.value = 50;
-                }
-            }
+            params.autoHeight = h.value <= 0;
 
             params.height = h as Dimension;
 
@@ -344,6 +328,7 @@ export default class ModalParameterParser {
             maxWidth.value = _.objValueAsFloat(maxWidth, 'value', 90);
             maxWidth.unit = _.objValueAsString(maxWidth, 'unit', 'vw');
 
+
         } else {
             params.maxWidth = {
                 value : 90,
@@ -379,26 +364,7 @@ export default class ModalParameterParser {
 
             w.value = _.objValueAsFloat(w, 'value', 0);
 
-            if (w.unit === 'px') {
-
-                if (w.value <= 0) {
-                    w.value = 800;
-                }
-
-            } else if (w.unit === 'vw') {
-
-                if (w.value <= 0) {
-                    w.value = 90;
-                }
-
-            } else {
-
-                if (w.value <= 0) {
-                    w.value = 50;
-                }
-
-            }
-
+            params.autoWidth = w.value <= 0;
 
             params.width = w as Dimension;
         }
@@ -648,6 +614,7 @@ export default class ModalParameterParser {
         } else if (body.contentType === 'function') {
             body.functionName = _.objValue(body, 'functionName');
             body.functionArguments = _.objValue(body, 'functionArguments');
+            body.functionThis = _.objValue(body, 'functionThis');
         } else if (body.contentType === 'iframe') {
             body.iframeCode = _.objValueAsString(body, 'iframeCode');
 
