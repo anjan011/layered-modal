@@ -1,6 +1,6 @@
 {
   "name": "layered-modal",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "changelog": "See CHANGELOG.md for details.",
   "description": "A lightweight, flexible, and stackable modal dialog system that allows multiple modals to be layered over each other. Provides full control over modal instances, enabling seamless manipulation of dialogs based on the currently visible modal content.",
   "exports": {

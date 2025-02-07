@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.9] - 2025-02-07
+
+- in case of relative url like this `/path/to/resource` for AJAX call, now `window.location.origin` is prepended to it making the url absolute. 
+
 ## [1.0.8] - 2025-02-06
 
 - Added support for `body.functionThis` so that a custom `this` value can be set when the function is called.

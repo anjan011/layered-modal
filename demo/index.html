@@ -96,10 +96,13 @@
 
                             body : {
 
-                                contentType : 'function',
-                                functionName : Person.hello,
-                                functionArguments : 'what?',
-                                functionThis : person,
+                                contentType : 'ajax',
+                                ajaxParams : {
+                                    url : 'http://127.0.0.1:7000/ajax/login-form.php',
+                                    data : {
+                                        email : 'someone@somesite.net'
+                                    }
+                                }
 
                             },
                             shiftDistance : {

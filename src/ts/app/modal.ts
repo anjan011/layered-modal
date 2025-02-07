@@ -716,6 +716,14 @@ export default class Modal {
 
             } else {
 
+                if(url.indexOf('http://') !== 0 && url.indexOf('https://') !== 0) {
+
+                    if(typeof window !== "undefined" && (window instanceof Window)) {
+                        url = window.location.origin  + url;
+                    }
+
+                }
+
                 let fetchParams = {
                     method: _.objValueAsString(ap, 'method', 'GET'),
                     headers: _.objValueAsObject(ap, 'headers'),
@@ -771,6 +779,8 @@ export default class Modal {
                 if (ap?.decodeParams !== undefined && ap.decodeParams) {
                     url = decodeURIComponent(url);
                 }
+
+                console.log('Final URL: ' + url);
 
 
                 const response = await fetch(url, fetchParams);

@@ -20,6 +20,7 @@ export interface ModalBodyParams {
     iframeCode?: string;
     functionName?: Function | string;
     functionArguments?: any;
+    functionThis?: any;
     ajaxParams?: AjaxParams;
     imageParams?: ImageParams;
     cssClass?: string;
