@@ -51,9 +51,10 @@ export default class DataAttrs2ModalParam {
                     captionCssClass: _.objValueAsString(attrs, 'lm-b-image-caption-css-class'),
                 },
                 cssClass: _.objValueAsString(attrs, 'lm-b-css-class'),
-                aspectRatio: _.objValueAsFloat(attrs, 'lm-b-aspect-ratio'),
+
                 transformer: _.objValueAsString(attrs, 'lm-b-transformer'),
-            }
+            },
+            aspectRatio: _.objValueAsFloat(attrs, 'lm-aspect-ratio'),
         };
 
         // region [Modal widths]

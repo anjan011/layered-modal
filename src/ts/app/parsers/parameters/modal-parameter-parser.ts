@@ -221,6 +221,16 @@ export default class ModalParameterParser {
             params.closeOnOutsideMouseClick = _.objValueAsBool(params,'closeOnOutsideMouseClick',false);
         }
 
+        /**
+         * Aspect ratio, you can set this to maintain a specific
+         * width and height ratio. Normally it may not be useful,
+         * but when loading a video or image, it may be helpful
+         */
+
+        if (params.hasOwnProperty('aspectRatio')) {
+
+            params.aspectRatio = _.objValueAsFloat(params, 'aspectRatio', 0);
+        }
 
         return params as ModalParams;
     }
@@ -584,16 +594,7 @@ export default class ModalParameterParser {
 
 
 
-        /**
-         * Aspect ratio, you can set this to maintain a specific
-         * width and height ratio. Normally it may not be useful,
-         * but when loading a video or image, it may be helpful
-         */
 
-        if (body.hasOwnProperty('aspectRatio')) {
-
-            body.aspectRatio = _.objValueAsFloat(body, 'aspectRatio', 0);
-        }
 
         /**
          * Content type and content data ...
@@ -619,6 +620,7 @@ export default class ModalParameterParser {
             body.iframeCode = _.objValueAsString(body, 'iframeCode');
 
         } else if (body.contentType === 'ajax') {
+
             let ap = body.ajaxParams = _.objValueAsObject(body, 'ajaxParams') as AjaxParams;
 
             ap.url = _.objValueAsString(ap, 'url');
@@ -643,6 +645,7 @@ export default class ModalParameterParser {
             }
 
         } else if (body.contentType === 'image') {
+
             let ip = body.imageParams = _.objValueAsObject(body, 'imageParams') as ImageParams;
 
             ip.url = _.objValueAsString(ip, 'url');
@@ -660,10 +663,6 @@ export default class ModalParameterParser {
         } else if (body.contentType === 'template') {
 
             body.templateId = _.objValueAsString(body, 'templateId');
-
-        } else if (body.contentType === 'image') {
-
-            body.imageParams = _.objValueAsObject(body, 'imageParams') as ImageParams;
 
         }
 

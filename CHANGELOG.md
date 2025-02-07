@@ -2,7 +2,8 @@
 
 ## [1.0.9] - 2025-02-07
 
-- in case of relative url like this `/path/to/resource` for AJAX call, now `window.location.origin` is prepended to it making the url absolute. 
+- in case of relative url like this `/path/to/resource` for AJAX call, now `window.location.origin` is prepended to it making the url absolute.
+- moved `aspectRatio` param from modalBody to modal itself.
 
 ## [1.0.8] - 2025-02-06
 

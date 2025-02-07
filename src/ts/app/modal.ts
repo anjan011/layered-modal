@@ -193,6 +193,12 @@ export default class Modal {
             `transition-duration: ${this.#params.transitionDuration}ms;`,
         ];
 
+        if (this.#params.aspectRatio !== undefined) {
+            if (this.#params.aspectRatio > 0) {
+                modalInlineCss.push(`aspect-ratio: ${this.#params.aspectRatio};`);
+            }
+        }
+
         if (this.#params.width) {
 
             if (!this.#params.autoWidth) {
@@ -336,12 +342,6 @@ export default class Modal {
 
         if (body.inlineStyles !== undefined) {
             styles.push(_.ensureSemicolon(body.inlineStyles as string));
-        }
-
-        if (body.aspectRatio !== undefined) {
-            if (body.aspectRatio > 0) {
-                styles.push(`aspect-ratio: ${body.aspectRatio};`);
-            }
         }
 
         if (body.maxHeight !== undefined) {

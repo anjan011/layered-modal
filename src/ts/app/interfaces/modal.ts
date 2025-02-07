@@ -17,7 +17,6 @@ export interface ModalHeaderParams {
 
 export interface ModalBodyParams {
     noPadding?: boolean;
-    aspectRatio?: number;
     contentType?: string,
     content?: string,
     iframeCode?: string,
@@ -85,6 +84,7 @@ export interface ModalParams {
     backDrop?: BackDropParams;
     disableEscKey?: boolean;
     closeOnOutsideMouseClick? : boolean;
+    aspectRatio?: number;
 }
 
 export interface BackDropParams {
