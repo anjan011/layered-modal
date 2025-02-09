@@ -1,10 +1,9 @@
 export default class FormSerializer {
     private form;
-    constructor(formId: string);
+    private skipEmptyString;
+    constructor(formId: string, skipEmptyString?: boolean);
+    serialize(): any;
     private parseName;
-    serialize(): Record<string, any>;
-    serializeArray(): Array<{
-        name: string;
-        value: string;
-    }>;
+    private parseValue;
+    private setDeepValue;
 }

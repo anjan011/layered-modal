@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.10] - 2025-02-08
+
+- A small issue fix.
+
+## [1.0.10] - 2025-02-08
+
+- Structured documentation and demo now available at [https://docs.anjan011.com/layered-modal/](https://docs.anjan011.com/layered-modal/) 
+
 ## [1.0.9] - 2025-02-07
 
 - in case of relative url like this `/path/to/resource` for AJAX call, now `window.location.origin` is prepended to it making the url absolute.

@@ -10,3 +10,7 @@ other. If you are looking for a single popup, you are still covered, with plenty
 4. Support for inline css styles and additional css classes for modal header, body and footer.
 5. Different footer mode: including alert, confirm and custom. Which lets you easily turn your modal into an alert
    dialog, confirm dialog or place your own custom content in the footer.
+   
+# Documentation and Demo
+
+For full documentation and demo, please visit [https://docs.anjan011.com/layered-modal/](https://docs.anjan011.com/layered-modal/). I will update this readme later to clear out all configuration options listed here, so that the readme file is not too large anymore. 
