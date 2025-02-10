@@ -4,6 +4,7 @@
 
 - Footer button icon position bug fixed
 - Added function name as string, support to AJAX parameter's transformJson callback.
+- Readme file updated with links to [https://docs.anjan011.com/layered-modal/](https://docs.anjan011.com/layered-modal/)
 
 ## [1.0.11] - 2025-02-08
 

@@ -1,4 +1,4 @@
-# layered-modal
+## layered-modal
 
 Layered modal is yet another popup, with added stacking management, which allows you multiple modals stacked over each
 other. If you are looking for a single popup, you are still covered, with plenty of features like -
@@ -11,6 +11,6 @@ other. If you are looking for a single popup, you are still covered, with plenty
 5. Different footer mode: including alert, confirm and custom. Which lets you easily turn your modal into an alert
    dialog, confirm dialog or place your own custom content in the footer.
    
-# Documentation and Demo
+### Documentation and Demo
 
-For full documentation and demo, please visit [https://docs.anjan011.com/layered-modal/](https://docs.anjan011.com/layered-modal/). I will update this readme later to clear out all configuration options listed here, so that the readme file is not too large anymore. 
+For full documentation and demo, please visit [https://docs.anjan011.com/layered-modal/](https://docs.anjan011.com/layered-modal/).  

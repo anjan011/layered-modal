@@ -68,10 +68,10 @@ const files = [
         file: "markdown/modal.md",
         skipChars: skipChars,
     },
-    {
+    /*{
         file : "markdown/data-attributes.md",
         skipChars: skipChars,
-    }
+    }*/
 ];
 
 const outputFile = "README.md";
