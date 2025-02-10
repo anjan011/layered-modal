@@ -13,6 +13,7 @@ import {
     ModalHeaderParams,
     ModalParams, ModalXButton, BackDropParams
 } from "../../interfaces/modal"
+import {ok} from "assert";
 
 export default class ModalParameterParser {
 
@@ -450,6 +451,8 @@ export default class ModalParameterParser {
 
         let okBtn = footer.okButton = _.objValueAsObject(footer, 'okButton') as Partial<ButtonParams>;
 
+        console.log('%c%s', 'color: red;background-color: red;color: #fff;font-size: 1.2em;', '`Ok Button: ',okBtn);
+
         okBtn.cssClass = _.objValueAsString(okBtn, 'cssClass');
 
         if (!okBtn.cssClass) {
@@ -470,7 +473,7 @@ export default class ModalParameterParser {
         okBtn.iconClass = _.objValueAsString(okBtn, 'iconClass');
         okBtn.iconPosition = _.objValueAsString(okBtn, 'iconPosition', 'left').toLowerCase();
 
-        if (['left', 'right'].includes(okBtn.iconPosition)) {
+        if (!['left', 'right'].includes(okBtn.iconPosition)) {
             okBtn.iconPosition = 'left';
         }
 
