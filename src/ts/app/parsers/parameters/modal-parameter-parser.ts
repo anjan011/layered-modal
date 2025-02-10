@@ -451,8 +451,6 @@ export default class ModalParameterParser {
 
         let okBtn = footer.okButton = _.objValueAsObject(footer, 'okButton') as Partial<ButtonParams>;
 
-        console.log('%c%s', 'color: red;background-color: red;color: #fff;font-size: 1.2em;', '`Ok Button: ',okBtn);
-
         okBtn.cssClass = _.objValueAsString(okBtn, 'cssClass');
 
         if (!okBtn.cssClass) {
@@ -657,6 +655,7 @@ export default class ModalParameterParser {
             ip.caption = _.objValueAsString(ip, 'caption');
             ip.captionTemplate = _.objValueAsString(ip, 'captionTemplate');
             ip.captionCssClass = _.objValueAsString(ip, 'captionCssClass');
+            ip.captionInlineStyles = _.objValueAsString(ip, 'captionInlineStyles');
             ip.inlineStyles = _.objValueAsString(ip, 'inlineStyles');
 
         } else if (body.contentType === 'youtube-video') {

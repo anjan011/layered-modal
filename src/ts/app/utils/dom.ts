@@ -19,7 +19,7 @@ export class DomUtils {
         return dataAttrs;
     }
 
-    static getFunctionResult(funcName: string, functionArgs: string, context: any = null): any | null {
+    static getFunctionResult(funcName: string, functionArgs: any, context: any = null): any | null {
 
         if (typeof (window as any)[funcName] === "function") {
             let val = (window as any)[funcName].apply(context, [functionArgs]);
@@ -35,7 +35,7 @@ export class DomUtils {
         }
     }
 
-    static executeFunction(funcName: string, functionArgs: string, context: any = null) {
+    static executeFunction(funcName: string, functionArgs: any, context: any = null) {
 
         if (typeof (window as any)[funcName] === "function") {
             (window as any)[funcName].apply(context, [functionArgs]);

@@ -31,6 +31,7 @@ export interface ImageParams {
     inlineStyles?: string,
     captionTemplate?: string,
     captionCssClass?: string,
+    captionInlineStyles?: string,
 }
 
 export interface ButtonParams {

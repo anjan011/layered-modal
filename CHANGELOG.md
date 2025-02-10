@@ -3,6 +3,7 @@
 ## [1.0.12] - 2025-02-10
 
 - Footer button icon position bug fixed
+- Added function name as string, support to AJAX parameter's transformJson callback.
 
 ## [1.0.11] - 2025-02-08
 

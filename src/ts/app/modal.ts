@@ -465,7 +465,7 @@ export default class Modal {
                         }
 
                         if (captionText) {
-                            captionMarkup = `<div class="lm-image-caption ${imgParams.captionCssClass}">${captionText}</div>`;
+                            captionMarkup = `<div class="lm-image-caption ${imgParams.captionCssClass}" style="${imgParams.captionInlineStyles}">${captionText}</div>`;
                         }
 
 
@@ -780,8 +780,6 @@ export default class Modal {
                     url = decodeURIComponent(url);
                 }
 
-                console.log('Final URL: ' + url);
-
 
                 const response = await fetch(url, fetchParams);
 
@@ -820,6 +818,20 @@ export default class Modal {
 
                             }
 
+
+                        } else if (typeof ap?.transformJson === 'string') {
+
+                            try {
+
+                                let jsonData = JSON.parse(html);
+
+                                html = DomUtils.getFunctionResult(ap.transformJson,jsonData,this);
+
+                            } catch (error: any) {
+
+                                html = `Could not parse JSON text.<hr>Error: ${_.encodeHTML(error.message)}`;
+
+                            }
 
                         } else {
                             html = 'transformJson callback is required to transform JSON data into html code as modal body content.';
