@@ -669,7 +669,6 @@ const _ = {
     },
 
 
-
     sanitizeString(input: string, replacer: string = '-', changeCase: CaseOption = 'lower'): string {
         // Replace all non-word characters (\W) with the replacer
         let sanitized = input.replace(/\W+/g, replacer);
@@ -693,6 +692,71 @@ const _ = {
         }
 
         return sanitized;
+    },
+
+    parseCssValue(cssValue: string): { value: number; unit: string } | null {
+        const match = cssValue.match(/^([+-]?\d*\.?\d+)([a-zA-Z%vwvhrempx]*)$/);
+
+        if (!match) return null;
+
+        return {
+            value: parseFloat(match[1]),
+            unit: match[2] || "",
+        };
+    },
+
+    deepEqualWidthData(obj1: any, obj2: any): boolean {
+
+        if (obj1 === obj2) return true;
+
+        if (typeof obj1 !== "object" || typeof obj2 !== "object" || obj1 === null || obj2 === null) {
+            return false;
+        }
+
+        const keys1 = Object.keys(obj1).filter(key => typeof obj1[key] !== "function");
+        const keys2 = Object.keys(obj2).filter(key => typeof obj2[key] !== "function");
+
+        if (keys1.length !== keys2.length) return false;
+
+        return keys1.every((key) => {
+            if (!Object.prototype.hasOwnProperty.call(obj2, key)) return false;
+            return this.deepEqualWidthData(obj1[key], obj2[key]);
+        });
+    },
+
+    /**
+     * Has any of the given properties?
+     *
+     * @param obj
+     * @param properties
+     */
+
+    hasAnyProperty(obj : any,properties : string[] = []) : boolean {
+
+        if(!obj) {
+            return false;
+        }
+
+        if(typeof obj === 'object' && Array.isArray(obj)) {
+            return false;
+        }
+
+        if(!properties.length) {
+            return false;
+        }
+
+        for(let i = 0; i < properties.length;i++) {
+            if(obj.hasOwnProperty(properties[i])) {
+                return true;
+            }
+        }
+
+
+        return false;
+    },
+
+    isInstanceOfClass(value : any) : boolean {
+        return value instanceof Object && value.constructor !== Object;
     }
 }
 

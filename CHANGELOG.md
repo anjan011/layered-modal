@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.13] - 2025-02-12
+
+- Fixed close button icon positioning issue.
+
 ## [1.0.12] - 2025-02-10
 
 - Footer button icon position bug fixed

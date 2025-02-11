@@ -603,9 +603,9 @@ export default class ModalManager {
                 return;
             }
 
-            let attr2param = new DataAttrs2ModalParam();
+            let attr2param = new DataAttrs2ModalParam(attrs);
 
-            this.addModal(attr2param.generate(attrs) as ModalParams);
+            this.addModal(attr2param.generate() as ModalParams);
         });
 
     }

@@ -50,5 +50,12 @@ declare const _: {
     unicodeB64Encode(text: string): string;
     deepMerge<T extends Record<string, any>>(obj1: T, obj2: T): T;
     sanitizeString(input: string, replacer?: string, changeCase?: CaseOption): string;
+    parseCssValue(cssValue: string): {
+        value: number;
+        unit: string;
+    } | null;
+    deepEqualWidthData(obj1: any, obj2: any): boolean;
+    hasAnyProperty(obj: any, properties?: string[]): boolean;
+    isInstanceOfClass(value: any): boolean;
 };
 export default _;

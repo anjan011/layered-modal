@@ -23,7 +23,6 @@ export default class ModalParameterParser {
 
     static parse(params: Partial<ModalParams>): ModalParams {
 
-
         /**
          * Stack index ..
          */
@@ -503,7 +502,7 @@ export default class ModalParameterParser {
 
         closeBtn.iconPosition = _.objValueAsString(closeBtn, 'iconPosition', 'left').toLowerCase();
 
-        if (['left', 'right'].includes(closeBtn.iconPosition)) {
+        if (!['left', 'right'].includes(closeBtn.iconPosition)) {
             closeBtn.iconPosition = 'left';
         }
 
