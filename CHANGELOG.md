@@ -1,5 +1,9 @@
 # Changelog
 
+## [1.0.14] - 2025-02-12
+
+- Incorrect dependency on `bootstrap` removed.
+
 ## [1.0.13] - 2025-02-12
 
 - Fixed close button icon positioning issue.
@@ -15,9 +19,6 @@
 ## [1.0.11] - 2025-02-08
 
 - Form serializer logic updated. Now form controls has support for data-sdt and data-sdv for serializer data type and default value respectively. the `FormSerializer` class constructor now has a second parameter that enables the parser to skip controls with empty string value (except boolean types, which converts to false)
-
-## [1.0.10] - 2025-02-08
-
 - A small issue fix.
 
 ## [1.0.10] - 2025-02-08
