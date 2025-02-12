@@ -11,12 +11,12 @@ export interface Dimension {
 export interface AjaxParams {
     url: string;
     method: string;
-    headers?: object;
+    headers?: object | string;
     transformHtml?: Function | string | null;
     transformJson?: Function | string | null;
     contentDataType?: "html" | "json";
     timeoutMs: number;
-    data: FormData | object | null;
+    data: FormData | object | string | null;
     decodeParams?: boolean;
 }
 export interface ImageParams {

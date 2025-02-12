@@ -724,9 +724,28 @@ export default class Modal {
 
                 }
 
+                let headers = _.objValue(ap,'headers');
+
+                if(typeof headers === "string") {
+
+                    try {
+                        headers = JSON.parse(headers);
+
+                        if (!_.isPlainObject(headers)) {
+                            throw new Error("Request header as JSON string must be a valid plain object");
+                        }
+                    } catch (error) {
+
+                        throw new Error(`Error parsing request header as JSON!.`);
+
+                    }
+
+
+                }
+
                 let fetchParams = {
                     method: _.objValueAsString(ap, 'method', 'GET'),
-                    headers: _.objValueAsObject(ap, 'headers'),
+                    headers: headers,
                     signal: controller.signal
                 } as RequestInit;
 
@@ -734,12 +753,39 @@ export default class Modal {
                  * Prepare ajax data ...
                  */
 
+                if(ap?.data) {
+                    if (typeof ap.data === "string") {
+
+                        try {
+
+                            ap.data = JSON.parse(ap.data);
+
+                            if (!_.isPlainObject(ap.data)) {
+                                throw new Error(`Only a plain object encoded in JSON string is supported`);
+                            }
+
+                        } catch (error) {
+
+                            if(error instanceof SyntaxError) {
+                                throw new Error(`Error parsing request data JSON string. Details: ${error.message}`);
+                            } else {
+                                throw error;
+                            }
+
+
+
+                        }
+
+                    }
+                }
+
+
                 if (fetchParams.method === 'GET') {
 
                     if (ap?.data) {
 
                         if (_.isPlainObject(ap.data)) {
-                            url = _.appendQueryParams(url, ap.data);
+                            url = _.appendQueryParams(url, ap.data as Record<any, any>);
 
                         } else if (ap.data instanceof FormData) {
 
@@ -754,7 +800,7 @@ export default class Modal {
 
                 } else if (fetchParams.method === 'POST') {
 
-                    let headers = fetchParams.headers as Record<string, string>;
+                    let headers = fetchParams.headers = _.objValueAsObject(fetchParams,'headers') as Record<string, string>;
 
                     if (ap?.data) {
 
@@ -762,7 +808,7 @@ export default class Modal {
 
                             headers['Content-Type'] = 'application/x-www-form-urlencoded';
 
-                            fetchParams.body = _.buildQueryParams(ap.data, '');
+                            fetchParams.body = _.buildQueryParams(ap.data as Record<any, any>, '');
 
                         } else if (ap.data instanceof FormData) {
 
@@ -779,7 +825,6 @@ export default class Modal {
                 if (ap?.decodeParams !== undefined && ap.decodeParams) {
                     url = decodeURIComponent(url);
                 }
-
 
                 const response = await fetch(url, fetchParams);
 
@@ -851,9 +896,9 @@ export default class Modal {
 
 
                 if ((error as DOMException).name === "AbortError") {
-                    this.setBodyContent('html', `Request timed out after ${timeout}ms`);
+                    this.setBodyContent('html', `<span class="color-red">Request timed out after ${timeout}ms</span>`);
                 } else {
-                    this.setBodyContent('html', `Error fetching ajax content.<hr>Error: ` + error.message)
+                    this.setBodyContent('html', `<span class="color-red">${error.message}</span>`)
                 }
 
 

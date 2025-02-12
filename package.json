@@ -29,6 +29,7 @@
   "author": "Anjan Bhowmik",
   "license": "MIT",
   "dependencies": {
+    "bootstrap": "^5.3.3",
     "glob": "^11.0.1"
   },
   "devDependencies": {
@@ -61,7 +62,7 @@
     "serve": "npx webpack serve --mode development",
     "php:server": "php -S 127.0.0.1:9000 -t ./",
     "build:readme": "node merge-markdown.js",
-    "prepublishOnly" : "npm run build:all:production"
+    "prepublishOnly": "npm run build:all:production"
   },
   "type": "module"
 }

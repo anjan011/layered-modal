@@ -98,10 +98,10 @@
 
                                 contentType : 'ajax',
                                 ajaxParams : {
-                                    url : 'http://127.0.0.1:7000/ajax/login-form.php',
-                                    data : {
-                                        email : 'someone@somesite.net'
-                                    }
+                                    url : 'http://127.0.0.1:7000/ajax/ajax-data.php',
+                                    data2 : JSON.stringify({a : 10,b : 'Anjan'}),
+                                    data : {a: 10, b: 'Anjan',c : [1,2,3]},
+                                    method : 'get'
                                 }
 
                             },

@@ -3,6 +3,8 @@
 ## [1.0.13] - 2025-02-12
 
 - Fixed close button icon positioning issue.
+- AJAX headers can now be a plain object or JSON encoded string.
+- Issues fixed with modal's opening via `data-*` attributes
 
 ## [1.0.12] - 2025-02-10
 

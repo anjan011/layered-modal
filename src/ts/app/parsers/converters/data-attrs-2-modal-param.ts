@@ -1,4 +1,4 @@
-import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams} from "../../interfaces/modal";
+import {ModalBodyParams, ModalFooterParams, ModalHeaderParams, ModalParams, ModalXButton} from "../../interfaces/modal";
 import _ from "../../utils/mixins";
 import ModalParameterParser from "../parameters/modal-parameter-parser";
 import {AjaxParams, ButtonParams, Dimension, ImageParams} from "../../interfaces/common";
@@ -63,93 +63,29 @@ export default class DataAttrs2ModalParam {
 
         this.generateBody();
 
-        let attrs = this.#attrs;
+        /**
+         * generate backdrop ...
+         */
 
+        this.#generateBackDrop();
 
-        let modalParams: Partial<ModalParams> = {};
+        /**
+         * X Button ...
+         */
 
-        // region [Modal widths]
+        this.#generateXButton();
 
-        let autoWidth = true;
+        /**
+         * Widths ...
+         */
 
-        if (attrs.hasOwnProperty('lm-auto-width')) {
-            autoWidth = _.objValueAsIntFlag(attrs, 'lm-auto-width', 1) > 0;
-        }
+        this.#generateWidths();
 
-        modalParams.autoWidth = autoWidth;
+        /**
+         * Heights ...
+         */
 
-        let width: Partial<Dimension> = {};
-
-        if (attrs.hasOwnProperty('lm-width-value')) {
-            width.value = _.objValueAsFloat(attrs, 'lm-width-value');
-            width.unit = _.objValueAsString(attrs, 'lm-width-unit', 'px');
-
-            modalParams.width = width as Dimension;
-
-        }
-
-        let maxWidth: Partial<Dimension> = {};
-
-        if (attrs.hasOwnProperty('lm-max-width-value')) {
-            maxWidth.value = _.objValueAsFloat(attrs, 'lm-max-width-value', 100);
-            maxWidth.unit = _.objValueAsString(attrs, 'lm-max-width-unit', '%');
-
-            modalParams.maxWidth = maxWidth as Dimension;
-
-        }
-
-        let minWidth: Partial<Dimension> = {};
-
-        if (attrs.hasOwnProperty('lm-min-width-value')) {
-            minWidth.value = _.objValueAsFloat(attrs, 'lm-min-width-value', 0);
-            minWidth.unit = _.objValueAsString(attrs, 'lm-min-width-unit', 'px');
-
-            modalParams.minWidth = minWidth as Dimension;
-
-        }
-
-        // endregion
-
-        // region [Modal heights]
-
-        let autoHeight = true;
-
-        if (attrs.hasOwnProperty('lm-auto-height')) {
-            autoHeight = _.objValueAsIntFlag(attrs, 'lm-auto-height', 1) > 0;
-        }
-
-        modalParams.autoHeight = autoHeight;
-
-
-        let height: Partial<Dimension> = {};
-
-        if (attrs.hasOwnProperty('lm-height-value')) {
-            height.value = _.objValueAsFloat(attrs, 'lm-height-value');
-            height.unit = _.objValueAsString(attrs, 'lm-height-unit', 'px');
-
-            modalParams.height = height as Dimension;
-        }
-
-        let maxHeight: Partial<Dimension> = {};
-
-        if (attrs.hasOwnProperty('lm-max-height-value')) {
-            maxHeight.value = _.objValueAsFloat(attrs, 'lm-max-height-value', 100);
-            maxHeight.unit = _.objValueAsString(attrs, 'lm-max-height-unit', '%');
-
-            modalParams.maxHeight = maxHeight as Dimension;
-        }
-
-        let minHeight: Partial<Dimension> = {};
-
-        if (attrs.hasOwnProperty('lm-min-height-value')) {
-            minHeight.value = _.objValueAsFloat(attrs, 'lm-min-height-value', 0);
-            minHeight.unit = _.objValueAsString(attrs, 'lm-min-height-unit', 'px');
-
-            modalParams.minHeight = minHeight as Dimension;
-
-        }
-
-        // endregion
+        this.#generateHeights();
 
         return this.#modalParams as ModalParams;
 
@@ -791,6 +727,17 @@ export default class DataAttrs2ModalParam {
 
         // endregion
 
+        // region [Css Class]
+
+        if (this.#attrs.hasOwnProperty('lm-b-inline-styles')) {
+            this.#modalParams.body.inlineStyles = _.objValueAsString(
+                this.#attrs,
+                'lm-b-inline-styles'
+            );
+        }
+
+        // endregion
+
         // region [Iframe content]
 
         if(contentType === 'iframe') {
@@ -911,4 +858,163 @@ export default class DataAttrs2ModalParam {
 
     }
 
+    #generateBackDrop() {
+
+        if(_.hasAnyProperty(this.#attrs,['lm-backdrop-bg-color','lm-backdrop-opacity'])) {
+
+            if(!this.#modalParams.backDrop) {
+                this.#modalParams.backDrop = {};
+            }
+
+            if(this.#attrs.hasOwnProperty('lm-backdrop-bg-color')) {
+                this.#modalParams.backDrop.bgColor = _.objValueAsString(this.#attrs,'lm-backdrop-bg-color');
+            }
+
+            if (this.#attrs.hasOwnProperty('lm-backdrop-opacity')) {
+                this.#modalParams.backDrop.opacity = _.objValueAsFloat(this.#attrs, 'lm-backdrop-opacity');
+            }
+
+        }
+
+    }
+
+    #generateXButton() {
+
+
+        if(!this.#modalParams.xButton) {
+            this.#modalParams.xButton = {} as ModalXButton;
+        }
+
+        this.#modalParams.xButton.enabled = _.objValueAsInt(this.#attrs,'lm-x-btn-enabled',1) > 0;
+        this.#modalParams.xButton.content = _.objValueAsString(this.#attrs,'lm-x-btn-content','X');
+        this.#modalParams.xButton.cssClass = _.objValueAsString(this.#attrs,'lm-x-btn-css-class');
+        this.#modalParams.xButton.inlineStyles = _.objValueAsString(this.#attrs,'lm-x-btn-inline-styles');
+
+
+    }
+
+    #generateWidths() {
+
+        let autoWidth = true;
+
+        if (this.#attrs.hasOwnProperty('lm-auto-width')) {
+            autoWidth = _.objValueAsIntFlag(this.#attrs, 'lm-auto-width', 1) > 0;
+        }
+
+        this.#modalParams.autoWidth = autoWidth;
+
+        if (!autoWidth && this.#attrs.hasOwnProperty('lm-width')) {
+
+            let widthStr = _.objValueAsString(this.#attrs, 'lm-width');
+
+            let dim = _.parseCssValue(widthStr);
+
+            if(dim) {
+
+                this.#modalParams.width = dim as Dimension;
+
+            }
+
+        }
+
+        /**
+         * Max width ...
+         */
+
+        if (this.#attrs.hasOwnProperty('lm-max-width')) {
+
+            let widthStr = _.objValueAsString(this.#attrs, 'lm-max-width');
+
+            let dim = _.parseCssValue(widthStr);
+
+            if (dim) {
+
+                this.#modalParams.maxWidth = dim as Dimension;
+
+            }
+
+        }
+
+        /**
+         * Min width ...
+         */
+
+        if (this.#attrs.hasOwnProperty('lm-min-width')) {
+
+            let widthStr = _.objValueAsString(this.#attrs, 'lm-min-width');
+
+            let dim = _.parseCssValue(widthStr);
+
+            if (dim) {
+
+                this.#modalParams.minWidth = dim as Dimension;
+
+            }
+
+        }
+
+
+    }
+
+    #generateHeights() {
+
+        let autoHeight = true;
+
+        if (this.#attrs.hasOwnProperty('lm-auto-height')) {
+            autoHeight = _.objValueAsIntFlag(this.#attrs, 'lm-auto-height', 1) > 0;
+        }
+
+        this.#modalParams.autoHeight = autoHeight;
+
+        if (!autoHeight && this.#attrs.hasOwnProperty('lm-height')) {
+
+            let heightStr = _.objValueAsString(this.#attrs, 'lm-height');
+
+            let dim = _.parseCssValue(heightStr);
+
+            if (dim) {
+
+                this.#modalParams.height = dim as Dimension;
+
+            }
+
+        }
+
+        /**
+         * Max height ...
+         */
+
+        if (this.#attrs.hasOwnProperty('lm-max-height')) {
+
+            let heightStr = _.objValueAsString(this.#attrs, 'lm-max-height');
+
+            let dim = _.parseCssValue(heightStr);
+
+            if (dim) {
+
+                this.#modalParams.maxHeight = dim as Dimension;
+
+            }
+
+        }
+
+        /**
+         * Min height ...
+         */
+
+        if (this.#attrs.hasOwnProperty('lm-min-height')) {
+
+            let heightStr = _.objValueAsString(this.#attrs, 'lm-min-height');
+
+            let dim = _.parseCssValue(heightStr);
+
+            if (dim) {
+
+                this.#modalParams.minHeight = dim as Dimension;
+
+            }
+
+        }
+
+    }
 }

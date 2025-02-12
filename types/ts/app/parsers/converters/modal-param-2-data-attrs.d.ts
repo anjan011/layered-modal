@@ -14,5 +14,6 @@ export default class ModalParam2DataAttrs {
     generateHeaderAttrs(header: Partial<ModalHeaderParams>, attrs: Record<any, any>): void;
     generateFooterAttrs(): void;
     generateBodyAttrs(): void;
+    generateXButton(): void;
     generateAttrIfExists(sourceObj: Record<any, any>, key: string, attrName: string): void;
 }

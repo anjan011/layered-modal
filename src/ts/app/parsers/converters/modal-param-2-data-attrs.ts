@@ -163,25 +163,61 @@ export default class ModalParam2DataAttrs {
         let attrs = this.#attrs;
 
         if (params.hasOwnProperty('autoHeight') && !params.autoHeight) {
+
             attrs['data-lm-auto-height'] = '0';
+
+            if (params.height) {
+
+                if (params.height.value > 0) {
+
+                    let unit = _.objValueAsString(params.height, 'unit', 'px');
+
+                    if (!unit) {
+                        unit = 'px';
+                    }
+
+                    attrs['data-lm-height'] = params.height?.value + unit;
+
+                } else {
+                    delete attrs['data-lm-auto-height'];
+                }
+
+            }
+
         }
 
-
-        if (params.height && params.height.value > 0) {
-
-            attrs['data-lm-height'] = params.height?.value + params.height.unit;
-
-        }
 
         if (params.minHeight) {
 
-            attrs['data-lm-min-height'] = params.minHeight?.value + params.minHeight.unit;
+            if (params.minHeight.value > 0) {
+
+                let unit = _.objValueAsString(params.minHeight, 'unit', 'px');
+
+                if (!unit) {
+                    unit = 'px';
+                }
+
+                attrs['data-lm-min-height'] = params.minHeight?.value + unit;
+
+            }
+
 
         }
 
         if (params.maxHeight) {
 
-            attrs['data-lm-max-height'] = params.maxHeight?.value + params.maxHeight.unit;
+            if (params.maxHeight.value > 0) {
+
+                let unit = _.objValueAsString(params.maxHeight, 'unit', 'px');
+
+                if (!unit) {
+                    unit = 'px';
+                }
+
+                attrs['data-lm-max-height'] = params.maxHeight?.value + unit;
+
+            }
+
 
         }
 
@@ -198,25 +234,61 @@ export default class ModalParam2DataAttrs {
         let attrs = this.#attrs;
 
         if (params.hasOwnProperty('autoWidth') && !params.autoWidth) {
+
             attrs['data-lm-auto-width'] = '0';
+
+            if (params.width) {
+
+                if(params.width.value > 0) {
+
+                    let unit = _.objValueAsString(params.width,'unit','px');
+
+                    if(!unit) {
+                        unit = 'px';
+                    }
+
+                    attrs['data-lm-width'] = params.width?.value + unit;
+
+                } else {
+                    delete attrs['data-lm-auto-width'];
+                }
+
+            }
+
         }
 
-        if (params.width && params.width?.value > 0) {
-
-
-            attrs['data-lm-width'] = params.width?.value + params.width?.unit;
-
-        }
 
         if (params.minWidth) {
 
-            attrs['data-lm-min-width'] = params.minWidth?.value + params.minWidth?.unit;
+            if (params.minWidth.value > 0) {
+
+                let unit = _.objValueAsString(params.minWidth, 'unit', 'px');
+
+                if (!unit) {
+                    unit = 'px';
+                }
+
+                attrs['data-lm-min-width'] = params.minWidth?.value + unit;
+
+            }
+
 
         }
 
         if (params.maxWidth) {
 
-            attrs['data-lm-max-width'] = params.maxWidth?.value + params.maxWidth?.unit;
+            if (params.maxWidth.value > 0) {
+
+                let unit = _.objValueAsString(params.maxWidth, 'unit', 'px');
+
+                if (!unit) {
+                    unit = 'px';
+                }
+
+                attrs['data-lm-max-width'] = params.maxWidth?.value + unit;
+
+            }
+
 
         }
 
@@ -362,6 +434,24 @@ export default class ModalParam2DataAttrs {
          */
 
         this.generateBackDrop();
+
+        /**
+         * X Button ...
+         */
+
+        this.generateXButton();
+
+        /**
+         * Widths ...
+         */
+
+        this.generateWidths();
+
+        /**
+         * heights ...
+         */
+
+        this.generateHeights();
 
         return attrs;
 
@@ -562,6 +652,12 @@ export default class ModalParam2DataAttrs {
 
         // endregion
 
+        // region [Inline styles ...]
+
+        this.generateAttrIfExists(body, 'inlineStyles', 'data-lm-b-inline-styles');
+
+        // endregion
+
         // region [Content Type: Validate and enforce a valid value ...]
 
         if (!body.hasOwnProperty('contentType')) {
@@ -647,7 +743,14 @@ export default class ModalParam2DataAttrs {
                     this.generateAttrIfExists(ajax, 'method', 'data-lm-b-ajax-method');
 
                     if (typeof ajax.data !== "undefined" && ajax.data !== null) {
-                        this.#attrs['data-lm-b-ajax-data'] = _.unicodeB64Encode(JSON.stringify(ajax.data));
+
+                        if(_.isPlainObject(ajax.data)) {
+                            this.#attrs['data-lm-b-ajax-data'] = _.unicodeB64Encode(JSON.stringify(ajax.data));
+                        } else if(typeof ajax.data === "string") {
+                            this.#attrs['data-lm-b-ajax-data'] = _.unicodeB64Encode(ajax.data);
+                        }
+
+
                     }
 
                     this.generateAttrIfExists(ajax, 'decodeParams', 'data-lm-b-decode-params');
@@ -691,6 +794,35 @@ export default class ModalParam2DataAttrs {
 
         if (typeof body.transformer === 'string') {
             this.generateAttrIfExists(body, 'transformer', 'data-lm-b-transformer');
+        }
+
+    }
+
+    generateXButton() {
+
+        if(!this.#modalParams.xButton || !this.#modalParams.xButton.enabled) {
+            this.#attrs['data-lm-x-btn-enabled'] = '0';
+            return;
+        }
+
+        this.#attrs['data-lm-x-btn-enabled'] = '1';
+
+        let content = _.objValueAsString(this.#modalParams.xButton,'content');
+
+        if(content && content.toLowerCase() !== 'x') {
+            this.#attrs['data-lm-x-btn-content'] = content;
+        }
+
+        let cssClass = _.objValueAsString(this.#modalParams.xButton, 'cssClass');
+
+        if (cssClass) {
+            this.#attrs['data-lm-x-btn-css-class'] = cssClass;
+        }
+
+        let inlineStyles = _.objValueAsString(this.#modalParams.xButton, 'inlineStyles');
+
+        if (inlineStyles) {
+            this.#attrs['data-lm-x-btn-inline-styles'] = inlineStyles;
         }
 
     }
